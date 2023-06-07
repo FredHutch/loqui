@@ -18,7 +18,7 @@ library(ari)
 
 
 ui <- fluidPage(
-  titlePanel("Loqui"),
+  titlePanel("Loqui: Make videos"),
   
   sidebarLayout(
     sidebarPanel(

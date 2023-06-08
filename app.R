@@ -51,10 +51,13 @@ server <- function(input, output, session) {
       downloadButton("download_button")
     })
   })
-  
+  # https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
   output$download_button <- downloadHandler(
     filename = "video.mp4",
-    content = attr(res(), "outfile")
+    content = function(file) {
+      file.copy("www/ari-video.mp4", file)
+    },
+    contentType = "video/mp4"
   )
   
   

@@ -19,7 +19,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  observeEvent(input$go, {
+  res <- eventReactive(input$go, {
     # text
     pptx_path <- download_gs_file(input$url, out_type = "pptx")
     pptx_notes_vector <- pptx_notes(pptx_path)
@@ -33,18 +33,19 @@ server <- function(input, output, session) {
              paragraphs = pptx_notes_vector,
              service = "coqui",
              output = "www/ari-video.mp4")
-    
-    output$video <- renderUI({
-      tags$video(src = "ari-video.mp4", 
-                 type = "video/mp4",
-                 height ="400px", 
-                 width="400px",
-                 autoplay = TRUE, 
-                 controls = TRUE)
-    })
-    
-    
   })
+  
+  output$video <- renderUI({
+    video_path <- attr(res(), "outfile")
+    tags$video(src = basename(video_path), 
+               type = "video/mp4",
+               height ="400px", 
+               width="400px",
+               autoplay = TRUE, 
+               controls = TRUE)
+  })
+  
+  
 }
 
 shinyApp(ui, server)

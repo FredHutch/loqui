@@ -13,7 +13,8 @@ ui <- fluidPage(
       actionButton("go", "Generate")
     ),
     mainPanel(h4("Rendered Video (mp4)"),
-              uiOutput("video"))
+              uiOutput("video"),
+              uiOutput("download"))
   )
 )
 
@@ -44,6 +45,17 @@ server <- function(input, output, session) {
                autoplay = TRUE, 
                controls = TRUE)
   })
+  
+  observeEvent(input$go, {
+    output$download <- renderUI({
+      downloadButton("download_button")
+    })
+  })
+  
+  output$download_button <- downloadHandler(
+    filename = "video.mp4",
+    content = attr(res(), "outfile")
+  )
   
   
 }

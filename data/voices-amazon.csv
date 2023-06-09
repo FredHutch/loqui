@@ -1,0 +1,61 @@
+voice,language,language_code,gender,service
+Zeina,Arabic,arb,Female,amazon
+Zhiyu,Chinese Mandarin,cmn-CN,Female,amazon
+Naja,Danish,da-DK,Female,amazon
+Mads,Danish,da-DK,Male,amazon
+Ruben,Dutch,nl-NL,Male,amazon
+Lotte,Dutch,nl-NL,Female,amazon
+Russell,Australian English,en-AU,Male,amazon
+Nicole,Australian English,en-AU,Female,amazon
+Emma,British English,en-GB,Female,amazon
+Brian,British English,en-GB,Male,amazon
+Amy,British English,en-GB,Female,amazon
+Raveena,Indian English,en-IN,Female,amazon
+Aditi,Indian English,en-IN,Female,amazon
+Salli,US English,en-US,Female,amazon
+Matthew,US English,en-US,Male,amazon
+Kimberly,US English,en-US,Female,amazon
+Kendra,US English,en-US,Female,amazon
+Justin,US English,en-US,Male,amazon
+Joey,US English,en-US,Male,amazon
+Joanna,US English,en-US,Female,amazon
+Ivy,US English,en-US,Female,amazon
+Geraint,Welsh English,en-GB-WLS,Male,amazon
+Mathieu,French,fr-FR,Male,amazon
+Léa,French,fr-FR,Female,amazon
+Céline,French,fr-FR,Female,amazon
+Chantal,Canadian French,fr-CA,Female,amazon
+Vicki,German,de-DE,Female,amazon
+Marlene,German,de-DE,Female,amazon
+Hans,German,de-DE,Male,amazon
+Karl,Icelandic,is-IS,Male,amazon
+Dóra,Icelandic,is-IS,Female,amazon
+Bianca,Italian,it-IT,Female,amazon
+Giorgio,Italian,it-IT,Male,amazon
+Carla,Italian,it-IT,Female,amazon
+Takumi,Japanese,ja-JP,Male,amazon
+Mizuki,Japanese,ja-JP,Female,amazon
+Seoyeon,Korean,ko-KR,Female,amazon
+Liv,Norwegian,nb-NO,Female,amazon
+Maja,Polish,pl-PL,Female,amazon
+Jan,Polish,pl-PL,Male,amazon
+Jacek,Polish,pl-PL,Male,amazon
+Ewa,Polish,pl-PL,Female,amazon
+Vitória,Brazilian Portuguese,pt-BR,Female,amazon
+Ricardo,Brazilian Portuguese,pt-BR,Male,amazon
+Camila,Brazilian Portuguese,pt-BR,Female,amazon
+Inês,Portuguese,pt-PT,Female,amazon
+Cristiano,Portuguese,pt-PT,Male,amazon
+Carmen,Romanian,ro-RO,Female,amazon
+Tatyana,Russian,ru-RU,Female,amazon
+Maxim,Russian,ru-RU,Male,amazon
+Lucia,Castilian Spanish,es-ES,Female,amazon
+Enrique,Castilian Spanish,es-ES,Male,amazon
+Conchita,Castilian Spanish,es-ES,Female,amazon
+Mia,Mexican Spanish,es-MX,Female,amazon
+Penélope,US Spanish,es-US,Female,amazon
+Miguel,US Spanish,es-US,Male,amazon
+Lupe,US Spanish,es-US,Female,amazon
+Astrid,Swedish,sv-SE,Female,amazon
+Filiz,Turkish,tr-TR,Female,amazon
+Gwyneth,Welsh,cy-GB,Female,amazon

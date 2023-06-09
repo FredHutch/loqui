@@ -1,0 +1,429 @@
+voice,language,language_code,gender,service
+af-ZA-Standard-A,NA,af-ZA,FEMALE,google
+ar-XA-Standard-D,Arabic,ar-XA,FEMALE,google
+ar-XA-Wavenet-D,Arabic,ar-XA,FEMALE,google
+ar-XA-Wavenet-C,Arabic,ar-XA,MALE,google
+ar-XA-Wavenet-A,Arabic,ar-XA,FEMALE,google
+ar-XA-Standard-B,Arabic,ar-XA,MALE,google
+ar-XA-Standard-C,Arabic,ar-XA,MALE,google
+ar-XA-Wavenet-B,Arabic,ar-XA,MALE,google
+ar-XA-Standard-A,Arabic,ar-XA,FEMALE,google
+bg-BG-Standard-A,Bulgarian,bg-BG,FEMALE,google
+bn-IN-Standard-A,NA,bn-IN,FEMALE,google
+bn-IN-Standard-B,NA,bn-IN,MALE,google
+bn-IN-Wavenet-B,NA,bn-IN,MALE,google
+bn-IN-Wavenet-A,NA,bn-IN,FEMALE,google
+ca-ES-Standard-A,Catalan (Spain),ca-ES,FEMALE,google
+cmn-CN-Standard-C,NA,cmn-CN,MALE,google
+cmn-CN-Standard-B,NA,cmn-CN,MALE,google
+cmn-CN-Standard-A,NA,cmn-CN,FEMALE,google
+cmn-CN-Standard-D,NA,cmn-CN,FEMALE,google
+cmn-CN-Wavenet-A,NA,cmn-CN,FEMALE,google
+cmn-CN-Wavenet-B,NA,cmn-CN,MALE,google
+cmn-CN-Wavenet-C,NA,cmn-CN,MALE,google
+cmn-CN-Wavenet-D,NA,cmn-CN,FEMALE,google
+cmn-TW-Standard-A,NA,cmn-TW,FEMALE,google
+cmn-TW-Standard-B,NA,cmn-TW,MALE,google
+cmn-TW-Standard-C,NA,cmn-TW,MALE,google
+cmn-TW-Wavenet-A,NA,cmn-TW,FEMALE,google
+cmn-TW-Wavenet-B,NA,cmn-TW,MALE,google
+cmn-TW-Wavenet-C,NA,cmn-TW,MALE,google
+cs-CZ-Standard-A,Czech,cs-CZ,FEMALE,google
+cs-CZ-Wavenet-A,Czech,cs-CZ,FEMALE,google
+da-DK-Neural2-D,Danish,da-DK,FEMALE,google
+da-DK-Neural2-F,Danish,da-DK,MALE,google
+da-DK-Wavenet-E,Danish,da-DK,FEMALE,google
+da-DK-Wavenet-A,Danish,da-DK,FEMALE,google
+da-DK-Wavenet-C,Danish,da-DK,MALE,google
+da-DK-Wavenet-D,Danish,da-DK,FEMALE,google
+da-DK-Standard-A,Danish,da-DK,FEMALE,google
+da-DK-Standard-C,Danish,da-DK,MALE,google
+da-DK-Standard-D,Danish,da-DK,FEMALE,google
+da-DK-Standard-E,Danish,da-DK,FEMALE,google
+de-DE-Wavenet-A,German (Germany),de-DE,FEMALE,google
+de-DE-Neural2-B,German (Germany),de-DE,MALE,google
+de-DE-Standard-D,German (Germany),de-DE,MALE,google
+de-DE-Wavenet-D,German (Germany),de-DE,MALE,google
+de-DE-Wavenet-E,German (Germany),de-DE,MALE,google
+de-DE-Standard-F,German (Germany),de-DE,FEMALE,google
+de-DE-Polyglot-1,German (Germany),de-DE,MALE,google
+de-DE-Wavenet-F,German (Germany),de-DE,FEMALE,google
+de-DE-Wavenet-B,German (Germany),de-DE,MALE,google
+de-DE-Standard-B,German (Germany),de-DE,MALE,google
+de-DE-Neural2-F,German (Germany),de-DE,FEMALE,google
+de-DE-Standard-C,German (Germany),de-DE,FEMALE,google
+de-DE-Wavenet-C,German (Germany),de-DE,FEMALE,google
+de-DE-Standard-E,German (Germany),de-DE,MALE,google
+de-DE-Neural2-C,German (Germany),de-DE,FEMALE,google
+de-DE-Neural2-D,German (Germany),de-DE,MALE,google
+de-DE-Standard-A,German (Germany),de-DE,FEMALE,google
+el-GR-Standard-A,Greek,el-GR,FEMALE,google
+el-GR-Wavenet-A,Greek,el-GR,FEMALE,google
+en-AU-Wavenet-D,English (Australia),en-AU,MALE,google
+en-AU-Polyglot-1,English (Australia),en-AU,MALE,google
+en-AU-Standard-B,English (Australia),en-AU,MALE,google
+en-AU-Wavenet-B,English (Australia),en-AU,MALE,google
+en-AU-Standard-C,English (Australia),en-AU,FEMALE,google
+en-AU-Standard-D,English (Australia),en-AU,MALE,google
+en-AU-Wavenet-C,English (Australia),en-AU,FEMALE,google
+en-AU-Wavenet-A,English (Australia),en-AU,FEMALE,google
+en-AU-Neural2-D,English (Australia),en-AU,MALE,google
+en-AU-News-F,English (Australia),en-AU,FEMALE,google
+en-AU-Standard-A,English (Australia),en-AU,FEMALE,google
+en-AU-Neural2-C,English (Australia),en-AU,FEMALE,google
+en-AU-Neural2-B,English (Australia),en-AU,MALE,google
+en-AU-News-E,English (Australia),en-AU,FEMALE,google
+en-AU-News-G,English (Australia),en-AU,MALE,google
+en-AU-Neural2-A,English (Australia),en-AU,FEMALE,google
+en-GB-News-M,English (UK),en-GB,MALE,google
+en-GB-News-I,English (UK),en-GB,FEMALE,google
+en-GB-Neural2-D,English (UK),en-GB,MALE,google
+en-GB-News-L,English (UK),en-GB,MALE,google
+en-GB-Standard-B,English (UK),en-GB,MALE,google
+en-GB-News-H,English (UK),en-GB,FEMALE,google
+en-GB-News-K,English (UK),en-GB,MALE,google
+en-GB-News-J,English (UK),en-GB,MALE,google
+en-GB-Wavenet-A,English (UK),en-GB,FEMALE,google
+en-GB-Neural2-A,English (UK),en-GB,FEMALE,google
+en-GB-Neural2-C,English (UK),en-GB,FEMALE,google
+en-GB-Neural2-F,English (UK),en-GB,FEMALE,google
+en-GB-Wavenet-D,English (UK),en-GB,MALE,google
+en-GB-News-G,English (UK),en-GB,FEMALE,google
+en-GB-Neural2-B,English (UK),en-GB,MALE,google
+en-GB-Standard-D,English (UK),en-GB,MALE,google
+en-GB-Standard-F,English (UK),en-GB,FEMALE,google
+en-GB-Wavenet-C,English (UK),en-GB,FEMALE,google
+en-GB-Wavenet-F,English (UK),en-GB,FEMALE,google
+en-GB-Standard-A,English (UK),en-GB,FEMALE,google
+en-GB-Wavenet-B,English (UK),en-GB,MALE,google
+en-GB-Standard-C,English (UK),en-GB,FEMALE,google
+en-IN-Standard-C,English (India),en-IN,MALE,google
+en-IN-Wavenet-C,English (India),en-IN,MALE,google
+en-IN-Wavenet-A,English (India),en-IN,FEMALE,google
+en-IN-Wavenet-B,English (India),en-IN,MALE,google
+en-IN-Standard-B,English (India),en-IN,MALE,google
+en-IN-Standard-A,English (India),en-IN,FEMALE,google
+en-IN-Standard-D,English (India),en-IN,FEMALE,google
+en-IN-Wavenet-D,English (India),en-IN,FEMALE,google
+en-US-News-M,English (US),en-US,MALE,google
+en-US-News-N,English (US),en-US,MALE,google
+en-US-Neural2-H,English (US),en-US,FEMALE,google
+en-US-Standard-C,English (US),en-US,FEMALE,google
+en-US-Standard-D,English (US),en-US,MALE,google
+en-US-Standard-E,English (US),en-US,FEMALE,google
+en-US-Neural2-J,English (US),en-US,MALE,google
+en-US-Wavenet-G,English (US),en-US,FEMALE,google
+en-US-News-K,English (US),en-US,FEMALE,google
+en-US-Standard-A,English (US),en-US,MALE,google
+en-US-Wavenet-H,English (US),en-US,FEMALE,google
+en-US-Wavenet-E,English (US),en-US,FEMALE,google
+en-US-News-L,English (US),en-US,FEMALE,google
+en-US-Wavenet-F,English (US),en-US,FEMALE,google
+en-US-Wavenet-C,English (US),en-US,FEMALE,google
+en-US-Neural2-C,English (US),en-US,FEMALE,google
+en-US-Wavenet-D,English (US),en-US,MALE,google
+en-US-Wavenet-B,English (US),en-US,MALE,google
+en-US-Polyglot-1,English (US),en-US,MALE,google
+en-US-Standard-J,English (US),en-US,MALE,google
+en-US-Wavenet-I,English (US),en-US,MALE,google
+en-US-Standard-B,English (US),en-US,MALE,google
+en-US-Neural2-A,English (US),en-US,MALE,google
+en-US-Studio-O,English (US),en-US,FEMALE,google
+en-US-Standard-F,English (US),en-US,FEMALE,google
+en-US-Wavenet-A,English (US),en-US,MALE,google
+en-US-Neural2-F,English (US),en-US,FEMALE,google
+en-US-Wavenet-J,English (US),en-US,MALE,google
+en-US-Neural2-I,English (US),en-US,MALE,google
+en-US-Neural2-G,English (US),en-US,FEMALE,google
+en-US-Studio-M,English (US),en-US,MALE,google
+en-US-Neural2-D,English (US),en-US,MALE,google
+en-US-Standard-I,English (US),en-US,MALE,google
+en-US-Standard-G,English (US),en-US,FEMALE,google
+en-US-Standard-H,English (US),en-US,FEMALE,google
+en-US-Neural2-E,English (US),en-US,FEMALE,google
+es-ES-Wavenet-D,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Wavenet-B,Spanish (Spain),es-ES,MALE,google
+es-ES-Neural2-C,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Standard-D,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Standard-C,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Neural2-A,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Standard-B,Spanish (Spain),es-ES,MALE,google
+es-ES-Neural2-B,Spanish (Spain),es-ES,MALE,google
+es-ES-Wavenet-C,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Neural2-E,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Neural2-F,Spanish (Spain),es-ES,MALE,google
+es-ES-Neural2-D,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Standard-A,Spanish (Spain),es-ES,FEMALE,google
+es-ES-Polyglot-1,Spanish (Spain),es-ES,MALE,google
+es-US-Standard-A,NA,es-US,FEMALE,google
+es-US-Standard-B,NA,es-US,MALE,google
+es-US-Standard-C,NA,es-US,MALE,google
+es-US-Polyglot-1,NA,es-US,MALE,google
+es-US-Studio-B,NA,es-US,MALE,google
+es-US-News-D,NA,es-US,MALE,google
+es-US-Neural2-A,NA,es-US,FEMALE,google
+es-US-Neural2-C,NA,es-US,MALE,google
+es-US-Wavenet-C,NA,es-US,MALE,google
+es-US-News-G,NA,es-US,FEMALE,google
+es-US-Wavenet-A,NA,es-US,FEMALE,google
+es-US-Neural2-B,NA,es-US,MALE,google
+es-US-News-F,NA,es-US,FEMALE,google
+es-US-Wavenet-B,NA,es-US,MALE,google
+es-US-News-E,NA,es-US,MALE,google
+eu-ES-Standard-A,NA,eu-ES,FEMALE,google
+fi-FI-Standard-A,Finnish,fi-FI,FEMALE,google
+fi-FI-Wavenet-A,Finnish,fi-FI,FEMALE,google
+fil-PH-Wavenet-D,Filipino (Philippines),fil-PH,MALE,google
+fil-PH-Wavenet-B,Filipino (Philippines),fil-PH,FEMALE,google
+fil-ph-Neural2-A,Filipino (Philippines),fil-PH,FEMALE,google
+fil-PH-Wavenet-C,Filipino (Philippines),fil-PH,MALE,google
+fil-PH-Standard-C,Filipino (Philippines),fil-PH,MALE,google
+fil-PH-Standard-D,Filipino (Philippines),fil-PH,MALE,google
+fil-ph-Neural2-D,Filipino (Philippines),fil-PH,MALE,google
+fil-PH-Standard-B,Filipino (Philippines),fil-PH,FEMALE,google
+fil-PH-Wavenet-A,Filipino (Philippines),fil-PH,FEMALE,google
+fil-PH-Standard-A,Filipino (Philippines),fil-PH,FEMALE,google
+fr-CA-Neural2-C,French (Canada),fr-CA,FEMALE,google
+fr-CA-Standard-C,French (Canada),fr-CA,FEMALE,google
+fr-CA-Neural2-A,French (Canada),fr-CA,FEMALE,google
+fr-CA-Wavenet-C,French (Canada),fr-CA,FEMALE,google
+fr-CA-Standard-B,French (Canada),fr-CA,MALE,google
+fr-CA-Neural2-B,French (Canada),fr-CA,MALE,google
+fr-CA-Standard-A,French (Canada),fr-CA,FEMALE,google
+fr-CA-Wavenet-A,French (Canada),fr-CA,FEMALE,google
+fr-CA-Wavenet-B,French (Canada),fr-CA,MALE,google
+fr-CA-Standard-D,French (Canada),fr-CA,MALE,google
+fr-CA-Neural2-D,French (Canada),fr-CA,MALE,google
+fr-CA-Wavenet-D,French (Canada),fr-CA,MALE,google
+fr-FR-Wavenet-D,French (France),fr-FR,MALE,google
+fr-FR-Neural2-D,French (France),fr-FR,MALE,google
+fr-FR-Polyglot-1,French (France),fr-FR,MALE,google
+fr-FR-Wavenet-E,French (France),fr-FR,FEMALE,google
+fr-FR-Standard-E,French (France),fr-FR,FEMALE,google
+fr-FR-Wavenet-A,French (France),fr-FR,FEMALE,google
+fr-FR-Wavenet-B,French (France),fr-FR,MALE,google
+fr-FR-Neural2-B,French (France),fr-FR,MALE,google
+fr-FR-Neural2-E,French (France),fr-FR,FEMALE,google
+fr-FR-Neural2-A,French (France),fr-FR,FEMALE,google
+fr-FR-Neural2-C,French (France),fr-FR,FEMALE,google
+fr-FR-Standard-C,French (France),fr-FR,FEMALE,google
+fr-FR-Standard-D,French (France),fr-FR,MALE,google
+fr-FR-Wavenet-C,French (France),fr-FR,FEMALE,google
+fr-FR-Standard-B,French (France),fr-FR,MALE,google
+fr-FR-Standard-A,French (France),fr-FR,FEMALE,google
+gl-ES-Standard-A,NA,gl-ES,FEMALE,google
+gu-IN-Standard-A,NA,gu-IN,FEMALE,google
+gu-IN-Standard-B,NA,gu-IN,MALE,google
+gu-IN-Wavenet-A,NA,gu-IN,FEMALE,google
+gu-IN-Wavenet-B,NA,gu-IN,MALE,google
+he-IL-Wavenet-B,Hebrew (Israel),he-IL,MALE,google
+he-IL-Wavenet-A,Hebrew (Israel),he-IL,FEMALE,google
+he-IL-Standard-C,Hebrew (Israel),he-IL,FEMALE,google
+he-IL-Standard-A,Hebrew (Israel),he-IL,FEMALE,google
+he-IL-Wavenet-D,Hebrew (Israel),he-IL,MALE,google
+he-IL-Standard-B,Hebrew (Israel),he-IL,MALE,google
+he-IL-Wavenet-C,Hebrew (Israel),he-IL,FEMALE,google
+he-IL-Standard-D,Hebrew (Israel),he-IL,MALE,google
+hi-IN-Standard-D,Hindi (India),hi-IN,FEMALE,google
+hi-IN-Standard-B,Hindi (India),hi-IN,MALE,google
+hi-IN-Neural2-B,Hindi (India),hi-IN,MALE,google
+hi-IN-Wavenet-A,Hindi (India),hi-IN,FEMALE,google
+hi-IN-Wavenet-C,Hindi (India),hi-IN,MALE,google
+hi-IN-Neural2-C,Hindi (India),hi-IN,MALE,google
+hi-IN-Neural2-A,Hindi (India),hi-IN,FEMALE,google
+hi-IN-Standard-C,Hindi (India),hi-IN,MALE,google
+hi-IN-Wavenet-B,Hindi (India),hi-IN,MALE,google
+hi-IN-Standard-A,Hindi (India),hi-IN,FEMALE,google
+hi-IN-Neural2-D,Hindi (India),hi-IN,FEMALE,google
+hi-IN-Wavenet-D,Hindi (India),hi-IN,FEMALE,google
+hu-HU-Standard-A,Hungarian,hu-HU,FEMALE,google
+hu-HU-Wavenet-A,Hungarian,hu-HU,FEMALE,google
+id-ID-Wavenet-B,Indonesian,id-ID,MALE,google
+id-ID-Wavenet-A,Indonesian,id-ID,FEMALE,google
+id-ID-Standard-D,Indonesian,id-ID,FEMALE,google
+id-ID-Wavenet-C,Indonesian,id-ID,MALE,google
+id-ID-Standard-C,Indonesian,id-ID,MALE,google
+id-ID-Wavenet-D,Indonesian,id-ID,FEMALE,google
+id-ID-Standard-A,Indonesian,id-ID,FEMALE,google
+id-ID-Standard-B,Indonesian,id-ID,MALE,google
+is-IS-Standard-A,NA,is-IS,FEMALE,google
+it-IT-Wavenet-D,Italian,it-IT,MALE,google
+it-IT-Standard-B,Italian,it-IT,FEMALE,google
+it-IT-Wavenet-C,Italian,it-IT,MALE,google
+it-IT-Standard-D,Italian,it-IT,MALE,google
+it-IT-Standard-A,Italian,it-IT,FEMALE,google
+it-IT-Neural2-C,Italian,it-IT,MALE,google
+it-IT-Standard-C,Italian,it-IT,MALE,google
+it-IT-Wavenet-A,Italian,it-IT,FEMALE,google
+it-IT-Wavenet-B,Italian,it-IT,FEMALE,google
+it-IT-Neural2-A,Italian,it-IT,FEMALE,google
+ja-JP-Standard-C,Japanese,ja-JP,MALE,google
+ja-JP-Wavenet-D,Japanese,ja-JP,MALE,google
+ja-JP-Neural2-C,Japanese,ja-JP,MALE,google
+ja-JP-Standard-B,Japanese,ja-JP,FEMALE,google
+ja-JP-Wavenet-A,Japanese,ja-JP,FEMALE,google
+ja-JP-Standard-D,Japanese,ja-JP,MALE,google
+ja-JP-Wavenet-C,Japanese,ja-JP,MALE,google
+ja-JP-Standard-A,Japanese,ja-JP,FEMALE,google
+ja-JP-Neural2-B,Japanese,ja-JP,FEMALE,google
+ja-JP-Wavenet-B,Japanese,ja-JP,FEMALE,google
+ja-JP-Neural2-D,Japanese,ja-JP,MALE,google
+kn-IN-Standard-A,NA,kn-IN,FEMALE,google
+kn-IN-Standard-B,NA,kn-IN,MALE,google
+kn-IN-Wavenet-A,NA,kn-IN,FEMALE,google
+kn-IN-Wavenet-B,NA,kn-IN,MALE,google
+ko-KR-Wavenet-A,Korean,ko-KR,FEMALE,google
+ko-KR-Standard-D,Korean,ko-KR,MALE,google
+ko-KR-Standard-B,Korean,ko-KR,FEMALE,google
+ko-KR-Neural2-A,Korean,ko-KR,FEMALE,google
+ko-KR-Wavenet-C,Korean,ko-KR,MALE,google
+ko-KR-Wavenet-B,Korean,ko-KR,FEMALE,google
+ko-KR-Standard-C,Korean,ko-KR,MALE,google
+ko-KR-Neural2-B,Korean,ko-KR,FEMALE,google
+ko-KR-Standard-A,Korean,ko-KR,FEMALE,google
+ko-KR-Wavenet-D,Korean,ko-KR,MALE,google
+ko-KR-Neural2-C,Korean,ko-KR,MALE,google
+lt-LT-Standard-A,NA,lt-LT,MALE,google
+lv-LV-Standard-A,NA,lv-LV,MALE,google
+ml-IN-Wavenet-A,NA,ml-IN,FEMALE,google
+ml-IN-Wavenet-B,NA,ml-IN,MALE,google
+ml-IN-Wavenet-C,NA,ml-IN,FEMALE,google
+ml-IN-Wavenet-D,NA,ml-IN,MALE,google
+ml-IN-Standard-A,NA,ml-IN,FEMALE,google
+ml-IN-Standard-B,NA,ml-IN,MALE,google
+mr-IN-Standard-A,NA,mr-IN,FEMALE,google
+mr-IN-Standard-B,NA,mr-IN,MALE,google
+mr-IN-Standard-C,NA,mr-IN,FEMALE,google
+mr-IN-Wavenet-A,NA,mr-IN,FEMALE,google
+mr-IN-Wavenet-B,NA,mr-IN,MALE,google
+mr-IN-Wavenet-C,NA,mr-IN,FEMALE,google
+ms-MY-Wavenet-C,Malay,ms-MY,FEMALE,google
+ms-MY-Standard-C,Malay,ms-MY,FEMALE,google
+ms-MY-Wavenet-B,Malay,ms-MY,MALE,google
+ms-MY-Standard-D,Malay,ms-MY,MALE,google
+ms-MY-Standard-B,Malay,ms-MY,MALE,google
+ms-MY-Wavenet-A,Malay,ms-MY,FEMALE,google
+ms-MY-Wavenet-D,Malay,ms-MY,MALE,google
+ms-MY-Standard-A,Malay,ms-MY,FEMALE,google
+nb-NO-Wavenet-E,Norwegian,nb-NO,FEMALE,google
+nb-NO-Wavenet-D,Norwegian,nb-NO,MALE,google
+nb-NO-Standard-B,Norwegian,nb-NO,MALE,google
+nb-NO-Standard-E,Norwegian,nb-NO,FEMALE,google
+nb-NO-Wavenet-C,Norwegian,nb-NO,FEMALE,google
+nb-NO-Wavenet-B,Norwegian,nb-NO,MALE,google
+nb-NO-Standard-D,Norwegian,nb-NO,MALE,google
+nb-NO-Standard-C,Norwegian,nb-NO,FEMALE,google
+nb-NO-Wavenet-A,Norwegian,nb-NO,FEMALE,google
+nb-NO-Standard-A,Norwegian,nb-NO,FEMALE,google
+nl-BE-Standard-A,NA,nl-BE,FEMALE,google
+nl-BE-Standard-B,NA,nl-BE,MALE,google
+nl-BE-Wavenet-B,NA,nl-BE,MALE,google
+nl-BE-Wavenet-A,NA,nl-BE,FEMALE,google
+nl-NL-Wavenet-C,Dutch,nl-NL,MALE,google
+nl-NL-Standard-B,Dutch,nl-NL,MALE,google
+nl-NL-Wavenet-B,Dutch,nl-NL,MALE,google
+nl-NL-Standard-A,Dutch,nl-NL,FEMALE,google
+nl-NL-Wavenet-E,Dutch,nl-NL,FEMALE,google
+nl-NL-Standard-E,Dutch,nl-NL,FEMALE,google
+nl-NL-Standard-C,Dutch,nl-NL,MALE,google
+nl-NL-Wavenet-D,Dutch,nl-NL,FEMALE,google
+nl-NL-Wavenet-A,Dutch,nl-NL,FEMALE,google
+nl-NL-Standard-D,Dutch,nl-NL,FEMALE,google
+pa-IN-Standard-A,NA,pa-IN,FEMALE,google
+pa-IN-Standard-B,NA,pa-IN,MALE,google
+pa-IN-Standard-C,NA,pa-IN,FEMALE,google
+pa-IN-Standard-D,NA,pa-IN,MALE,google
+pa-IN-Wavenet-C,NA,pa-IN,FEMALE,google
+pa-IN-Wavenet-D,NA,pa-IN,MALE,google
+pa-IN-Wavenet-B,NA,pa-IN,MALE,google
+pa-IN-Wavenet-A,NA,pa-IN,FEMALE,google
+pl-PL-Standard-B,Polish,pl-PL,MALE,google
+pl-PL-Wavenet-B,Polish,pl-PL,MALE,google
+pl-PL-Wavenet-A,Polish,pl-PL,FEMALE,google
+pl-PL-Wavenet-D,Polish,pl-PL,FEMALE,google
+pl-PL-Standard-E,Polish,pl-PL,FEMALE,google
+pl-PL-Standard-D,Polish,pl-PL,FEMALE,google
+pl-PL-Wavenet-E,Polish,pl-PL,FEMALE,google
+pl-PL-Standard-A,Polish,pl-PL,FEMALE,google
+pl-PL-Wavenet-C,Polish,pl-PL,MALE,google
+pl-PL-Standard-C,Polish,pl-PL,MALE,google
+pt-BR-Neural2-C,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Standard-A,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Wavenet-C,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Standard-C,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Neural2-A,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Wavenet-B,Portuguese (Brazil),pt-BR,MALE,google
+pt-BR-Standard-B,Portuguese (Brazil),pt-BR,MALE,google
+pt-BR-Wavenet-A,Portuguese (Brazil),pt-BR,FEMALE,google
+pt-BR-Neural2-B,Portuguese (Brazil),pt-BR,MALE,google
+pt-PT-Wavenet-C,Portuguese (Portugal),pt-PT,MALE,google
+pt-PT-Standard-A,Portuguese (Portugal),pt-PT,FEMALE,google
+pt-PT-Standard-C,Portuguese (Portugal),pt-PT,MALE,google
+pt-PT-Standard-B,Portuguese (Portugal),pt-PT,MALE,google
+pt-PT-Wavenet-A,Portuguese (Portugal),pt-PT,FEMALE,google
+pt-PT-Wavenet-D,Portuguese (Portugal),pt-PT,FEMALE,google
+pt-PT-Wavenet-B,Portuguese (Portugal),pt-PT,MALE,google
+pt-PT-Standard-D,Portuguese (Portugal),pt-PT,FEMALE,google
+ro-RO-Standard-A,Romanian,ro-RO,FEMALE,google
+ro-RO-Wavenet-A,Romanian,ro-RO,FEMALE,google
+ru-RU-Standard-A,Russian,ru-RU,FEMALE,google
+ru-RU-Standard-D,Russian,ru-RU,MALE,google
+ru-RU-Standard-E,Russian,ru-RU,FEMALE,google
+ru-RU-Wavenet-A,Russian,ru-RU,FEMALE,google
+ru-RU-Wavenet-E,Russian,ru-RU,FEMALE,google
+ru-RU-Wavenet-D,Russian,ru-RU,MALE,google
+ru-RU-Wavenet-C,Russian,ru-RU,FEMALE,google
+ru-RU-Wavenet-B,Russian,ru-RU,MALE,google
+ru-RU-Standard-C,Russian,ru-RU,FEMALE,google
+ru-RU-Standard-B,Russian,ru-RU,MALE,google
+sk-SK-Standard-A,Slovak,sk-SK,FEMALE,google
+sk-SK-Wavenet-A,Slovak,sk-SK,FEMALE,google
+sr-RS-Standard-A,NA,sr-RS,FEMALE,google
+sv-SE-Wavenet-A,Swedish,sv-SE,FEMALE,google
+sv-SE-Standard-C,Swedish,sv-SE,FEMALE,google
+sv-SE-Standard-E,Swedish,sv-SE,MALE,google
+sv-SE-Wavenet-D,Swedish,sv-SE,FEMALE,google
+sv-SE-Wavenet-C,Swedish,sv-SE,MALE,google
+sv-SE-Standard-D,Swedish,sv-SE,MALE,google
+sv-SE-Standard-A,Swedish,sv-SE,FEMALE,google
+sv-SE-Standard-B,Swedish,sv-SE,FEMALE,google
+sv-SE-Wavenet-B,Swedish,sv-SE,FEMALE,google
+sv-SE-Wavenet-E,Swedish,sv-SE,MALE,google
+ta-IN-Wavenet-D,Tamil (India),ta-IN,MALE,google
+ta-IN-Standard-C,Tamil (India),ta-IN,FEMALE,google
+ta-IN-Wavenet-A,Tamil (India),ta-IN,FEMALE,google
+ta-IN-Wavenet-B,Tamil (India),ta-IN,MALE,google
+ta-IN-Wavenet-C,Tamil (India),ta-IN,FEMALE,google
+ta-IN-Standard-B,Tamil (India),ta-IN,MALE,google
+ta-IN-Standard-D,Tamil (India),ta-IN,MALE,google
+ta-IN-Standard-A,Tamil (India),ta-IN,FEMALE,google
+te-IN-Standard-B,Telugu (India),te-IN,MALE,google
+te-IN-Standard-A,Telugu (India),te-IN,FEMALE,google
+th-TH-Standard-A,Thai,th-TH,FEMALE,google
+th-TH-Neural2-C,Thai,th-TH,FEMALE,google
+tr-TR-Standard-E,Turkish,tr-TR,MALE,google
+tr-TR-Wavenet-C,Turkish,tr-TR,FEMALE,google
+tr-TR-Wavenet-D,Turkish,tr-TR,FEMALE,google
+tr-TR-Standard-A,Turkish,tr-TR,FEMALE,google
+tr-TR-Standard-C,Turkish,tr-TR,FEMALE,google
+tr-TR-Standard-D,Turkish,tr-TR,FEMALE,google
+tr-TR-Wavenet-E,Turkish,tr-TR,MALE,google
+tr-TR-Wavenet-A,Turkish,tr-TR,FEMALE,google
+tr-TR-Wavenet-B,Turkish,tr-TR,MALE,google
+tr-TR-Standard-B,Turkish,tr-TR,MALE,google
+uk-UA-Wavenet-A,Ukrainian (Ukraine),uk-UA,FEMALE,google
+uk-UA-Standard-A,Ukrainian (Ukraine),uk-UA,FEMALE,google
+vi-VN-Standard-A,Vietnamese,vi-VN,FEMALE,google
+vi-VN-Neural2-D,Vietnamese,vi-VN,MALE,google
+vi-VN-Neural2-A,Vietnamese,vi-VN,FEMALE,google
+vi-VN-Standard-B,Vietnamese,vi-VN,MALE,google
+vi-VN-Standard-C,Vietnamese,vi-VN,FEMALE,google
+vi-VN-Standard-D,Vietnamese,vi-VN,MALE,google
+vi-VN-Wavenet-C,Vietnamese,vi-VN,FEMALE,google
+vi-VN-Wavenet-D,Vietnamese,vi-VN,MALE,google
+vi-VN-Wavenet-A,Vietnamese,vi-VN,FEMALE,google
+vi-VN-Wavenet-B,Vietnamese,vi-VN,MALE,google
+yue-HK-Standard-A,NA,yue-HK,FEMALE,google
+yue-HK-Standard-B,NA,yue-HK,MALE,google
+yue-HK-Standard-C,NA,yue-HK,FEMALE,google
+yue-HK-Standard-D,NA,yue-HK,MALE,google

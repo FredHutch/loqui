@@ -1,15 +1,34 @@
 library(shiny)
 library(ari)
+library(magrittr)
+
+# images for pickerInput stored in www/img/ from the root app directory
+imgs <- c("img/coqui.png", "img/aws.jpeg", "img/google.png", "img/ms.jpeg")
+img_name <- c("Coqui TTS", "Amazon Polly", "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
+
+select_choice_img <- function(img, text) {
+  shiny::HTML(paste(
+    tags$img(src=img, width=30, height=22),
+    text
+  ))
+}
 
 ui <- fluidPage(
-  titlePanel("Loqui: Make videos"),
+  titlePanel("Loqui: Generate videos using ari"),
   
   sidebarLayout(
     sidebarPanel(
       textInput("url", 
                 label = "Google Slides URL",
                 value = "",
-                placeholder = "URL"),
+                placeholder = "Paste a URL"),
+      shinyWidgets::pickerInput("service",
+                                label = "Text-to-Speech Service", 
+                                choices = c("Coqui TTS" = "coqui",
+                                            "Amazon Polly" = "amazon",
+                                            "Google Cloud Text-to-Speech" = "google",
+                                            "Microsoft Cognitive Services Text-to-Speech" = "microsoft"),
+                                choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       actionButton("go", "Generate")
     ),
     mainPanel(h4("Rendered Video (mp4)"),
@@ -32,7 +51,7 @@ server <- function(input, output, session) {
     # create video
     ari_spin(images = image_path, 
              paragraphs = pptx_notes_vector,
-             service = "coqui",
+             service = input$service,
              output = "www/ari-video.mp4")
   })
   

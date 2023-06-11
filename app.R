@@ -41,32 +41,7 @@ ui <- fluidPage(
                                             "Google Cloud Text-to-Speech" = "google",
                                             "Microsoft Cognitive Services Text-to-Speech" = "microsoft"),
                                 choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
-      checkboxInput("select_voice", "Customize Voice", value = FALSE),
-      # Only show if checkbox is checked
-      conditionalPanel(
-        condition = "input.select_voice & input.service == 'coqui'",
-        uiOutput("select_coqui_lang"),
-        uiOutput("select_coqui_dataset"),
-        uiOutput("select_coqui_model_name")
-      ),
-      conditionalPanel(
-        condition = "input.select_voice & input.service == 'amazon'",
-        uiOutput("select_amazon_lang"),
-        uiOutput("select_amazon_gender"),
-        uiOutput("select_amazon_voice")
-      ),
-      conditionalPanel(
-        condition = "input.select_voice & input.service == 'google'",
-        uiOutput("select_google_lang"),
-        uiOutput("select_google_gender"),
-        uiOutput("select_google_voice")
-      ),
-      conditionalPanel(
-        condition = "input.select_voice & input.service == 'microsoft'",
-        uiOutput("select_ms_locale"),
-        uiOutput("select_ms_gender"),
-        uiOutput("select_ms_voice")
-      ),
+      uiOutput("voice_options"),
       actionButton("go", "Generate"),
       br(),
       br(),
@@ -79,186 +54,108 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  # Voices (Coqui)
+  
+  output$voice_options <- renderUI({
+    if (input$service == "coqui") {
+      tagList(
+        selectInput("coqui_lang", "Select Language (TTS)", 
+                    choices = unique(voices_coqui$language)),
+        selectInput("coqui_dataset", "Select Dataset (TTS)", choices = NULL),
+        selectInput("coqui_model_name", "Select Model Name (TTS)", choices = NULL)
+      )
+      
+    } else if (input$service == "amazon") {
+      tagList(
+        selectInput("amazon_lang", "Select Language", 
+                    choices = unique(voices_amazon$language)),
+        selectInput("amazon_gender", "Select Gender", choices = NULL),
+        selectInput("amazon_voice", "Select Voice", choices = NULL)
+      )
+    } else if (input$service == "google") {
+      tagList(
+        selectInput("google_lang", "Select Language", 
+                    choices = unique(voices_google$language)),
+        selectInput("google_gender", "Select Gender", choices = NULL),
+        selectInput("google_voice", "Select Voice", choices = NULL)
+      )
+    } else {
+      tagList(
+        selectInput("ms_locale", "Select Locale",
+                    choices = unique(voices_ms$locale)),
+        selectInput("ms_gender", "Select Gender", choices = NULL),
+        selectInput("ms_voice", "Select Voice", choices = NULL)
+      )
+    }
+  })
+  
+  # Coqui
   voices_coqui_reactive <- reactive({
-    voices_coqui %>% 
-      filter(language == input$coqui_lang) %>% 
-      filter(dataset == input$coqui_dataset) %>% 
-      filter(model_name == input$coqui_model_name)
+    filter(voices_coqui, language == input$coqui_lang)
+  })
+  observeEvent(input$coqui_lang, {
+    choices <- unique(voices_coqui_reactive()$dataset)
+    updateSelectInput(inputId = "coqui_dataset", choices = choices) 
+  })
+  voices_coqui_dataset_reactive <- reactive({
+    req(input$coqui_dataset)
+    filter(voices_coqui_reactive(), dataset == input$coqui_dataset)
+  })
+  observeEvent(input$coqui_dataset, {
+    choices <- unique(voices_coqui_dataset_reactive()$model_name)
+    updateSelectInput(inputId = "coqui_model_name", choices = choices) 
   })
   
-  output$select_coqui_lang <- renderUI({
-    selectizeInput("coqui_lang",
-                   "Select Language", 
-                   choices = unique(voices_coqui$language))
-  })
-  
-  output$select_coqui_dataset <- renderUI({
-    choice_dataset <- reactive({
-      req(input$coqui_lang)
-      
-      voices_coqui %>% 
-        filter(language == input$coqui_lang) %>% 
-        pull(dataset) %>% 
-        unique()
-    })
-    
-    selectizeInput("coqui_dataset", "Select Dataset",
-                   choices = choice_dataset())
-  })
-  
-  output$select_coqui_model_name <- renderUI({
-    choice_model_name <- reactive({
-      req(input$coqui_lang, 
-          input$coqui_dataset)
-      
-      voices_coqui %>% 
-        filter(language == input$coqui_lang) %>% 
-        filter(dataset == input$coqui_dataset) %>% 
-        dplyr::pull(model_name) %>% 
-        unique()
-    })
-    
-    selectizeInput("coqui_model_name", "Select Model Name",
-                   choices = choice_model_name())
-  })
-  # Voices (Coqui) END
-  
-  # Voices (Amazon Polly)
+  # Amazon
   voices_amazon_reactive <- reactive({
-    voices_amazon %>% 
-      filter(language == input$amazon_lang,
-             gender == input$amazon_gender,
-             voice == input$amazon_voice)
+    filter(voices_amazon, language == input$amazon_lang)
+  })
+  observeEvent(input$amazon_lang, {
+    choices <- unique(voices_amazon_reactive()$gender)
+    updateSelectInput(inputId = "amazon_gender", choices = choices) 
+  })
+  voices_amazon_gender_reactive <- reactive({
+    req(input$amazon_gender)
+    filter(voices_amazon_reactive(), gender == input$amazon_gender)
+  })
+  observeEvent(input$amazon_gender, {
+    choices <- unique(voices_amazon_gender_reactive()$voice)
+    updateSelectInput(inputId = "amazon_voice", choices = choices) 
   })
   
-  output$select_amazon_lang <- renderUI({
-    selectizeInput("amazon_lang",
-                   "Select Language", 
-                   choices = unique(voices_amazon$language))
-  })
-  
-  output$select_amazon_gender <- renderUI({
-    choice_gender <- reactive({
-      req(input$amazon_lang)
-      
-      voices_amazon %>% 
-        filter(language == input$amazon_lang) %>% 
-        dplyr::pull(gender) %>% 
-        unique()
-    })
-    
-    selectizeInput("amazon_gender", "Select Gender",
-                   choices = choice_gender())
-  })
-  
-  output$select_amazon_voice <- renderUI({
-    choice_voice <- reactive({
-      req(input$amazon_lang,
-          input$amazon_gender)
-      
-      voices_amazon %>% 
-        filter(language == input$amazon_lang) %>% 
-        filter(gender == input$amazon_gender) %>% 
-        dplyr::pull(voice) %>% 
-        unique()
-    })
-    
-    selectizeInput("amazon_voice", "Select Voice",
-                   choices = choice_voice())
-  })
-  # Voices (Amazon Polly) END
-  
-  # Voices (Google)
+  # Google
   voices_google_reactive <- reactive({
-    voices_google %>% 
-      filter(language == input$google_lang,
-             gender == input$google_gender,
-             voice == input$google_voice)
+    filter(voices_google, language == input$google_lang)
+  })
+  observeEvent(input$google_lang, {
+    choices <- unique(voices_google_reactive()$gender)
+    updateSelectInput(inputId = "google_gender", choices = choices) 
+  })
+  voices_google_gender_reactive <- reactive({
+    req(input$google_gender)
+    filter(voices_google_reactive(), gender == input$google_gender)
+  })
+  observeEvent(input$google_gender, {
+    choices <- unique(voices_google_gender_reactive()$voice)
+    updateSelectInput(inputId = "google_voice", choices = choices) 
   })
   
-  output$select_google_lang <- renderUI({
-    selectizeInput("google_lang",
-                   "Select Language", 
-                   choices = unique(voices_google$language))
-  })
-  
-  output$select_google_gender <- renderUI({
-    choice_gender <- reactive({
-      req(input$google_lang)
-      
-      voices_google %>% 
-        filter(language == input$google_lang) %>% 
-        dplyr::pull(gender) %>% 
-        unique()
-    })
-    
-    selectizeInput("google_gender", "Select Gender",
-                   choices = choice_gender())
-  })
-  
-  output$select_google_voice <- renderUI({
-    choice_voice <- reactive({
-      req(input$google_lang,
-          input$google_gender)
-      
-      voices_google %>% 
-        filter(language == input$google_lang) %>% 
-        filter(gender == input$google_gender) %>% 
-        dplyr::pull(voice) %>% 
-        unique()
-    })
-    
-    selectizeInput("google_voice", "Select Voice",
-                   choices = choice_voice())
-  })
-  # Voices (Google) END
-  
-  # Voices (Microsoft)
+  # Microsoft
   voices_ms_reactive <- reactive({
-    voices_ms %>% 
-      filter(locale == input$ms_locale,
-             gender == input$ms_gender,
-             name == input$ms_voice)
+    filter(voices_ms, locale == input$ms_locale)
+  })
+  observeEvent(input$ms_locale, {
+    choices <- unique(voices_ms_reactive()$gender)
+    updateSelectInput(inputId = "ms_gender", choices = choices) 
+  })
+  voices_ms_gender_reactive <- reactive({
+    req(input$ms_gender)
+    filter(voices_ms_reactive(), gender == input$ms_gender)
+  })
+  observeEvent(input$ms_gender, {
+    choices <- unique(voices_ms_gender_reactive()$name)
+    updateSelectInput(inputId = "ms_voice", choices = choices) 
   })
   
-  output$select_ms_locale <- renderUI({
-    selectizeInput("ms_locale",
-                   "Select Locale", 
-                   choices = unique(voices_ms$locale))
-  })
-  
-  output$select_ms_gender <- renderUI({
-    choice_gender <- reactive({
-      req(input$ms_locale)
-      
-      voices_ms %>% 
-        filter(locale == input$ms_locale) %>% 
-        dplyr::pull(gender) %>% 
-        unique()
-    })
-    
-    selectizeInput("ms_gender", "Select Gender",
-                   choices = choice_gender())
-  })
-  
-  output$select_ms_voice <- renderUI({
-    choice_voice <- reactive({
-      req(input$ms_locale,
-          input$ms_gender)
-      
-      voices_ms %>% 
-        filter(locale == input$ms_locale) %>% 
-        filter(gender == input$ms_gender) %>% 
-        dplyr::pull(name) %>% 
-        unique()
-    })
-    
-    selectizeInput("ms_voice", "Select Voice",
-                   choices = choice_voice())
-  })
-  # Voices (Microsoft) END
-
   # MP4 Video
   res <- eventReactive(input$go, {
     # text
@@ -270,10 +167,24 @@ server <- function(input, output, session) {
     image_path <- pdf_to_pngs(pdf_path)
     
     # create video
-    ari_spin(images = image_path, 
-             paragraphs = pptx_notes_vector,
-             service = input$service,
-             output = "www/ari-video.mp4")
+    switch(input$service,
+           coqui     = ari_spin(images = image_path, 
+                                paragraphs = pptx_notes_vector,
+                                service = input$service,
+                                # voice = voices_coqui_reactive()$model_name,
+                                output = "www/ari-video.mp4"),
+           amazon    = ari_spin(images = image_path, 
+                                paragraphs = pptx_notes_vector,
+                                service = input$service,
+                                output = "www/ari-video.mp4"),
+           google    = ari_spin(images = image_path, 
+                                paragraphs = pptx_notes_vector,
+                                service = input$service,
+                                output = "www/ari-video.mp4"),
+           microsoft = ari_spin(images = image_path, 
+                                paragraphs = pptx_notes_vector,
+                                service = input$service,
+                                output = "www/ari-video.mp4"))
   })
   
   output$video <- renderUI({

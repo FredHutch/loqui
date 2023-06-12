@@ -11,8 +11,8 @@ voices_google <- read_csv("data/voices-google.csv") %>%
 voices_ms <- read_csv("data/voices-ms.csv")
 names(voices_ms) <- tolower(names(voices_ms))
 
-# images for pickerInput stored in www/img/ from the root app directory
-imgs <- c("img/coqui.png", "img/aws.jpeg", "img/google.png", "img/ms.jpeg")
+# images for pickerInput stored in www/i/ from the root app directory
+imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
@@ -43,7 +43,7 @@ ui <- fluidPage(
       actionButton("go", "Generate"),
       br(),
       br(),
-      tags$img(src = "img/logo.png", width = "500px")
+      tags$img(src = "i/img/logo.png", width = "500px")
     ),
     mainPanel(h4("Rendered Video (mp4)"),
               uiOutput("video"),
@@ -221,4 +221,12 @@ server <- function(input, output, session) {
   )
 }
 
-shinyApp(ui, server)
+options <- list()
+if (!interactive()) {
+  addResourcePath("/i", file.path(getwd(), "www"))
+  options$port = 3838
+  options$launch.browser = FALSE
+  options$host = "0.0.0.0"
+
+}
+shinyApp(ui, server, options=options)

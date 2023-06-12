@@ -26,7 +26,7 @@ select_choice_img <- function(img, text) {
 }
 
 ui <- fluidPage(
-  titlePanel("Loqui: Generate videos using ari"),
+  titlePanel("Loqui: A Shiny App that Generates Videos using ari"),
   hr(),
   sidebarLayout(
     sidebarPanel(
@@ -39,7 +39,7 @@ ui <- fluidPage(
                                 choices = c("Coqui TTS" = "coqui",
                                             "Amazon Polly" = "amazon",
                                             "Google Cloud Text-to-Speech" = "google",
-                                            "Microsoft Cognitive Services Text-to-Speech" = "microsoft"),
+                                            "Microsoft Cognitive Services Text-to-Speech" = "ms"),
                                 choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       uiOutput("voice_options"),
       actionButton("go", "Generate"),
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
       )
     } else {
       tagList(
-        selectInput("ms_locale", "Select Locale",
+        selectInput("ms_locale", "Select Language",
                     choices = unique(voices_ms$locale)),
         selectInput("ms_gender", "Select Gender", choices = NULL),
         selectInput("ms_voice", "Select Voice", choices = NULL)
@@ -93,6 +93,7 @@ server <- function(input, output, session) {
     filter(voices_coqui, language == input$coqui_lang)
   })
   observeEvent(input$coqui_lang, {
+    freezeReactiveValue(input, "coqui_dataset")
     choices <- unique(voices_coqui_reactive()$dataset)
     updateSelectInput(inputId = "coqui_dataset", choices = choices) 
   })
@@ -101,6 +102,7 @@ server <- function(input, output, session) {
     filter(voices_coqui_reactive(), dataset == input$coqui_dataset)
   })
   observeEvent(input$coqui_dataset, {
+    freezeReactiveValue(input, "coqui_model_name")
     choices <- unique(voices_coqui_dataset_reactive()$model_name)
     updateSelectInput(inputId = "coqui_model_name", choices = choices) 
   })
@@ -110,6 +112,7 @@ server <- function(input, output, session) {
     filter(voices_amazon, language == input$amazon_lang)
   })
   observeEvent(input$amazon_lang, {
+    freezeReactiveValue(input, "amazon_gender")
     choices <- unique(voices_amazon_reactive()$gender)
     updateSelectInput(inputId = "amazon_gender", choices = choices) 
   })
@@ -118,6 +121,7 @@ server <- function(input, output, session) {
     filter(voices_amazon_reactive(), gender == input$amazon_gender)
   })
   observeEvent(input$amazon_gender, {
+    freezeReactiveValue(input, "amazon_voice")
     choices <- unique(voices_amazon_gender_reactive()$voice)
     updateSelectInput(inputId = "amazon_voice", choices = choices) 
   })
@@ -127,6 +131,7 @@ server <- function(input, output, session) {
     filter(voices_google, language == input$google_lang)
   })
   observeEvent(input$google_lang, {
+    freezeReactiveValue(input, "google_gender")
     choices <- unique(voices_google_reactive()$gender)
     updateSelectInput(inputId = "google_gender", choices = choices) 
   })
@@ -135,6 +140,7 @@ server <- function(input, output, session) {
     filter(voices_google_reactive(), gender == input$google_gender)
   })
   observeEvent(input$google_gender, {
+    freezeReactiveValue(input, "google_voice")
     choices <- unique(voices_google_gender_reactive()$voice)
     updateSelectInput(inputId = "google_voice", choices = choices) 
   })
@@ -144,6 +150,7 @@ server <- function(input, output, session) {
     filter(voices_ms, locale == input$ms_locale)
   })
   observeEvent(input$ms_locale, {
+    freezeReactiveValue(input, "ms_gender")
     choices <- unique(voices_ms_reactive()$gender)
     updateSelectInput(inputId = "ms_gender", choices = choices) 
   })
@@ -152,6 +159,7 @@ server <- function(input, output, session) {
     filter(voices_ms_reactive(), gender == input$ms_gender)
   })
   observeEvent(input$ms_gender, {
+    freezeReactiveValue(input, "ms_voice")
     choices <- unique(voices_ms_gender_reactive()$name)
     updateSelectInput(inputId = "ms_voice", choices = choices) 
   })
@@ -168,31 +176,34 @@ server <- function(input, output, session) {
     
     # create video
     switch(input$service,
-           coqui     = ari_spin(images = image_path, 
-                                paragraphs = pptx_notes_vector,
-                                service = input$service,
-                                # voice = voices_coqui_reactive()$model_name,
-                                output = "www/ari-video.mp4"),
-           amazon    = ari_spin(images = image_path, 
-                                paragraphs = pptx_notes_vector,
-                                service = input$service,
-                                output = "www/ari-video.mp4"),
-           google    = ari_spin(images = image_path, 
-                                paragraphs = pptx_notes_vector,
-                                service = input$service,
-                                output = "www/ari-video.mp4"),
-           microsoft = ari_spin(images = image_path, 
-                                paragraphs = pptx_notes_vector,
-                                service = input$service,
-                                output = "www/ari-video.mp4"))
+           coqui = ari_spin(images = image_path, 
+                            paragraphs = pptx_notes_vector,
+                            service = "coqui",
+                            model_name = input$coqui_model_name,
+                            output = "www/ari-video.mp4"),
+           amazon = ari_spin(images = image_path, 
+                             paragraphs = pptx_notes_vector,
+                             service = "amazon",
+                             voice = input$amazon_voice,
+                             output = "www/ari-video.mp4"),
+           google = ari_spin(images = image_path, 
+                             paragraphs = pptx_notes_vector,
+                             service = "google",
+                             voice = input$google_voice,
+                             output = "www/ari-video.mp4"),
+           ms = ari_spin(images = image_path, 
+                         paragraphs = pptx_notes_vector,
+                         service = "microsoft",
+                         voice = input$ms_voice,
+                         output = "www/ari-video.mp4"))
   })
   
   output$video <- renderUI({
     video_path <- attr(res(), "outfile")
     tags$video(src = basename(video_path), 
                type = "video/mp4",
-               height ="400px", 
-               width="400px",
+               height ="450px", 
+               width="800px",
                autoplay = TRUE, 
                controls = TRUE)
   })
@@ -202,7 +213,7 @@ server <- function(input, output, session) {
       downloadButton("download_button")
     })
   })
-  # https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
+  # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
   output$download_button <- downloadHandler(
     filename = "video.mp4",
     content = function(file) {
@@ -210,8 +221,6 @@ server <- function(input, output, session) {
     },
     contentType = "video/mp4"
   )
-  
-  
 }
 
 shinyApp(ui, server)

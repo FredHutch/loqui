@@ -3,6 +3,7 @@ library(ari)
 library(dplyr)
 library(readr)
 
+# Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv")
 voices_amazon <- read_csv("data/voices-amazon.csv")
 voices_google <- read_csv("data/voices-google.csv") %>% 

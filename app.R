@@ -10,9 +10,6 @@ voices_google <- read_csv("data/voices-google.csv") %>%
 voices_ms <- read_csv("data/voices-ms.csv")
 names(voices_ms) <- tolower(names(voices_ms))
 
-# Dummy Google Slides URL: 
-# https://docs.google.com/presentation/d/1Dw_rBb1hySN_76xh9-x5J2dWF_das9BAUjQigf2fN-E/edit#slide=id.p
-
 # images for pickerInput stored in www/img/ from the root app directory
 imgs <- c("img/coqui.png", "img/aws.jpeg", "img/google.png", "img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 

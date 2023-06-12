@@ -221,9 +221,9 @@ server <- function(input, output, session) {
   )
 }
 
+addResourcePath("/i", file.path(getwd(), "www"))
 options <- list()
 if (!interactive()) {
-  addResourcePath("/i", file.path(getwd(), "www"))
   options$port = 3838
   options$launch.browser = FALSE
   options$host = "0.0.0.0"

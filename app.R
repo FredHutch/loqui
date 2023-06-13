@@ -24,7 +24,25 @@ select_choice_img <- function(img, text) {
 }
 
 ui <- fluidPage(
-  titlePanel("Loqui: A Shiny App that Generates Videos using ari"),
+  titlePanel(tagList(
+    "Loqui, Generate Videos using ari",
+    span(
+      actionButton("Help", 
+                   label = "Help",
+                   icon = icon("question"),
+                   width = "77px",
+                   onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')",
+                   style="color: #fff; background-color: #FF0000"),
+      actionButton("github",
+                   label = "Code",
+                   icon = icon("github"),
+                   width = "77px",
+                   onclick ="window.open(`https://github.com/FredHutch/loqui`, '_blank')",
+                   style="color: #fff; background-color: #767676; border-color: #767676"),
+      style = "position:absolute;right:2em;"
+    )
+  ),
+  windowTitle = "Loqui"),
   hr(),
   sidebarLayout(
     sidebarPanel(
@@ -43,7 +61,12 @@ ui <- fluidPage(
       actionButton("go", "Generate"),
       br(),
       br(),
-      tags$img(src = "i/img/logo.png", width = "90%")
+      h5("Built with",
+         img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
+         "by",
+         img(src = "https://posit.co/wp-content/uploads/2022/10/thumbnail-63.jpg", height = "30px")
+      ),
+      tags$img(src = "i/img/logo.png", width = "90%"),
     ),
     mainPanel(h4("Rendered Video (mp4)"),
               uiOutput("video"),
@@ -238,6 +261,6 @@ if (!interactive()) {
   options$port = 3838
   options$launch.browser = FALSE
   options$host = "0.0.0.0"
-
+  
 }
 shinyApp(ui, server, options=options)

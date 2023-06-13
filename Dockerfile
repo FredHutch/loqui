@@ -21,6 +21,8 @@ RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
 
+RUN mkdir -p /private/tmp
+
 RUN R -e "install.packages(c('remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly'), repos='https://cran.rstudio.com/')"
 
 # TODO change this when PR is merged and ari is updated in CRAN:

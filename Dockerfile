@@ -2,7 +2,7 @@ FROM fredhutch/r-shiny-base:4.2.0
 
 RUN apt-get --allow-releaseinfo-change update -y
 
-RUN apt-get install -y libpoppler-cpp-dev
+RUN apt-get install -y libpoppler-cpp-dev ffpmeg
 
 RUN echo break cache
 

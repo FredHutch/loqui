@@ -24,6 +24,7 @@ select_choice_img <- function(img, text) {
 }
 
 ui <- fluidPage(
+  tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
   titlePanel(tagList(
     "Loqui, Generate Videos using ari",
     span(

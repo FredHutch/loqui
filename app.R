@@ -56,10 +56,20 @@ server <- function(input, output, session) {
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(
-        selectInput("coqui_lang", "Select Language (TTS)", 
+        selectInput("coqui_lang", "Select Language", 
                     choices = unique(voices_coqui$language)),
-        selectInput("coqui_dataset", "Select Dataset (TTS)", choices = NULL),
-        selectInput("coqui_model_name", "Select Model Name (TTS)", choices = NULL)
+        selectInput("coqui_dataset", "Select Dataset", choices = NULL),
+        selectInput("coqui_model_name", "Select Model Name", choices = NULL),
+        selectInput("coqui_vocoder_name", "Select Vocoder Name",
+                    choices = c("libri-tts/wavegrad",
+                                "libri-tts/fullband-melgan",
+                                "ek1/wavegrad",
+                                "ljspeech/multiband-melgan",
+                                "ljspeech/hifigan_v2",
+                                "ljspeech/univnet",
+                                "blizzard2013/hifigan_v2",
+                                "vctk/hifigan_v2",
+                                "sam/hifigan_v2"))
       )
       
     } else if (input$service == "amazon") {
@@ -178,6 +188,7 @@ server <- function(input, output, session) {
                             paragraphs = pptx_notes_vector,
                             service = "coqui",
                             model_name = input$coqui_model_name,
+                            vocoder_name = input$coqui_vocoder_name,
                             output = "www/ari-video.mp4"),
            amazon = ari_spin(images = image_path, 
                              paragraphs = pptx_notes_vector,

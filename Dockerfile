@@ -17,7 +17,7 @@ RUN make -j `nproc`
 
 RUN make altinstall
 
-RUN python3 -m ensurepip
+RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
 

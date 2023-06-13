@@ -43,7 +43,7 @@ ui <- fluidPage(
       actionButton("go", "Generate"),
       br(),
       br(),
-      tags$img(src = "i/img/logo.png", width = "500px")
+      tags$img(src = "i/img/logo.png", width = "90%")
     ),
     mainPanel(h4("Rendered Video (mp4)"),
               uiOutput("video"),

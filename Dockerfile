@@ -1,6 +1,16 @@
 FROM fredhutch/r-shiny-base:4.2.0
 
-RUN R -e "install.packages(c('ari', 'text2speech', 'shinyWidgets'), repos='https://cran.rstudio.com/')"
+RUN apt-get --allow-releaseinfo-change update -y
+
+RUN apt-get install -y libpoppler-cpp-dev
+
+RUN echo break cache
+
+
+RUN R -e "install.packages(c('remotes', 'pdftools', 'text2speech', 'shinyWidgets'), repos='https://cran.rstudio.com/')"
+
+# TODO change this when PR is merged and ari is updated in CRAN:
+RUN R -e 'remotes::install_github("jhudsl/ari", "ariExtra-immigration", upgrade = "never")'
 
 ADD . /app
 

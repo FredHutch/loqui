@@ -21,7 +21,6 @@ RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
 
-RUN mkdir -p /private/tmp
 
 RUN R -e "install.packages(c('remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly'), repos='https://cran.rstudio.com/')"
 
@@ -32,6 +31,11 @@ RUN R -e 'remotes::install_github("jhudsl/ari", "ariExtra-immigration", upgrade 
 # make sure all packages are installed
 # because R does not fail when there's an error installing a package.
 RUN R -e 'if(!all(commandArgs(TRUE) %in% installed.packages()[,"Package"])) q("no", 1)' --args remotes pdftools tidyr text2speech shinyWidgets aws.polly ari
+
+RUN mkdir -p /private/
+
+RUN ln -s /tmp /private/
+
 
 
 ADD . /app

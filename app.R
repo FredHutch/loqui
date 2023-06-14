@@ -65,7 +65,7 @@ ui <- fluidPage(
       h5("Built with",
          img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
          "by",
-         img(src = "https://posit.co/wp-content/uploads/2022/10/thumbnail-63.jpg", height = "30px")
+         img(src = "i/posit.jpeg", height = "30px")
       ),
       tags$img(src = "i/img/logo.png", width = "90%"),
     ),

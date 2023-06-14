@@ -4,7 +4,9 @@ library(dplyr)
 library(readr)
 
 # Voice Data
-voices_coqui <- read_csv("data/voices-coqui.csv")
+voices_coqui <- read_csv("data/voices-coqui.csv") %>% 
+  # Remove after testing
+  filter(language == "en", dataset == "ljspeech", model_name == "tacotron2-DDC_ph")
 voices_amazon <- read_csv("data/voices-amazon.csv")
 voices_google <- read_csv("data/voices-google.csv") %>% 
   filter(!is.na(language))
@@ -95,28 +97,28 @@ server <- function(input, output, session) {
                                 "vctk/hifigan_v2",
                                 "sam/hifigan_v2"))
       )
-      
+      # Remove after testing
     } else if (input$service == "amazon") {
-      tagList(
-        selectInput("amazon_lang", "Select Language", 
-                    choices = unique(voices_amazon$language)),
-        selectInput("amazon_gender", "Select Gender", choices = NULL),
-        selectInput("amazon_voice", "Select Voice", choices = NULL)
-      )
+      # tagList(
+      #   selectInput("amazon_lang", "Select Language", 
+      #               choices = unique(voices_amazon$language)),
+      #   selectInput("amazon_gender", "Select Gender", choices = NULL),
+      #   selectInput("amazon_voice", "Select Voice", choices = NULL)
+      # )
     } else if (input$service == "google") {
-      tagList(
-        selectInput("google_lang", "Select Language", 
-                    choices = unique(voices_google$language)),
-        selectInput("google_gender", "Select Gender", choices = NULL),
-        selectInput("google_voice", "Select Voice", choices = NULL)
-      )
+      # tagList(
+      #   selectInput("google_lang", "Select Language", 
+      #               choices = unique(voices_google$language)),
+      #   selectInput("google_gender", "Select Gender", choices = NULL),
+      #   selectInput("google_voice", "Select Voice", choices = NULL)
+      # )
     } else {
-      tagList(
-        selectInput("ms_locale", "Select Language",
-                    choices = unique(voices_ms$locale)),
-        selectInput("ms_gender", "Select Gender", choices = NULL),
-        selectInput("ms_voice", "Select Voice", choices = NULL)
-      )
+      # tagList(
+      #   selectInput("ms_locale", "Select Language",
+      #               choices = unique(voices_ms$locale)),
+      #   selectInput("ms_gender", "Select Gender", choices = NULL),
+      #   selectInput("ms_voice", "Select Voice", choices = NULL)
+      # )
     }
   })
   
@@ -233,7 +235,7 @@ server <- function(input, output, session) {
   
   output$video <- renderUI({
     video_path <- attr(res(), "outfile")
-    tags$video(src = basename(video_path), 
+    tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
                height ="450px", 
                width="800px",

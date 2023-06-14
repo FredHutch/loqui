@@ -71,7 +71,7 @@ ui <- fluidPage(
       ),
       tags$img(src = "i/img/logo.png", width = "90%"),
     ),
-    mainPanel(h4("Rendered Video (mp4)"),
+    mainPanel(h3("Rendered Video (mp4)"),
               uiOutput("video"),
               uiOutput("download"))
   )
@@ -87,15 +87,17 @@ server <- function(input, output, session) {
         selectInput("coqui_dataset", "Select Dataset", choices = NULL),
         selectInput("coqui_model_name", "Select Model Name", choices = NULL),
         selectInput("coqui_vocoder_name", "Select Vocoder Name",
-                    choices = c("libri-tts/wavegrad",
-                                "libri-tts/fullband-melgan",
-                                "ek1/wavegrad",
-                                "ljspeech/multiband-melgan",
-                                "ljspeech/hifigan_v2",
-                                "ljspeech/univnet",
-                                "blizzard2013/hifigan_v2",
-                                "vctk/hifigan_v2",
-                                "sam/hifigan_v2"))
+                    choices = "ljspeech/univnet")
+        # Remove after testing
+        # c("libri-tts/wavegrad",
+        #   "libri-tts/fullband-melgan",
+        #   "ek1/wavegrad",
+        #   "ljspeech/multiband-melgan",
+        #   "ljspeech/hifigan_v2",
+        #   "ljspeech/univnet",
+        #   "blizzard2013/hifigan_v2",
+        #   "vctk/hifigan_v2",
+        #   "sam/hifigan_v2")
       )
       # Remove after testing
     } else if (input$service == "amazon") {

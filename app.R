@@ -26,22 +26,44 @@ select_choice_img <- function(img, text) {
 }
 
 ui <- fluidPage(
-  tags$head(tags$link(rel="shortcut icon", href="i/favicon.ico")),
+  # css
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "i/hutch_theme.css")
+  ),
+  # favicon
+  tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
+  # css to center the progress bar
+  # https://stackoverflow.com/a/52585505/14804653
+  tags$head(
+    tags$style(
+      HTML(".shiny-notification {
+           height: 100px;
+           width: 800px;
+           position:fixed;
+           top: calc(50% - 50px);
+           left: calc(50% - 400px);
+           font-size: 250%;
+           text-align: center;
+           }
+           "
+      )
+    )
+  ),
   titlePanel(tagList(
     "Loqui, Generate Videos using ari",
     span(
-      actionButton("Help", 
+      actionButton("help", 
                    label = "Help",
                    icon = icon("question"),
                    width = "77px",
                    onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')",
-                   style="color: #fff; background-color: #FF0000"),
+                   style="color: #fff; background-color: #AA4AC4;"),
       actionButton("github",
                    label = "Code",
                    icon = icon("github"),
                    width = "77px",
                    onclick ="window.open(`https://github.com/FredHutch/loqui`, '_blank')",
-                   style="color: #fff; background-color: #767676; border-color: #767676"),
+                   style="color: #fff; background-color: #0A799A;"),
       style = "position:absolute;right:2em;"
     )
   ),
@@ -67,7 +89,7 @@ ui <- fluidPage(
       h5("Built with",
          img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
          "by",
-         img(src = "i/posit.jpeg", height = "30px")
+         img(src = "i/img/posit.jpeg", height = "30px")
       ),
       tags$img(src = "i/img/logo.png", width = "90%"),
     ),
@@ -201,37 +223,59 @@ server <- function(input, output, session) {
   
   # MP4 Video
   res <- eventReactive(input$go, {
-    # text
-    pptx_path <- download_gs_file(input$url, out_type = "pptx")
-    pptx_notes_vector <- pptx_notes(pptx_path)
-    
-    # images
-    pdf_path <- download_gs_file(input$url, out_type = "pdf")
-    image_path <- pdf_to_pngs(pdf_path)
-    
-    # create video
-    switch(input$service,
-           coqui = ari_spin(images = image_path, 
-                            paragraphs = pptx_notes_vector,
-                            service = "coqui",
-                            model_name = input$coqui_model_name,
-                            vocoder_name = input$coqui_vocoder_name,
-                            output = "www/ari-video.mp4"),
-           amazon = ari_spin(images = image_path, 
-                             paragraphs = pptx_notes_vector,
-                             service = "amazon",
-                             voice = input$amazon_voice,
-                             output = "www/ari-video.mp4"),
-           google = ari_spin(images = image_path, 
-                             paragraphs = pptx_notes_vector,
-                             service = "google",
-                             voice = input$google_voice,
-                             output = "www/ari-video.mp4"),
-           ms = ari_spin(images = image_path, 
-                         paragraphs = pptx_notes_vector,
-                         service = "microsoft",
-                         voice = input$ms_voice,
-                         output = "www/ari-video.mp4"))
+    withProgress(message = 'Rendering video...', 
+                 value = 0, 
+                 detail="0%", {
+                   # text
+                   pptx_path <- download_gs_file(input$url, out_type = "pptx")
+                   incProgress(1/5, 
+                               message = "Converted slides to PPTX", 
+                               detail = "20%")
+                   pptx_notes_vector <- pptx_notes(pptx_path)
+                   incProgress(1/5, 
+                               message = "Extracted speaker notes", 
+                               detail = "40%")
+                   # images
+                   pdf_path <- download_gs_file(input$url, out_type = "pdf")
+                   incProgress(1/5, 
+                               message = "Converted slides to PDF", 
+                               detail = "60%")
+                   image_path <- pdf_to_pngs(pdf_path)
+                   incProgress(1/5, 
+                               message = "Converted PDF to PNG", 
+                               detail = "80%")
+                   Sys.sleep(1)
+                   incProgress(0, 
+                               message = "Rendering takes a few minutes!", 
+                               detail = "80%")
+                   # create video
+                   switch(input$service,
+                          coqui = ari_spin(images = image_path, 
+                                           paragraphs = pptx_notes_vector,
+                                           service = "coqui",
+                                           model_name = input$coqui_model_name,
+                                           vocoder_name = input$coqui_vocoder_name,
+                                           output = "www/ari-video.mp4"),
+                          amazon = ari_spin(images = image_path, 
+                                            paragraphs = pptx_notes_vector,
+                                            service = "amazon",
+                                            voice = input$amazon_voice,
+                                            output = "www/ari-video.mp4"),
+                          google = ari_spin(images = image_path, 
+                                            paragraphs = pptx_notes_vector,
+                                            service = "google",
+                                            voice = input$google_voice,
+                                            output = "www/ari-video.mp4"),
+                          ms = ari_spin(images = image_path, 
+                                        paragraphs = pptx_notes_vector,
+                                        service = "microsoft",
+                                        voice = input$ms_voice,
+                                        output = "www/ari-video.mp4"))
+                   incProgress(1/5, 
+                               message = "Rendered video as mp4", 
+                               detail = "100%")
+                   Sys.sleep(1)
+                 })
   })
   
   output$video <- renderUI({

@@ -71,8 +71,7 @@ ui <- fluidPage(
       ),
       tags$img(src = "i/img/logo.png", width = "90%"),
     ),
-    mainPanel(h3("Rendered Video (mp4)"),
-              uiOutput("video"),
+    mainPanel(uiOutput("video"),
               uiOutput("download"))
   )
 )

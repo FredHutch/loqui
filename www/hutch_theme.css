@@ -1,0 +1,33 @@
+/* Change header text */
+h2 {
+  font-family: Times;
+  font-size: 38px;
+  color: #1c3b61;
+  font-weight: bold;
+}
+
+/* Change footer text */
+h5 {
+  font-family: Arial;
+  color: #1c3b61;
+  font-weight: bold;
+}
+
+/* Action Buttons */
+#help.btn {
+  font-family: Times;
+}
+#github.btn {
+  font-family: Times;
+}
+#go.btn {
+  font-family: Arial;
+  font-weight: bold;
+  color: #F4F4F4;
+  background-color: #FFB500;
+}
+
+
+.control-label {
+  color: #1c3b61;
+}

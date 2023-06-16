@@ -231,22 +231,42 @@ server <- function(input, output, session) {
                    incProgress(1/5, 
                                message = "Converted slides to PPTX", 
                                detail = "20%")
+                   Sys.sleep(0.5)
+                   incProgress(0, 
+                               message = "Extracting speaker notes...", 
+                               detail = "20%")
                    pptx_notes_vector <- pptx_notes(pptx_path)
                    incProgress(1/5, 
-                               message = "Extracted speaker notes", 
+                               message = "Extracting speaker notes...Done!", 
+                               detail = "40%")
+                   Sys.sleep(0.5)
+                   incProgress(0, 
+                               message = "Converting slides to PDF...", 
                                detail = "40%")
                    # images
                    pdf_path <- download_gs_file(input$url, out_type = "pdf")
                    incProgress(1/5, 
-                               message = "Converted slides to PDF", 
+                               message = "Converting slides to PDF...Done!", 
+                               detail = "60%")
+                   Sys.sleep(0.5)
+                   incProgress(0, 
+                               message = "Converting PDF to PNG...", 
                                detail = "60%")
                    image_path <- pdf_to_pngs(pdf_path)
                    incProgress(1/5, 
-                               message = "Converted PDF to PNG", 
+                               message = "Converting PDF to PNG...Done!", 
+                               detail = "80%")
+                   Sys.sleep(0.5)
+                   incProgress(0, 
+                               message = "Rendering video...", 
                                detail = "80%")
                    Sys.sleep(1)
                    incProgress(0, 
                                message = "Rendering takes a few minutes!", 
+                               detail = "80%")
+                   Sys.sleep(1)
+                   incProgress(0, 
+                               message = "Rendering video...", 
                                detail = "80%")
                    # create video
                    switch(input$service,

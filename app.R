@@ -4,13 +4,13 @@ library(dplyr)
 library(readr)
 
 # Voice Data
-voices_coqui <- read_csv("data/voices-coqui.csv") %>% 
+voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
   # Remove after testing
   filter(language == "en", dataset == "ljspeech", model_name == "tacotron2-DDC_ph")
-voices_amazon <- read_csv("data/voices-amazon.csv")
-voices_google <- read_csv("data/voices-google.csv") %>% 
+voices_amazon <- read_csv("data/voices-amazon.csv", show_col_types = FALSE)
+voices_google <- read_csv("data/voices-google.csv", show_col_types = FALSE) %>% 
   filter(!is.na(language))
-voices_ms <- read_csv("data/voices-ms.csv")
+voices_ms <- read_csv("data/voices-ms.csv", show_col_types = FALSE)
 names(voices_ms) <- tolower(names(voices_ms))
 
 # images for pickerInput stored in www/i/ from the root app directory
@@ -43,6 +43,8 @@ ui <- fluidPage(
            top: calc(50% - 50px);
            left: calc(50% - 400px);
            font-size: 250%;
+           font-family: Times;
+           color: #1c3b61;
            text-align: center;
            }
            "
@@ -223,13 +225,14 @@ server <- function(input, output, session) {
   
   # MP4 Video
   res <- eventReactive(input$go, {
-    withProgress(message = 'Rendering video...', 
+    withProgress(message = 'Converting slides to PPTX...', 
                  value = 0, 
                  detail="0%", {
                    # text
+                   Sys.sleep(0.5)
                    pptx_path <- download_gs_file(input$url, out_type = "pptx")
                    incProgress(1/5, 
-                               message = "Converted slides to PPTX", 
+                               message = "Converting slides to PPTX...Done!", 
                                detail = "20%")
                    Sys.sleep(0.5)
                    incProgress(0, 
@@ -294,7 +297,7 @@ server <- function(input, output, session) {
                    incProgress(1/5, 
                                message = "Rendered video as mp4", 
                                detail = "100%")
-                   Sys.sleep(1)
+                   Sys.sleep(1.5)
                  })
   })
   

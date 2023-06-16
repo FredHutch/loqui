@@ -52,7 +52,7 @@ ui <- fluidPage(
     )
   ),
   titlePanel(tagList(
-    "Loqui, Generate Videos using ari",
+    "Loqui",
     span(
       actionButton("help", 
                    label = "Help",

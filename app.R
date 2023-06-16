@@ -264,7 +264,7 @@ server <- function(input, output, session) {
                    incProgress(0, 
                                message = "Rendering takes a few minutes!", 
                                detail = "80%")
-                   Sys.sleep(1)
+                   Sys.sleep(3)
                    incProgress(0, 
                                message = "Rendering video...", 
                                detail = "80%")

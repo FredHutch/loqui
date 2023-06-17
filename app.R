@@ -96,25 +96,28 @@ ui <- fluidPage(
       tags$img(src = "i/img/logo.png", width = "90%")
     ),
     mainPanel(
-      tabsetPanel(
-        tabPanel(div("About",
-                     style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
-                 br(),
-                 h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
-                 span(textOutput("about"), 
-                      style = "font-family: Arial; color: #1c3b61")),
-        tabPanel(
-          div("Rendered Video", 
-              style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
-          br(),
-          uiOutput("video"),
-          br(),
-          fluidRow(column(11, htmlOutput("video_info"))),
-          fluidRow(
-            column(2, uiOutput("download")),
-            column(1, uiOutput("send_email"))
-          )
-        )
+      tabsetPanel(id = "inTabset",
+                  tabPanel(
+                    title = div("About",
+                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
+                    value = "about",
+                    br(),
+                    h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
+                    span(textOutput("about"), 
+                         style = "font-family: Arial; color: #1c3b61")),
+                  tabPanel(
+                    title = div("Rendered Video", 
+                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
+                    value = "rendered_video",
+                    br(),
+                    uiOutput("video"),
+                    br(),
+                    fluidRow(column(11, htmlOutput("video_info"))),
+                    fluidRow(
+                      column(2, uiOutput("download")),
+                      column(1, uiOutput("send_email"))
+                    )
+                  )
       )
       
     )
@@ -124,7 +127,11 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   output$about <- renderText({
-    "Placeholder"
+    paste("Lorem ipsum dolor sit amet, consectetur adipiscing elit,", 
+    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi",
+    "ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in",
+    "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat")
   })
   
   output$voice_options <- renderUI({
@@ -342,6 +349,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$go, {
+    updateTabsetPanel(session, "inTabset", selected = "rendered_video")
     pdf_path <- download_gs_file(input$gs_url, "pdf")
     video_info_reactive <- pdf_info(pdf = pdf_path)
     

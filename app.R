@@ -2,6 +2,7 @@ library(shiny)
 library(ari)
 library(dplyr)
 library(readr)
+library(pdftools)
 
 # Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
@@ -58,14 +59,12 @@ ui <- fluidPage(
                    label = "Help",
                    icon = icon("question"),
                    width = "77px",
-                   onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')",
-                   style="color: #fff; background-color: #AA4AC4;"),
+                   onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')"),
       actionButton("github",
                    label = "Code",
                    icon = icon("github"),
                    width = "77px",
-                   onclick ="window.open(`https://github.com/FredHutch/loqui`, '_blank')",
-                   style="color: #fff; background-color: #0A799A;"),
+                   onclick ="window.open(`https://github.com/FredHutch/loqui`, '_blank')"),
       style = "position:absolute;right:2em;"
     )
   ),
@@ -73,17 +72,18 @@ ui <- fluidPage(
   hr(),
   sidebarLayout(
     sidebarPanel(
-      textInput("url", 
+      textInput("gs_url", 
                 label = "Google Slides URL",
                 value = "",
                 placeholder = "Paste a URL"),
       shinyWidgets::pickerInput("service",
                                 label = "Text-to-Speech Service", 
-                                choices = c("Coqui TTS" = "coqui",
-                                            "Amazon Polly" = "amazon",
-                                            "Google Cloud Text-to-Speech" = "google",
-                                            "Microsoft Cognitive Services Text-to-Speech" = "ms"),
-                                choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
+                                choices = c("Coqui TTS" = "coqui"),
+                                choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img)[[1]])),
+      # "Amazon Polly" = "amazon",
+      # "Google Cloud Text-to-Speech" = "google",
+      # "Microsoft Cognitive Services Text-to-Speech" = "ms"),
+      # choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       uiOutput("voice_options"),
       actionButton("go", "Generate"),
       br(),
@@ -93,14 +93,39 @@ ui <- fluidPage(
          "by",
          img(src = "i/img/posit.jpeg", height = "30px")
       ),
-      tags$img(src = "i/img/logo.png", width = "90%"),
+      tags$img(src = "i/img/logo.png", width = "90%")
     ),
-    mainPanel(uiOutput("video"),
-              uiOutput("download"))
+    mainPanel(
+      tabsetPanel(
+        tabPanel(div("About",
+                     style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
+                 br(),
+                 h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
+                 span(textOutput("about"), 
+                      style = "font-family: Arial; color: #1c3b61")),
+        tabPanel(
+          div("Rendered Video", 
+              style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
+          br(),
+          uiOutput("video"),
+          br(),
+          fluidRow(column(11, htmlOutput("video_info"))),
+          fluidRow(
+            column(2, uiOutput("download")),
+            column(1, uiOutput("send_email"))
+          )
+        )
+      )
+      
+    )
   )
 )
 
 server <- function(input, output, session) {
+  
+  output$about <- renderText({
+    "Placeholder"
+  })
   
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
@@ -122,7 +147,7 @@ server <- function(input, output, session) {
         #   "vctk/hifigan_v2",
         #   "sam/hifigan_v2")
       )
-      # Remove after testing
+      # Remove when paid services are good2go
     } else if (input$service == "amazon") {
       # tagList(
       #   selectInput("amazon_lang", "Select Language", 
@@ -131,6 +156,7 @@ server <- function(input, output, session) {
       #   selectInput("amazon_voice", "Select Voice", choices = NULL)
       # )
     } else if (input$service == "google") {
+      # Remove when paid services are good2go
       # tagList(
       #   selectInput("google_lang", "Select Language", 
       #               choices = unique(voices_google$language)),
@@ -138,6 +164,7 @@ server <- function(input, output, session) {
       #   selectInput("google_voice", "Select Voice", choices = NULL)
       # )
     } else {
+      # Remove when paid services are good2go
       # tagList(
       #   selectInput("ms_locale", "Select Language",
       #               choices = unique(voices_ms$locale)),
@@ -230,7 +257,8 @@ server <- function(input, output, session) {
                  detail="0%", {
                    # text
                    Sys.sleep(0.5)
-                   pptx_path <- download_gs_file(input$url, out_type = "pptx")
+                   # download as pptx
+                   pptx_path <- download_gs_file(input$gs_url, out_type = "pptx")
                    incProgress(1/5, 
                                message = "Converting slides to PPTX...Done!", 
                                detail = "20%")
@@ -238,6 +266,7 @@ server <- function(input, output, session) {
                    incProgress(0, 
                                message = "Extracting speaker notes...", 
                                detail = "20%")
+                   # extract speaker notes
                    pptx_notes_vector <- pptx_notes(pptx_path)
                    incProgress(1/5, 
                                message = "Extracting speaker notes...Done!", 
@@ -246,8 +275,8 @@ server <- function(input, output, session) {
                    incProgress(0, 
                                message = "Converting slides to PDF...", 
                                detail = "40%")
-                   # images
-                   pdf_path <- download_gs_file(input$url, out_type = "pdf")
+                   # download as pdf
+                   pdf_path <- download_gs_file(input$gs_url, out_type = "pdf")
                    incProgress(1/5, 
                                message = "Converting slides to PDF...Done!", 
                                detail = "60%")
@@ -255,6 +284,7 @@ server <- function(input, output, session) {
                    incProgress(0, 
                                message = "Converting PDF to PNG...", 
                                detail = "60%")
+                   # convert to png
                    image_path <- pdf_to_pngs(pdf_path)
                    incProgress(1/5, 
                                message = "Converting PDF to PNG...Done!", 
@@ -305,20 +335,39 @@ server <- function(input, output, session) {
     video_path <- attr(res(), "outfile")
     tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
-               height ="450px", 
-               width="800px",
+               height ="480px", 
+               width="854px",
                autoplay = TRUE, 
                controls = TRUE)
   })
   
   observeEvent(input$go, {
-    output$download <- renderUI({
-      downloadButton("download_button")
+    pdf_path <- download_gs_file(input$gs_url, "pdf")
+    video_info_reactive <- pdf_info(pdf = pdf_path)
+    
+    output$video_info <- renderUI({
+      span(textOutput("video_title"), 
+           style = "font-weight: bold; 
+                    font-family: Arial; 
+                    font-size: 25px; 
+                    color: #1c3b61")
+      
+      output$video_title <- renderText({
+        video_info_reactive$keys$Title
+      })
     })
+    output$download <- renderUI({
+      downloadButton("download_btn", width = "20px")
+    })
+    output$send_email <- renderUI({
+      actionButton("email", "Email", icon = icon("inbox"))
+    })
+    
   })
+  
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
-  output$download_button <- downloadHandler(
-    filename = "video.mp4",
+  output$download_btn <- downloadHandler(
+    filename = "loqui_video.mp4",
     content = function(file) {
       file.copy("www/ari-video.mp4", file)
     },

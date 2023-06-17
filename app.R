@@ -85,7 +85,7 @@ ui <- fluidPage(
       # "Microsoft Cognitive Services Text-to-Speech" = "ms"),
       # choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       uiOutput("voice_options"),
-      actionButton("go", "Generate"),
+      actionButton("generate", "Generate"),
       br(),
       br(),
       h5("Built with",
@@ -258,7 +258,7 @@ server <- function(input, output, session) {
   })
   
   # MP4 Video
-  res <- eventReactive(input$go, {
+  res <- eventReactive(input$generate, {
     withProgress(message = 'Converting slides to PPTX...', 
                  value = 0, 
                  detail="0%", {
@@ -348,7 +348,7 @@ server <- function(input, output, session) {
                controls = TRUE)
   })
   
-  observeEvent(input$go, {
+  observeEvent(input$generate, {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
     pdf_path <- download_gs_file(input$gs_url, "pdf")
     video_info_reactive <- pdf_info(pdf = pdf_path)

@@ -6,6 +6,15 @@ h2 {
   font-weight: bold;
 }
 
+
+/* Text inside 'About this Shiny app' tab */
+h3 {
+  font-family: Times;
+  font-size: 28px;
+  color: #1c3b61;
+  font-weight: bold;
+}
+
 /* Change footer text */
 h5 {
   font-family: Arial;
@@ -13,21 +22,51 @@ h5 {
   font-weight: bold;
 }
 
+/* Video Title */
+#video_info.shiny-html-output {
+  font-family: Arial;
+  font-size: 25px;
+  font-weight: bold;
+  color: #1c3b61;
+}
+
 /* Action Buttons */
+
+/* Help Button */
 #help.btn {
+  color: #F4F4F4;
+  background-color: #AA4AC4;
   font-family: Times;
 }
+/* Code Button */
 #github.btn {
+  color: #F4F4F4;
+  background-color: #0A799A;
   font-family: Times;
 }
+/* Generate Button */
 #go.btn {
   font-family: Arial;
   font-weight: bold;
   color: #F4F4F4;
   background-color: #FFB500;
 }
+/* Download Button */
+#download_btn.btn {
+  font-family: Arial;
+  font-weight: bold;
+  color: #F4F4F4;
+  background-color: #0A799A;
+}
+/* Email button */
+#email.btn {
+  font-family: Arial;
+  font-weight: bold;
+  color: #F4F4F4;
+  background-color: #FFB500;
+}
 
-
+/* selectInput Label */
 .control-label {
   color: #1c3b61;
 }

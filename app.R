@@ -104,6 +104,15 @@ ui <- fluidPage(
                     br(),
                     h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
                     span(textOutput("about"), 
+                         # https://community.rstudio.com/t/hyperlink-portion-of-text-in-shiny-server-text-block/67328
+                        # Loqui is an open source web application that enables the creation of automated courses using ari,
+                        # an R package for generating videos from text and images. Loqui takes as input a Google Slides URL, 
+                        # extracts the speaker notes from the slides, and converts them into an audio file. Then, it converts the Google Slides to images and ultimately, 
+                        # generates an mp4 video file where each image is presented with its corresponding audio. 
+                        # The functionaliy of Loqui relies on two R packages, namely ari and text2speech, which run in the background. 
+                        # Although  it is certainly possible to go directly to these packages and run their functions for course generation, 
+                        # we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly 
+                        # interface allowing individuals to effortlessly create automated courses without the need for programming skills.
                          style = "font-family: Arial; color: #1c3b61")),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -113,27 +122,14 @@ ui <- fluidPage(
                     uiOutput("video"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
-                    fluidRow(
-                      column(2, uiOutput("download")),
-                      column(1, uiOutput("send_email"))
-                    )
+                    fluidRow(uiOutput("video_btn"))
                   )
       )
-      
     )
   )
 )
 
 server <- function(input, output, session) {
-  
-  output$about <- renderText({
-    paste("Lorem ipsum dolor sit amet, consectetur adipiscing elit,", 
-    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi",
-    "ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in",
-    "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat")
-  })
-  
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(
@@ -349,7 +345,6 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$generate, {
-    updateTabsetPanel(session, "inTabset", selected = "rendered_video")
     pdf_path <- download_gs_file(input$gs_url, "pdf")
     video_info_reactive <- pdf_info(pdf = pdf_path)
     
@@ -364,13 +359,13 @@ server <- function(input, output, session) {
         video_info_reactive$keys$Title
       })
     })
-    output$download <- renderUI({
-      downloadButton("download_btn", width = "20px")
+    output$video_btn <- renderUI({
+      column(12,
+             downloadButton("download_btn"),
+             actionButton("send_email", "Email", icon = icon("inbox")),
+             align = "left"
+      )
     })
-    output$send_email <- renderUI({
-      actionButton("email", "Email", icon = icon("inbox"))
-    })
-    
   })
   
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file

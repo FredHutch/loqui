@@ -103,19 +103,43 @@ ui <- fluidPage(
                     value = "about",
                     br(),
                     h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
-                    span(textOutput("about"), 
-                         # https://community.rstudio.com/t/hyperlink-portion-of-text-in-shiny-server-text-block/67328
-                        # Loqui is an open source web application that enables the creation of automated courses using ari,
-                        # an R package for generating videos from text and images. Loqui takes as input a Google Slides URL, 
-                        # extracts the speaker notes from the slides, and converts them into an audio file. Then, it converts the Google Slides to images and ultimately, 
-                        # generates an mp4 video file where each image is presented with its corresponding audio. 
-                        # The functionaliy of Loqui relies on two R packages, namely ari and text2speech, which run in the background. 
-                        # Although  it is certainly possible to go directly to these packages and run their functions for course generation, 
-                        # we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly 
-                        # interface allowing individuals to effortlessly create automated courses without the need for programming skills.
-                         style = "font-family: Arial; color: #1c3b61"),
+                    div( 
+                      p("Loqui is an open source web application that enables the creation of automated courses using ari,
+                        an R package for generating videos from text and images. Loqui takes as input a Google Slides URL,
+                        extracts the speaker notes from the slides, and converts them into an audio file. 
+                        Then, it converts the Google Slides to images and ultimately,
+                        generates an mp4 video file where each image is presented with its corresponding audio."),
+                      
+                      p("The functionality of Loqui relies on two R packages, namely ari and text2speech, which run in the background.
+                        Although  it is certainly possible to go directly to these packages and run their functions for course generation,
+                        we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
+                        interface allowing individuals to effortlessly create automated courses without the need for programming skills."),
+                      
+                      h4("Prerequisites"),
+                      tags$ul(
+                        tags$li("Start from a Google Slides that you wish to generate automated courses from. 
+                           Make sure all slides contain speaker notes. A slide without a speaker note will generate a scratchy radio sound."),
+                        tags$li("Turn link sharing on. Make sure \"General access\" is set to \"Anyone with the link 
+                          (Anyone on the internet with the link can edit)\" 
+                           and Role can be set to either Editor, Viewer, or Commenter."),
+                        tags$li("For more information, read Section 2 \"How to share a Google Slides presentation via a link\" of this",
+                        a(href = "https://www.brightcarbon.com/blog/how-to-share-google-slides-presentation", "blogpost."))
+                      ),
+                      
+                      h4("Instructions"),
+                      tags$ul(
+                        tags$li("Copy and Paste the Google Slides URL into the text box labeled \"Google Slides URL\"."),
+                        tags$li("Choose the Text-to-Speech Service. Please note that as of mid-2023, only the Coqui TTS engine is available 
+                          as a free option.
+                        However, paid services like Amazon Polly, Google Cloud Text-to-Speech, and Microsoft Azure Text-to-Speech will be introduced in the future."),
+                        tags$li("Select the desired voice options for the text-to-speech engine. We have already pre-selected the voice options that sound the most human-like.
+                        However, if you prefer alternative voice options, kindly inform us, and we will accommodate your request. 
+                        If there is sufficient interest, we may consider expanding the list of voice options to provide more choices."),
+                        tags$li("Click the \"Generate\" button to initiate the course generation process.")
+                      ),
+                      style = "font-family: Arial; color: #1c3b61"),
                     actionButton("get_started", "Get Started", icon = icon("rocket"))
-                    ),
+                  ),
                   tabPanel(
                     title = div("Rendered Video", 
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),

@@ -32,6 +32,14 @@ h5 {
 
 /* Action Buttons */
 
+/* Get Started Button */
+#get_started.btn {
+  font-family: Arial;
+  font-weight: bold;
+  color: #F4F4F4;
+  background-color: #FFB500;
+}
+
 /* Help Button */
 #help.btn {
   color: #F4F4F4;

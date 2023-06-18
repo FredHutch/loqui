@@ -57,7 +57,7 @@ ui <- fluidPage(
     span(
       actionButton("help", 
                    label = "Help",
-                   icon = icon("question"),
+                   icon = icon("circle-exclamation"),
                    width = "77px",
                    onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')"),
       actionButton("github",
@@ -85,7 +85,7 @@ ui <- fluidPage(
       # "Microsoft Cognitive Services Text-to-Speech" = "ms"),
       # choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       uiOutput("voice_options"),
-      actionButton("generate", "Generate"),
+      actionButton("generate", "Generate", icon = icon("person-running")),
       br(),
       br(),
       h5("Built with",
@@ -113,7 +113,9 @@ ui <- fluidPage(
                         # Although  it is certainly possible to go directly to these packages and run their functions for course generation, 
                         # we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly 
                         # interface allowing individuals to effortlessly create automated courses without the need for programming skills.
-                         style = "font-family: Arial; color: #1c3b61")),
+                         style = "font-family: Arial; color: #1c3b61"),
+                    actionButton("get_started", "Get Started", icon = icon("rocket"))
+                    ),
                   tabPanel(
                     title = div("Rendered Video", 
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -130,6 +132,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  observeEvent(input$get_started, {
+    updateTabsetPanel(session, "inTabset", selected = "rendered_video")
+  })
+  
+  
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(

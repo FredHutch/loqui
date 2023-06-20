@@ -107,7 +107,6 @@ ui <- fluidPage(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
-                    br(),
                     h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
                     div( 
                       p("Loqui is an open source web application that enables the creation of automated courses using ari,
@@ -144,7 +143,9 @@ ui <- fluidPage(
                         If there is sufficient interest, we may consider expanding the list of voice options to provide more choices."),
                         tags$li("Click the \"Generate\" button to initiate the course generation process.")
                       ),
+                      em("Privacy Policy: The data we collect is limited to the date of usage, duration of the generated video, and the domain associated with the provided email address."),
                       style = "font-family: Arial; color: #1c3b61"),
+                    br(),
                     textInput("email", "Email Address"),
                     actionButton("get_started", "Get Started", icon = icon("rocket"))
                   ),
@@ -153,7 +154,7 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "rendered_video",
                     br(),
-                    uiOutput("video_ui"),
+                    uiOutput("video"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
                     fluidRow(uiOutput("video_btn"))
@@ -373,13 +374,13 @@ server <- function(input, output, session) {
                  })
   })
   
-  output$video_ui <- renderUI({
+  output$video <- renderUI({
+    req(input$generate)
     tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",
-               autoplay = TRUE, 
-               controls = TRUE)
+               autoplay = TRUE)
   })
   
   observeEvent(input$generate, {

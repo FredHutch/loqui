@@ -38,6 +38,7 @@ h5 {
   font-weight: bold;
   color: #F4F4F4;
   background-color: #0A799A;
+  border-radius: 12px;
 }
 
 /* Help Button */
@@ -59,6 +60,7 @@ h5 {
   font-weight: bold;
   color: #F4F4F4;
   background-color: #0A799A;
+  border-radius: 12px;
 }
 /* Download Button */
 #download_btn.btn {
@@ -66,13 +68,15 @@ h5 {
   font-weight: bold;
   color: #F4F4F4;
   background-color: #0A799A;
+  border-radius: 12px;
 }
 /* Email button */
-#email.btn {
+#send_email.btn {
   font-family: Arial;
   font-weight: bold;
   color: #F4F4F4;
   background-color: #FFB500;
+  border-radius: 12px;
 }
 
 /* selectInput Label */

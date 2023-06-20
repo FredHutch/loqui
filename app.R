@@ -26,6 +26,12 @@ select_choice_img <- function(img, text) {
   ))
 }
 
+# Check if email is valid 
+is_valid_email <- function(x) {
+  grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
+}
+
+# Start of Shiny app
 ui <- fluidPage(
   # css
   tags$head(
@@ -128,6 +134,7 @@ ui <- fluidPage(
                       
                       h4("Instructions"),
                       tags$ul(
+                        tags$li("In the provided box below, please provide a valid email address as this app requires it to function properly."),
                         tags$li("Copy and Paste the Google Slides URL into the text box labeled \"Google Slides URL\"."),
                         tags$li("Choose the Text-to-Speech Service. Please note that as of mid-2023, only the Coqui TTS engine is available 
                           as a free option.
@@ -138,6 +145,7 @@ ui <- fluidPage(
                         tags$li("Click the \"Generate\" button to initiate the course generation process.")
                       ),
                       style = "font-family: Arial; color: #1c3b61"),
+                    textInput("email", "Email Address"),
                     actionButton("get_started", "Get Started", icon = icon("rocket"))
                   ),
                   tabPanel(
@@ -145,7 +153,7 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "rendered_video",
                     br(),
-                    uiOutput("video"),
+                    uiOutput("video_ui"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
                     fluidRow(uiOutput("video_btn"))
@@ -365,8 +373,7 @@ server <- function(input, output, session) {
                  })
   })
   
-  output$video <- renderUI({
-    video_path <- attr(res(), "outfile")
+  output$video_ui <- renderUI({
     tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
                height ="480px", 

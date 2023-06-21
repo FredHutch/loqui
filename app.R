@@ -403,7 +403,7 @@ server <- function(input, output, session) {
                width="854px",
                autoplay = TRUE,
                controls = TRUE
-               )
+    )
   })
   # Show video title and buttons when "Generate" is clicked
   observeEvent(input$generate, {
@@ -442,6 +442,12 @@ server <- function(input, output, session) {
   
   # Send email
   observeEvent(input$send_email, {
+    # Dialog Box
+    showModal(modalDialog(
+      title = "Success message:",
+      paste0("Email with the video file has been sent to ", input$email, ".")
+    ))
+    
     # Date/Time
     date_time <- add_readable_time()
     # Compose Email
@@ -479,7 +485,7 @@ server <- function(input, output, session) {
     duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
     sub(pattern, "\\1", duration_raw)
   })
- 
+  
   
 }
 # Code for Deployment to Hutch servers

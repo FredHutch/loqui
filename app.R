@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(ari)
 library(dplyr)
 library(readr)
@@ -33,6 +34,7 @@ is_valid_email <- function(x) {
 
 # Start of Shiny app
 ui <- fluidPage(
+  useShinyjs(),
   # css
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "i/hutch_theme.css")
@@ -165,11 +167,20 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  # Disable buttons when email is not provided
+  observe({
+    toggleState("generate",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
+    toggleState("download_btn",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
+    toggleState("send_email",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
+  })
+  # Switch tabs when "Get Started" is clicked
   observeEvent(input$get_started, {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
   })
-  
-  
+  # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(
@@ -373,16 +384,16 @@ server <- function(input, output, session) {
                    Sys.sleep(1.5)
                  })
   })
-  
+  # Show video when "Generate" is clicked
   output$video <- renderUI({
-    req(input$generate)
+    video_path <- attr(res(), "outfile")
     tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",
                autoplay = TRUE)
   })
-  
+  # Show video title and buttons when "Generate" is clicked
   observeEvent(input$generate, {
     pdf_path <- download_gs_file(input$gs_url, "pdf")
     video_info_reactive <- pdf_info(pdf = pdf_path)
@@ -416,7 +427,7 @@ server <- function(input, output, session) {
     contentType = "video/mp4"
   )
 }
-
+# Code for Deployment to Hutch servers
 addResourcePath("/i", file.path(getwd(), "www"))
 options <- list()
 if (!interactive()) {

@@ -64,6 +64,10 @@ ui <- fluidPage(
   titlePanel(tagList(
     "Loqui",
     span(
+      actionButton("demo", 
+                   label = "Demo",
+                   icon = icon("youtube"),
+                   onclick ="window.open(`https://github.com/FredHutch/loqui#getting-help`, '_blank')"),
       actionButton("help", 
                    label = "Help",
                    icon = icon("circle-exclamation"),
@@ -102,7 +106,8 @@ ui <- fluidPage(
          "by",
          img(src = "i/img/posit.jpeg", height = "30px")
       ),
-      tags$img(src = "i/img/logo.png", width = "90%")
+      tags$img(src = "i/img/logo.png", width = "90%"),
+      h6("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170")
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
@@ -122,7 +127,6 @@ ui <- fluidPage(
                         Although  it is certainly possible to go directly to these packages and run their functions for course generation,
                         we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
                         interface allowing individuals to effortlessly create automated courses without the need for programming skills."),
-                      
                       h4("Prerequisites"),
                       tags$ul(
                         tags$li("Start from a Google Slides that you wish to generate automated courses from. 
@@ -149,6 +153,7 @@ ui <- fluidPage(
                       em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
                       style = "font-family: Arial; color: #1c3b61"),
                     br(),
+                    # textOutput("duration_text"),
                     textInput("email", "Email Address"),
                     actionButton("get_started", "Get Started", icon = icon("rocket"))
                   ),
@@ -389,12 +394,15 @@ server <- function(input, output, session) {
   })
   # Show video when "Generate" is clicked
   output$video <- renderUI({
+    # Hack: Wait until stuff inside res() is processed
     video_path <- attr(res(), "outfile")
     tags$video(src = "i/ari-video.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",
-               autoplay = TRUE)
+               autoplay = TRUE,
+               controls = TRUE
+               )
   })
   # Show video title and buttons when "Generate" is clicked
   observeEvent(input$generate, {
@@ -452,9 +460,25 @@ server <- function(input, output, session) {
       )
   })
   
-  # Duration of mp4 video
-  # system("ffmpeg -i loqui_video_test.mp4 2>&1 | grep \"Duration\"",intern = TRUE) -> test
-  # sub(pattern, "\\1", regmatches(txt,regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", txt)))
+  # res_duration <- eventReactive(res(), {
+  #   pattern <- "Duration: ([0-9:.]+)"
+  #   duration_raw <- system2("ffmpeg", "-i i/ari-video.mp4 2>&1 | grep \"Duration\"", 
+  #                           stdout = TRUE)
+  #   duration_raw <- regmatches(txt,regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
+  #   sub(pattern, "\\1", duration_raw)
+  # })
+  # Duration
+  output$duration_text <- renderText({ 
+    # Hack: Wait until stuff inside res() is processed
+    video_path <- attr(res(), "outfile")
+    
+    pattern <- "Duration: ([0-9:.]+)"
+    duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
+                            stdout = TRUE)
+    duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
+    sub(pattern, "\\1", duration_raw)
+  })
+ 
   
 }
 # Code for Deployment to Hutch servers

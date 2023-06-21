@@ -40,7 +40,12 @@ h5 {
   background-color: #0A799A;
   border-radius: 12px;
 }
-
+/* Demo App Button */
+#demo.btn {
+  color: #F4F4F4;
+  background-color: #FFB500;
+  font-family: Times;
+}
 /* Help Button */
 #help.btn {
   color: #F4F4F4;

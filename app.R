@@ -68,7 +68,7 @@ ui <- fluidPage(
                    label = "Help",
                    icon = icon("circle-exclamation"),
                    width = "77px",
-                   onclick ="window.open(`https://github.com/FredHutch/loqui/issues`, '_blank')"),
+                   onclick ="window.open(`https://github.com/FredHutch/loqui#getting-help`, '_blank')"),
       actionButton("github",
                    label = "Code",
                    icon = icon("github"),
@@ -443,7 +443,7 @@ server <- function(input, output, session) {
     )
     # Send email
     email %>% 
-      add_attachment(file = "i/ari-video.mp4") %>%
+      add_attachment(file = "www/ari-video.mp4") %>%
       smtp_send(
         to = input$email,
         from = "howardbaek@fredhutch.org",

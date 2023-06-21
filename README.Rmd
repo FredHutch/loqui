@@ -20,6 +20,6 @@ The functionality of [Loqui](https://loqui.fredhutch.org/) relies on two R packa
 
 ## Getting Help
 
-If you are confused, please open a [GitHub issue](https://github.com/FredHutch/loqui/issues/new) and let us know what you are struggling with. You can ask us questions such as "Could you provide step-by-step instructions for navigating the app?", "Where exactly is my data stored?" or "Is it possible to access additional voice options?"
+If you are confused, please open a [GitHub issue](https://github.com/FredHutch/loqui/issues/new) and let us know what you are struggling with. You can ask us questions such as "Could you provide step-by-step instructions for navigating the app?", "Where exactly is my data stored?" or "Is it possible to access additional voice options?" We welcome any constructive feedback as well.
 
 

@@ -21,6 +21,7 @@ RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
 
+RUN echo break cache
 
 RUN R -e "install.packages(c('remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula'), repos='https://cran.rstudio.com/')"
 

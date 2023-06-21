@@ -6,7 +6,7 @@ The functionality of Loqui relies on two R packages, namely ari and text2speech,
 
 ## Getting Help
 
-If you are confused, please open an [issue](https://github.com/FredHutch/loqui/issues) and let us know what you are struggling with. You can ask us questions such as "Could you provide step-by-step instructions for navigating the app?", "Where exactly is my data stored?" or "Is it possible to access additional voice options?"
+If you are confused, please open a [GitHub issue](https://github.com/FredHutch/loqui/issues/new) and let us know what you are struggling with. You can ask us questions such as "Could you provide step-by-step instructions for navigating the app?", "Where exactly is my data stored?" or "Is it possible to access additional voice options?"
 
 
 

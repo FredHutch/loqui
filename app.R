@@ -452,6 +452,8 @@ server <- function(input, output, session) {
       )
   })
   
+  # Duration of mp4 video
+  # system("ffmpeg -i loqui_video_test.mp4 2>&1 | grep \"Duration\"",intern = TRUE) -> test
   # sub(pattern, "\\1", regmatches(txt,regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", txt)))
   
 }

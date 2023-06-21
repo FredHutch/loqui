@@ -175,6 +175,8 @@ server <- function(input, output, session) {
                 !is.null(input$email) && input$email != "" && is_valid_email(input$email))
     toggleState("send_email",
                 !is.null(input$email) && input$email != "" && is_valid_email(input$email))
+    toggleState("get_started",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
   })
   # Switch tabs when "Get Started" is clicked
   observeEvent(input$get_started, {

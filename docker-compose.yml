@@ -7,8 +7,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == sc-swarm-05]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.loqui.rule=Host(`loqui.fredhutch.org`)"

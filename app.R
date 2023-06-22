@@ -87,7 +87,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       textInput("gs_url", 
-                label = "Google Slides URL",
+                label = "Google Slides URL (Enable Link Sharing)",
                 value = "",
                 placeholder = "Paste a URL"),
       shinyWidgets::pickerInput("service",

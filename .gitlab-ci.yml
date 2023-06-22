@@ -16,6 +16,8 @@ stages:
 build:
   stage: build
   script:
+    - mkdir -p .secrets
+    - echo $GOOGLE_TOKEN | base64 -d > .secrets/$GOOGLE_TOKEN_NAME
     - docker build -t sc-registry.fredhutch.org/loqui:test .
     - docker push sc-registry.fredhutch.org/loqui:test
 

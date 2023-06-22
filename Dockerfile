@@ -43,5 +43,7 @@ ADD . /app
 
 WORKDIR /app
 
+ADD .secrets /app/.secrets
+
 CMD R -f app.R
 

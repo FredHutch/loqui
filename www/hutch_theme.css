@@ -21,6 +21,10 @@ h5 {
   color: #1c3b61;
   font-weight: bold;
 }
+h6 {
+  font-family: Arial;
+  color: #1c3b61;
+}
 
 /* Video Title */
 #video_info.shiny-html-output {

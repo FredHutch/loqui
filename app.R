@@ -5,6 +5,7 @@ library(dplyr)
 library(readr)
 library(pdftools)
 library(blastula)
+library(googlesheets4)
 
 # Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
@@ -150,11 +151,9 @@ ui <- fluidPage(
                         If there is sufficient interest, we may consider expanding the list of voice options to provide more choices."),
                         tags$li("Click the \"Generate\" button to initiate the course generation process.")
                       ),
-                      em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address.
-                         We don't collect any other information."),
+                      em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
                       style = "font-family: Arial; color: #1c3b61"),
                     br(),
-                    # textOutput("duration_text"),
                     textInput("email", "Email Address"),
                     actionButton("get_started", "Get Started", icon = icon("rocket"))
                   ),
@@ -166,7 +165,8 @@ ui <- fluidPage(
                     uiOutput("video"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
-                    fluidRow(uiOutput("video_btn"))
+                    fluidRow(uiOutput("video_btn")),
+                    fluidRow(uiOutput("video_btn_test"))
                   )
       )
     )
@@ -444,8 +444,8 @@ server <- function(input, output, session) {
   observeEvent(input$send_email, {
     # Dialog Box
     showModal(modalDialog(
-      title = "Success message:",
-      paste0("Email with the video file has been sent to ", input$email, ".")
+      title = span(h4("Success message:"), style = "color: #1c3b61;font-family:Times;font-weight: bold;"),
+      span(paste0("Email with the video file has been sent to ", input$email, "."), style = "color: #1c3b61;font-family:Arial")
     ))
     
     # Date/Time
@@ -466,17 +466,9 @@ server <- function(input, output, session) {
         credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
       )
   })
-  
-  # res_duration <- eventReactive(res(), {
-  #   pattern <- "Duration: ([0-9:.]+)"
-  #   duration_raw <- system2("ffmpeg", "-i i/ari-video.mp4 2>&1 | grep \"Duration\"", 
-  #                           stdout = TRUE)
-  #   duration_raw <- regmatches(txt,regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
-  #   sub(pattern, "\\1", duration_raw)
-  # })
-  # Duration
-  output$duration_text <- renderText({ 
-    # Hack: Wait until stuff inside res() is processed
+  # Duration of rendered video
+  video_duration <- reactive({
+    # Hack: Wait until res() is processed
     video_path <- attr(res(), "outfile")
     
     pattern <- "Duration: ([0-9:.]+)"
@@ -485,8 +477,24 @@ server <- function(input, output, session) {
     duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
     sub(pattern, "\\1", duration_raw)
   })
-  
-  
+  # Google Sheets
+  observeEvent(input$generate, {
+    # Hack: Wait until res() is processed
+    video_path <- attr(res(), "outfile")
+    
+    video_duration <- video_duration()
+    date_time <- add_readable_time()
+    # Authorize
+    gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
+    # Append
+    gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
+    sheet_append(gs_url,
+                 data.frame(date_time = date_time,
+                            video_duration = video_duration, 
+                            email = input$email))
+    
+    
+  })
 }
 # Code for Deployment to Hutch servers
 addResourcePath("/i", file.path(getwd(), "www"))

@@ -162,7 +162,7 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "rendered_video",
                     br(),
-                    uiOutput("video"),
+                    uiOutput("video_ui"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
                     fluidRow(uiOutput("video_btn")),
@@ -314,7 +314,7 @@ server <- function(input, output, session) {
   })
   
   # MP4 Video
-  res <- eventReactive(input$generate, {
+  observeEvent(input$generate, {
     withProgress(message = 'Converting slides to PPTX...', 
                  value = 0, 
                  detail="0%", {
@@ -392,21 +392,17 @@ server <- function(input, output, session) {
                                detail = "100%")
                    Sys.sleep(1.5)
                  })
-  })
-  # Show video when "Generate" is clicked
-  output$video <- renderUI({
-    # Hack: Wait until stuff inside res() is processed
-    video_path <- attr(res(), "outfile")
-    tags$video(src = "i/ari-video.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               autoplay = TRUE,
-               controls = TRUE
-    )
-  })
-  # Show video title and buttons when "Generate" is clicked
-  observeEvent(input$generate, {
+    
+    # Show video when "Generate" is clicked
+    output$video_ui <- renderUI({
+      tags$video(src = "i/ari-video.mp4", 
+                 type = "video/mp4",
+                 height ="480px", 
+                 width="854px",
+                 autoplay = TRUE,
+                 controls = TRUE)
+    })
+    
     pdf_path <- download_gs_file(input$gs_url, "pdf")
     video_info_reactive <- pdf_info(pdf = pdf_path)
     
@@ -428,6 +424,21 @@ server <- function(input, output, session) {
              align = "left"
       )
     })
+    
+    pattern <- "Duration: ([0-9:.]+)"
+    duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
+                            stdout = TRUE)
+    duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
+    video_duration <- sub(pattern, "\\1", duration_raw)
+    date_time <- add_readable_time()
+    # Authorize
+    gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
+    # Append
+    gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
+    sheet_append(gs_url,
+                 data.frame(date_time = date_time,
+                            video_duration = video_duration, 
+                            email = input$email))
   })
   
   # Download rendered video
@@ -465,35 +476,6 @@ server <- function(input, output, session) {
         subject = "Loqui Video",
         credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
       )
-  })
-  # Duration of rendered video
-  video_duration <- reactive({
-    # Hack: Wait until res() is processed
-    video_path <- attr(res(), "outfile")
-    
-    pattern <- "Duration: ([0-9:.]+)"
-    duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
-                            stdout = TRUE)
-    duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
-    sub(pattern, "\\1", duration_raw)
-  })
-  # Google Sheets
-  observeEvent(input$generate, {
-    # Hack: Wait until res() is processed
-    video_path <- attr(res(), "outfile")
-    
-    video_duration <- video_duration()
-    date_time <- add_readable_time()
-    # Authorize
-    gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
-    # Append
-    gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
-    sheet_append(gs_url,
-                 data.frame(date_time = date_time,
-                            video_duration = video_duration, 
-                            email = input$email))
-    
-    
   })
 }
 # Code for Deployment to Hutch servers

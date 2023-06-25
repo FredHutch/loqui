@@ -45,5 +45,7 @@ WORKDIR /app
 
 ADD .secrets /app/.secrets
 
+EXPOSE 3838
+
 CMD R -f app.R
 

@@ -6,6 +6,11 @@ library(readr)
 library(pdftools)
 library(blastula)
 library(googlesheets4)
+library(promises)
+library(future)
+library(ipc)
+plan(multisession)
+options("future.rng.onMisuse" = "ignore")
 
 # Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
@@ -237,6 +242,7 @@ server <- function(input, output, session) {
     }
   })
   
+  # Remove after testing
   # Coqui
   voices_coqui_reactive <- reactive({
     filter(voices_coqui, language == input$coqui_lang)
@@ -244,7 +250,7 @@ server <- function(input, output, session) {
   observeEvent(input$coqui_lang, {
     freezeReactiveValue(input, "coqui_dataset")
     choices <- unique(voices_coqui_reactive()$dataset)
-    updateSelectInput(inputId = "coqui_dataset", choices = choices) 
+    updateSelectInput(inputId = "coqui_dataset", choices = choices)
   })
   voices_coqui_dataset_reactive <- reactive({
     req(input$coqui_dataset)
@@ -253,149 +259,160 @@ server <- function(input, output, session) {
   observeEvent(input$coqui_dataset, {
     freezeReactiveValue(input, "coqui_model_name")
     choices <- unique(voices_coqui_dataset_reactive()$model_name)
-    updateSelectInput(inputId = "coqui_model_name", choices = choices) 
+    updateSelectInput(inputId = "coqui_model_name", choices = choices)
   })
+  # 
+  # # Amazon
+  # voices_amazon_reactive <- reactive({
+  #   filter(voices_amazon, language == input$amazon_lang)
+  # })
+  # observeEvent(input$amazon_lang, {
+  #   freezeReactiveValue(input, "amazon_gender")
+  #   choices <- unique(voices_amazon_reactive()$gender)
+  #   updateSelectInput(inputId = "amazon_gender", choices = choices) 
+  # })
+  # voices_amazon_gender_reactive <- reactive({
+  #   req(input$amazon_gender)
+  #   filter(voices_amazon_reactive(), gender == input$amazon_gender)
+  # })
+  # observeEvent(input$amazon_gender, {
+  #   freezeReactiveValue(input, "amazon_voice")
+  #   choices <- unique(voices_amazon_gender_reactive()$voice)
+  #   updateSelectInput(inputId = "amazon_voice", choices = choices) 
+  # })
+  # 
+  # # Google
+  # voices_google_reactive <- reactive({
+  #   filter(voices_google, language == input$google_lang)
+  # })
+  # observeEvent(input$google_lang, {
+  #   freezeReactiveValue(input, "google_gender")
+  #   choices <- unique(voices_google_reactive()$gender)
+  #   updateSelectInput(inputId = "google_gender", choices = choices) 
+  # })
+  # voices_google_gender_reactive <- reactive({
+  #   req(input$google_gender)
+  #   filter(voices_google_reactive(), gender == input$google_gender)
+  # })
+  # observeEvent(input$google_gender, {
+  #   freezeReactiveValue(input, "google_voice")
+  #   choices <- unique(voices_google_gender_reactive()$voice)
+  #   updateSelectInput(inputId = "google_voice", choices = choices) 
+  # })
+  # 
+  # # Microsoft
+  # voices_ms_reactive <- reactive({
+  #   filter(voices_ms, locale == input$ms_locale)
+  # })
+  # observeEvent(input$ms_locale, {
+  #   freezeReactiveValue(input, "ms_gender")
+  #   choices <- unique(voices_ms_reactive()$gender)
+  #   updateSelectInput(inputId = "ms_gender", choices = choices) 
+  # })
+  # voices_ms_gender_reactive <- reactive({
+  #   req(input$ms_gender)
+  #   filter(voices_ms_reactive(), gender == input$ms_gender)
+  # })
+  # observeEvent(input$ms_gender, {
+  #   freezeReactiveValue(input, "ms_voice")
+  #   choices <- unique(voices_ms_gender_reactive()$name)
+  #   updateSelectInput(inputId = "ms_voice", choices = choices) 
+  # })
+  # 
   
-  # Amazon
-  voices_amazon_reactive <- reactive({
-    filter(voices_amazon, language == input$amazon_lang)
-  })
-  observeEvent(input$amazon_lang, {
-    freezeReactiveValue(input, "amazon_gender")
-    choices <- unique(voices_amazon_reactive()$gender)
-    updateSelectInput(inputId = "amazon_gender", choices = choices) 
-  })
-  voices_amazon_gender_reactive <- reactive({
-    req(input$amazon_gender)
-    filter(voices_amazon_reactive(), gender == input$amazon_gender)
-  })
-  observeEvent(input$amazon_gender, {
-    freezeReactiveValue(input, "amazon_voice")
-    choices <- unique(voices_amazon_gender_reactive()$voice)
-    updateSelectInput(inputId = "amazon_voice", choices = choices) 
-  })
-  
-  # Google
-  voices_google_reactive <- reactive({
-    filter(voices_google, language == input$google_lang)
-  })
-  observeEvent(input$google_lang, {
-    freezeReactiveValue(input, "google_gender")
-    choices <- unique(voices_google_reactive()$gender)
-    updateSelectInput(inputId = "google_gender", choices = choices) 
-  })
-  voices_google_gender_reactive <- reactive({
-    req(input$google_gender)
-    filter(voices_google_reactive(), gender == input$google_gender)
-  })
-  observeEvent(input$google_gender, {
-    freezeReactiveValue(input, "google_voice")
-    choices <- unique(voices_google_gender_reactive()$voice)
-    updateSelectInput(inputId = "google_voice", choices = choices) 
-  })
-  
-  # Microsoft
-  voices_ms_reactive <- reactive({
-    filter(voices_ms, locale == input$ms_locale)
-  })
-  observeEvent(input$ms_locale, {
-    freezeReactiveValue(input, "ms_gender")
-    choices <- unique(voices_ms_reactive()$gender)
-    updateSelectInput(inputId = "ms_gender", choices = choices) 
-  })
-  voices_ms_gender_reactive <- reactive({
-    req(input$ms_gender)
-    filter(voices_ms_reactive(), gender == input$ms_gender)
-  })
-  observeEvent(input$ms_gender, {
-    freezeReactiveValue(input, "ms_voice")
-    choices <- unique(voices_ms_gender_reactive()$name)
-    updateSelectInput(inputId = "ms_voice", choices = choices) 
-  })
-  
-  # MP4 Video
+  # Main function
   observeEvent(input$generate, {
-    withProgress(message = 'Converting slides to PPTX...', 
-                 value = 0, 
-                 detail="0%", {
-                   # text
-                   Sys.sleep(0.5)
-                   # download as pptx
-                   pptx_path <- download_gs_file(input$gs_url, out_type = "pptx")
-                   incProgress(1/5, 
-                               message = "Converting slides to PPTX...Done!", 
-                               detail = "20%")
-                   Sys.sleep(0.5)
-                   incProgress(0, 
-                               message = "Extracting speaker notes...", 
-                               detail = "20%")
-                   # extract speaker notes
-                   pptx_notes_vector <- pptx_notes(pptx_path)
-                   incProgress(1/5, 
-                               message = "Extracting speaker notes...Done!", 
-                               detail = "40%")
-                   Sys.sleep(0.5)
-                   incProgress(0, 
-                               message = "Converting slides to PDF...", 
-                               detail = "40%")
-                   # download as pdf
-                   pdf_path <- download_gs_file(input$gs_url, out_type = "pdf")
-                   incProgress(1/5, 
-                               message = "Converting slides to PDF...Done!", 
-                               detail = "60%")
-                   Sys.sleep(0.5)
-                   incProgress(0, 
-                               message = "Converting PDF to PNG...", 
-                               detail = "60%")
-                   # convert to png
-                   image_path <- pdf_to_pngs(pdf_path)
-                   incProgress(1/5, 
-                               message = "Converting PDF to PNG...Done!", 
-                               detail = "80%")
-                   Sys.sleep(0.5)
-                   incProgress(0, 
-                               message = "Rendering video...", 
-                               detail = "80%")
-                   Sys.sleep(1)
-                   incProgress(0, 
-                               message = "Rendering takes a few minutes!", 
-                               detail = "80%")
-                   Sys.sleep(3)
-                   incProgress(0, 
-                               message = "Rendering video...", 
-                               detail = "80%")
-                   # create video
-                   switch(input$service,
-                          coqui = ari_spin(images = image_path, 
-                                           paragraphs = pptx_notes_vector,
-                                           service = "coqui",
-                                           model_name = input$coqui_model_name,
-                                           vocoder_name = input$coqui_vocoder_name,
-                                           output = "www/ari-video.mp4"),
-                          amazon = ari_spin(images = image_path, 
-                                            paragraphs = pptx_notes_vector,
-                                            service = "amazon",
-                                            voice = input$amazon_voice,
-                                            output = "www/ari-video.mp4"),
-                          google = ari_spin(images = image_path, 
-                                            paragraphs = pptx_notes_vector,
-                                            service = "google",
-                                            voice = input$google_voice,
-                                            output = "www/ari-video.mp4"),
-                          ms = ari_spin(images = image_path, 
-                                        paragraphs = pptx_notes_vector,
-                                        service = "microsoft",
-                                        voice = input$ms_voice,
-                                        output = "www/ari-video.mp4"))
-                   incProgress(1/5, 
-                               message = "Rendered video as mp4", 
-                               detail = "100%")
-                   Sys.sleep(1.5)
-                 })
+    
+    # Create a progress bar
+    progress <- AsyncProgress$new(message = "Downloading slides as PPTX...", detail = "0%")
+    
+    service <- input$service
+    coqui_model_name <- input$coqui_model_name
+    coqui_vocoder_name <- input$coqui_vocoder_name
+    gs_url <- input$gs_url
+    user_email <- input$email
+    
+    res <- reactiveVal()
+    future_promise({
+      pptx_path <- download_gs_file(gs_url, out_type = "pptx")
+      progress$inc(amount = 1/5, message = "Downloading slides as PPTX...Done!", detail = "20%")
+      Sys.sleep(0.5)
+      
+      # extract speaker notes
+      progress$inc(amount = 0, message = "Extracting speaker notes...", detail = "20%")
+      Sys.sleep(0.5)
+      pptx_notes_vector <- pptx_notes(pptx_path)
+      progress$inc(amount = 1/5, message = "Extracting speaker notes...Done!", detail = "40%")
+      Sys.sleep(0.5)
+      
+      # download as pdf
+      progress$inc(amount = 0, message = "Downloading slides as PDF...", detail = "40%")
+      Sys.sleep(0.5)
+      pdf_path <- download_gs_file(gs_url, out_type = "pdf")
+      progress$inc(amount = 1/5, message = "Downloading slides as PDF...Done!", detail = "60%")
+      Sys.sleep(0.5)
+      
+      # convert to png
+      progress$inc(amount = 0, message = "Converting PDF to PNG...", detail = "60%")
+      Sys.sleep(0.5)
+      image_path <- pdf_to_pngs(pdf_path)
+      progress$inc(amount = 1/5, message = "Converting PDF to PNG...Done!", detail = "80%")
+      Sys.sleep(0.5)
+      
+      progress$inc(amount = 0/5, message = "Rendering video...", detail = "80%")
+      Sys.sleep(1)
+      progress$inc(amount = 0/5, message = "Rendering takes a few minutes!", detail = "80%")
+      Sys.sleep(3)
+      progress$inc(amount = 0/5, message = "Rendering video...", detail = "80%")
+      # create video
+      switch(service,
+             coqui = ari_spin(images = image_path, 
+                              paragraphs = pptx_notes_vector,
+                              service = "coqui",
+                              model_name = coqui_model_name,
+                              vocoder_name = coqui_vocoder_name,
+                              output = "www/ari-video.mp4"),
+             amazon = ari_spin(images = image_path, 
+                               paragraphs = pptx_notes_vector,
+                               service = "amazon",
+                               voice = input$amazon_voice,
+                               output = "www/ari-video.mp4"),
+             google = ari_spin(images = image_path, 
+                               paragraphs = pptx_notes_vector,
+                               service = "google",
+                               voice = input$google_voice,
+                               output = "www/ari-video.mp4"),
+             ms = ari_spin(images = image_path, 
+                           paragraphs = pptx_notes_vector,
+                           service = "microsoft",
+                           voice = input$ms_voice,
+                           output = "www/ari-video.mp4"))
+      progress$inc(amount = 1/5, message = "Rendering video...Done!", detail = "100%")
+      Sys.sleep(1.5)
+      progress$close()
+      
+      duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
+                              stdout = TRUE)
+      duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
+      video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
+      date_time <- add_readable_time()
+      # Authorize
+      gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
+      # Append
+      gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
+      sheet_append(gs_url,
+                   data.frame(date_time = date_time,
+                              video_duration = video_duration, 
+                              email = user_email))
+      
+      # Final output
+      "i/ari-video.mp4"
+    }) %...>% res
     
     # Show video when "Generate" is clicked
     output$video_ui <- renderUI({
-      tags$video(src = "i/ari-video.mp4", 
+      res <- res()
+      tags$video(src = res, 
                  type = "video/mp4",
                  height ="480px", 
                  width="854px",
@@ -417,6 +434,7 @@ server <- function(input, output, session) {
         video_info_reactive$keys$Title
       })
     })
+    
     output$video_btn <- renderUI({
       column(12,
              downloadButton("download_btn"),
@@ -424,21 +442,6 @@ server <- function(input, output, session) {
              align = "left"
       )
     })
-    
-    pattern <- "Duration: ([0-9:.]+)"
-    duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
-                            stdout = TRUE)
-    duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
-    video_duration <- sub(pattern, "\\1", duration_raw)
-    date_time <- add_readable_time()
-    # Authorize
-    gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
-    # Append
-    gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
-    sheet_append(gs_url,
-                 data.frame(date_time = date_time,
-                            video_duration = video_duration, 
-                            email = input$email))
   })
   
   # Download rendered video

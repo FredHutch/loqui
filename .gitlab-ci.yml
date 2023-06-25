@@ -28,7 +28,7 @@ test:
       alias: loqui
   script:
     
-    - sleep 60 && curl -i  http://loqui:3838  |head -1|grep -q "200 OK"
+    - sleep 60 && curl -sI  http://loqui:3838  |head -1|grep -q "200 OK"
 
 deploy:
   stage: deploy

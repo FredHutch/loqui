@@ -117,6 +117,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
+                  # TODO: includeMarkdown()
                   tabPanel(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -194,6 +195,16 @@ server <- function(input, output, session) {
   observeEvent(input$get_started, {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
   })
+  
+  video_name <- eventReactive(input$get_started, {
+    # create unique name for video file
+    current_time <- Sys.time()
+    current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
+    unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
+    
+    unique_file_name
+  })
+  
   # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
@@ -322,15 +333,15 @@ server <- function(input, output, session) {
   
   # Main function
   observeEvent(input$generate, {
-    
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Downloading slides as PPTX...", detail = "0%")
-    
+    # Inputs used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
     coqui_vocoder_name <- input$coqui_vocoder_name
     gs_url <- input$gs_url
     user_email <- input$email
+    video_name <- video_name()
     
     res <- reactiveVal()
     future_promise({
@@ -364,35 +375,36 @@ server <- function(input, output, session) {
       progress$inc(amount = 0/5, message = "Rendering takes a few minutes!", detail = "80%")
       Sys.sleep(3)
       progress$inc(amount = 0/5, message = "Rendering video...", detail = "80%")
-      # create video
+      
       switch(service,
              coqui = ari_spin(images = image_path, 
                               paragraphs = pptx_notes_vector,
                               service = "coqui",
                               model_name = coqui_model_name,
                               vocoder_name = coqui_vocoder_name,
-                              output = "www/ari-video.mp4"),
+                              output = video_name),
              amazon = ari_spin(images = image_path, 
                                paragraphs = pptx_notes_vector,
                                service = "amazon",
                                voice = input$amazon_voice,
-                               output = "www/ari-video.mp4"),
+                               output = video_name),
              google = ari_spin(images = image_path, 
                                paragraphs = pptx_notes_vector,
                                service = "google",
                                voice = input$google_voice,
-                               output = "www/ari-video.mp4"),
+                               output = video_name),
              ms = ari_spin(images = image_path, 
                            paragraphs = pptx_notes_vector,
                            service = "microsoft",
                            voice = input$ms_voice,
-                           output = "www/ari-video.mp4"))
+                           output = video_name)
+      )
       progress$inc(amount = 1/5, message = "Rendering video...Done!", detail = "100%")
       Sys.sleep(1.5)
       progress$close()
       
-      duration_raw <- system2("ffmpeg", "-i www/ari-video.mp4 2>&1 | grep \"Duration\"", 
-                              stdout = TRUE)
+      ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")
+      duration_raw <- system2("ffmpeg", ffmpeg_cmd, stdout = TRUE)
       duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
       video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
       date_time <- add_readable_time()
@@ -406,7 +418,8 @@ server <- function(input, output, session) {
                               email = user_email))
       
       # Final output
-      "i/ari-video.mp4"
+      # Replace "www" with "i"
+      gsub("www", "i", video_name)
     }) %...>% res
     
     # Show video when "Generate" is clicked
@@ -449,7 +462,7 @@ server <- function(input, output, session) {
   output$download_btn <- downloadHandler(
     filename = "loqui_video.mp4",
     content = function(file) {
-      file.copy("www/ari-video.mp4", file)
+      file.copy(video_name(), file)
     },
     contentType = "video/mp4"
   )
@@ -472,7 +485,7 @@ server <- function(input, output, session) {
     )
     # Send email
     email %>% 
-      add_attachment(file = "www/ari-video.mp4") %>%
+      add_attachment(file = video_name()) %>%
       smtp_send(
         to = input$email,
         from = "howardbaek@fredhutch.org",

@@ -9,7 +9,7 @@ library(googlesheets4)
 library(promises)
 library(future)
 library(ipc)
-plan(multisession, workers=5)
+plan(multisession, workers = 25)
 options("future.rng.onMisuse" = "ignore")
 
 # Voice Data

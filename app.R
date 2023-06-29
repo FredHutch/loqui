@@ -93,7 +93,11 @@ ui <- fluidPage(
   hr(),
   sidebarLayout(
     sidebarPanel(
-      textInput("email", "Email Address"),
+      textInput("email", "Email Address (where video should be sent)"),
+      div(
+        checkboxInput("auto_email", "Once video finishes rendering, send to email automatically", FALSE),
+        style = "color: #1c3b61;"
+      ),
       textInput("gs_url", 
                 label = "Google Slides URL (Enable Link Sharing)",
                 value = "",
@@ -148,7 +152,7 @@ ui <- fluidPage(
                       
                       h4("Instructions"),
                       tags$ul(
-                        tags$li("In the provided box below, please provide a valid email address as this app requires it to function properly."),
+                        tags$li("In the left sidebar, please provide a valid email address as this app requires it to function properly."),
                         tags$li("Copy and Paste the Google Slides URL into the text box labeled \"Google Slides URL\"."),
                         tags$li("Choose the Text-to-Speech Service. Please note that as of mid-2023, only the Coqui TTS engine is available 
                           as a free option.
@@ -344,7 +348,7 @@ server <- function(input, output, session) {
   # Main function
   observeEvent(input$generate, {
     # Create a progress bar
-    progress <- AsyncProgress$new(message = "Downloading slides as PPTX...", detail = "0%")
+    progress <- AsyncProgress$new(message = "Processing takes a few minutes...")
     # Inputs used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
@@ -356,35 +360,19 @@ server <- function(input, output, session) {
     res <- reactiveVal()
     future_promise({
       pptx_path <- download_gs_file(gs_url, out_type = "pptx")
-      progress$inc(amount = 1/5, message = "Downloading slides as PPTX...Done!", detail = "20%")
-      Sys.sleep(0.5)
+      progress$inc(amount = 1/5, message = "Processing...")
       
       # extract speaker notes
-      progress$inc(amount = 0, message = "Extracting speaker notes...", detail = "20%")
-      Sys.sleep(0.5)
       pptx_notes_vector <- pptx_notes(pptx_path)
-      progress$inc(amount = 1/5, message = "Extracting speaker notes...Done!", detail = "40%")
-      Sys.sleep(0.5)
+      progress$inc(amount = 1/5, message = "Processing...")
       
       # download as pdf
-      progress$inc(amount = 0, message = "Downloading slides as PDF...", detail = "40%")
-      Sys.sleep(0.5)
       pdf_path <- download_gs_file(gs_url, out_type = "pdf")
-      progress$inc(amount = 1/5, message = "Downloading slides as PDF...Done!", detail = "60%")
-      Sys.sleep(0.5)
+      progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
-      progress$inc(amount = 0, message = "Converting PDF to PNG...", detail = "60%")
-      Sys.sleep(0.5)
       image_path <- pdf_to_pngs(pdf_path)
-      progress$inc(amount = 1/5, message = "Converting PDF to PNG...Done!", detail = "80%")
-      Sys.sleep(0.5)
-      
-      progress$inc(amount = 0/5, message = "Rendering video...", detail = "80%")
-      Sys.sleep(1)
-      progress$inc(amount = 0/5, message = "Rendering takes a few minutes!", detail = "80%")
-      Sys.sleep(3)
-      progress$inc(amount = 0/5, message = "Rendering video...", detail = "80%")
+      progress$inc(amount = 1/5, message = "Processing...")
       
       switch(service,
              coqui = ari_spin(images = image_path, 
@@ -409,8 +397,8 @@ server <- function(input, output, session) {
                            voice = input$ms_voice,
                            output = video_name)
       )
-      progress$inc(amount = 1/5, message = "Rendering video...Done!", detail = "100%")
-      Sys.sleep(1.5)
+      progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
+      Sys.sleep(2)
       progress$close()
       
       ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")

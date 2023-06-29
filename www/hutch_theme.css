@@ -90,5 +90,6 @@ h6 {
 
 /* selectInput Label */
 .control-label {
+  font-family: Arial;
   color: #1c3b61;
 }

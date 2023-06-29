@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyjs)
+library(shinyFeedback)
 library(ari)
 library(dplyr)
 library(readr)
@@ -42,6 +43,7 @@ is_valid_email <- function(x) {
 # Start of Shiny app
 ui <- fluidPage(
   useShinyjs(),
+  useShinyFeedback(),
   # css
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "i/hutch_theme.css")
@@ -91,6 +93,7 @@ ui <- fluidPage(
   hr(),
   sidebarLayout(
     sidebarPanel(
+      textInput("email", "Email Address"),
       textInput("gs_url", 
                 label = "Google Slides URL (Enable Link Sharing)",
                 value = "",
@@ -112,12 +115,10 @@ ui <- fluidPage(
          "by",
          img(src = "i/img/posit.jpeg", height = "30px")
       ),
-      tags$img(src = "i/img/logo.png", width = "90%"),
-      h6("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170")
+      tags$img(src = "i/img/logo.png", width = "90%")
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
-                  # TODO: includeMarkdown()
                   tabPanel(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -158,10 +159,9 @@ ui <- fluidPage(
                         tags$li("Click the \"Generate\" button to initiate the course generation process.")
                       ),
                       em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
+                      h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61"),
                     br(),
-                    textInput("email", "Email Address"),
-                    actionButton("get_started", "Get Started", icon = icon("rocket"))
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -188,15 +188,25 @@ server <- function(input, output, session) {
                 !is.null(input$email) && input$email != "" && is_valid_email(input$email))
     toggleState("send_email",
                 !is.null(input$email) && input$email != "" && is_valid_email(input$email))
-    toggleState("get_started",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
   })
+  # Display feedback message when email address is not valid
+  observeEvent(input$email, {
+    if (input$email != "" & !is_valid_email(input$email)) {
+      showFeedbackWarning(
+        inputId = "email",
+        text = "Invalid email. Please try again."
+      )  
+    } else {
+      hideFeedback("email")
+    }
+  })
+  
   # Switch tabs when "Get Started" is clicked
-  observeEvent(input$get_started, {
+  observeEvent(input$generate, {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
   })
   
-  video_name <- eventReactive(input$get_started, {
+  video_name <- eventReactive(input$generate, {
     # create unique name for video file
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")

@@ -363,7 +363,7 @@ server <- function(input, output, session) {
     
     res <- reactiveVal()
     future_promise({
-      progress$inc(amount = 0, message = "Processing takes a few minutes (1)...")
+      progress$inc(amount = 0, message = "Processing takes a few minutes...")
       pptx_path <- download_gs_file(gs_url, out_type = "pptx")
       progress$inc(amount = 1/5, message = "Processing...")
       
@@ -372,16 +372,18 @@ server <- function(input, output, session) {
       progress$inc(amount = 1/5, message = "Processing...")
       
       # download as pdf
-      progress$inc(amount = 0, message = "Processing takes a few minutes (2)...")
+      progress$inc(amount = 0, message = "Processing takes a few minutes...")
       pdf_path <- download_gs_file(gs_url, out_type = "pdf")
       progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
-      progress$inc(amount = 0, message = "Processing takes a few minutes (3)...")
+      progress$inc(amount = 0, message = "Processing takes a few minutes...")
       image_path <- pdf_to_pngs(pdf_path)
       progress$inc(amount = 1/5, message = "Processing...")
       
-      progress$inc(amount = 0, message = "This is going to take a few minutes...")
+      progress$inc(amount = 0, message = "This step requires a few minutes...")
+      Sys.sleep(2)
+      progress$inc(amount = 0, message = "Processing...")
       switch(service,
              coqui = ari_spin(images = image_path, 
                               paragraphs = pptx_notes_vector,

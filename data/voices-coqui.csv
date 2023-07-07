@@ -1,5 +1,6 @@
 type,language,dataset,model_name,service
 tts_models,multilingual,multi-dataset,your_tts,coqui
+tts_models,multilingual,multi-dataset,bark,coqui
 tts_models,bg,cv,vits,coqui
 tts_models,cs,cv,vits,coqui
 tts_models,da,cv,vits,coqui
@@ -21,6 +22,8 @@ tts_models,en,vctk,fast_pitch,coqui
 tts_models,en,sam,tacotron-DDC,coqui
 tts_models,en,blizzard2013,capacitron-t2-c50,coqui
 tts_models,en,blizzard2013,capacitron-t2-c150_v2,coqui
+tts_models,en,multi-dataset,tortoise-v2,coqui
+tts_models,en,jenny,jenny,coqui
 tts_models,es,mai,tacotron2-DDC,coqui
 tts_models,es,css10,vits,coqui
 tts_models,fr,mai,tacotron2-DDC,coqui

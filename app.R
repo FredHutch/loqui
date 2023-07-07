@@ -17,7 +17,9 @@ options("future.rng.onMisuse" = "ignore")
 # Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
   # Remove after testing
-  filter(language == "en", dataset == "ljspeech", model_name == "tacotron2-DDC_ph")
+  filter(language == "en", 
+         dataset %in% c("ljspeech", "jenny"),
+         model_name %in% c("tacotron2-DDC_ph", "jenny"))
 voices_amazon <- read_csv("data/voices-amazon.csv", show_col_types = FALSE)
 voices_google <- read_csv("data/voices-google.csv", show_col_types = FALSE) %>% 
   filter(!is.na(language))
@@ -230,7 +232,7 @@ server <- function(input, output, session) {
         selectInput("coqui_dataset", "Select Dataset", choices = NULL),
         selectInput("coqui_model_name", "Select Model Name", choices = NULL),
         selectInput("coqui_vocoder_name", "Select Vocoder Name",
-                    choices = "ljspeech/univnet")
+                    choices = c("ljspeech/univnet", "jenny"))
         # Remove after testing
         # c("libri-tts/wavegrad",
         #   "libri-tts/fullband-melgan",
@@ -269,7 +271,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Remove after testing
+  
   # Coqui
   voices_coqui_reactive <- reactive({
     filter(voices_coqui, language == input$coqui_lang)
@@ -288,7 +290,8 @@ server <- function(input, output, session) {
     choices <- unique(voices_coqui_dataset_reactive()$model_name)
     updateSelectInput(inputId = "coqui_model_name", choices = choices)
   })
-  # 
+  
+  # Remove after testing
   # # Amazon
   # voices_amazon_reactive <- reactive({
   #   filter(voices_amazon, language == input$amazon_lang)

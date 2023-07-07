@@ -1,4 +1,5 @@
-# Create dataset of voices list (06/09/2023)
+# Create dataset of voices list (07/07/2023)
+# Update: Include jenny model from Coqui TTS
 library(dplyr)
 library(readr)
 library(text2speech)

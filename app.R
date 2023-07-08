@@ -78,7 +78,7 @@ ui <- fluidPage(
       actionButton("demo", 
                    label = "Demo",
                    icon = icon("youtube"),
-                   onclick ="window.open(`https://www.youtube.com/watch?v=lEbMGDIufM4`, '_blank')"),
+                   onclick ="window.open(`https://youtu.be/wWo1ul_Vyfo`, '_blank')"),
       actionButton("help", 
                    label = "Help",
                    icon = icon("circle-exclamation"),

@@ -232,7 +232,7 @@ server <- function(input, output, session) {
         selectInput("coqui_dataset", "Select Dataset", choices = NULL),
         selectInput("coqui_model_name", "Select Model Name", choices = NULL),
         selectInput("coqui_vocoder_name", "Select Vocoder Name",
-                    choices = c("ljspeech/univnet", "jenny"))
+                    choices = NULL)
         # Remove after testing
         # c("libri-tts/wavegrad",
         #   "libri-tts/fullband-melgan",
@@ -289,6 +289,15 @@ server <- function(input, output, session) {
     freezeReactiveValue(input, "coqui_model_name")
     choices <- unique(voices_coqui_dataset_reactive()$model_name)
     updateSelectInput(inputId = "coqui_model_name", choices = choices)
+  })
+  voices_coqui_model_reactive <- reactive({
+    req(input$coqui_model_name)
+    filter(voices_coqui_dataset_reactive(), dataset == input$coqui_model_name)
+  })
+  observeEvent(input$coqui_model_name, {
+    freezeReactiveValue(input, "coqui_vocoder_name")
+    choices <- ifelse(input$coqui_model_name == "jenny", "jenny", "ljspeech/univnet")
+    updateSelectInput(inputId = "coqui_vocoder_name", choices = choices)
   })
   
   # Remove after testing

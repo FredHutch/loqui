@@ -442,7 +442,7 @@ We also invite you to visit our website at [https://hutchdatascience.org](https:
 to explore a wealth of valuable resources and stay updated on the latest news from
 the Fred Hutch Data Science Lab (DaSL). 
 
-Feel free to reach out to us with any questions by replying to this email or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
+Feel free to reach out to us with any questions at howardbaek@fredhutch.org or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
             
 Howard Baek
@@ -550,7 +550,7 @@ We also invite you to visit our website at [https://hutchdatascience.org](https:
 to explore a wealth of valuable resources and stay updated on the latest news from
 the Fred Hutch Data Science Lab (DaSL). 
 
-Feel free to reach out to us with any questions by replying to this email or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
+Feel free to reach out to us with any questions at howardbaek@fredhutch.org or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
             
 Howard Baek

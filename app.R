@@ -256,8 +256,6 @@ server <- function(input, output, session) {
                controls = TRUE)
   })
   
-  
-  
   # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {

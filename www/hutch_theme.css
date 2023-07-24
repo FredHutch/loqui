@@ -62,7 +62,6 @@ h6 {
   background-color: #0A799A;
   font-family: Times;
 }
-
 /* Generate Button */
 #generate.btn {
   font-family: Arial;
@@ -71,6 +70,7 @@ h6 {
   background-color: #0A799A;
   border-radius: 12px;
 }
+
 /* Download Button */
 #download_btn.btn {
   font-family: Arial;

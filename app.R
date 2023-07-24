@@ -169,7 +169,15 @@ ui <- fluidPage(
                       em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61"),
+                    actionButton("show_example", "Show Example", icon = icon("magnifying-glass"),
+                                 style = "font-family: Arial; font-weight: bold; color: #F4F4F4; background-color: #0A799A; border-radius: 12px;")
+                  ),
+                  tabPanel(
+                    title = div("Examples", 
+                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"), 
+                    value = "loqui_example",
                     br(),
+                    uiOutput("loqui_example_ui")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -214,6 +222,11 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
   })
   
+  # Switch tabs when "Show Example" is clicked
+  observeEvent(input$show_example, {
+    updateTabsetPanel(session, "inTabset", selected = "loqui_example")
+  })
+  
   video_name <- eventReactive(input$generate, {
     # create unique name for video file
     current_time <- Sys.time()
@@ -221,6 +234,16 @@ server <- function(input, output, session) {
     unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
     
     unique_file_name
+  })
+  
+  # Show video when "Generate" is clicked
+  output$loqui_example_ui <- renderUI({
+    tags$video(src = "i/video/emerse.mp4", 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               autoplay = TRUE,
+               controls = TRUE)
   })
   
   # Voice Options

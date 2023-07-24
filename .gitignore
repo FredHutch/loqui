@@ -3,8 +3,7 @@
 .RData
 .Ruserdata
 .DS_Store
-www/**/*.mp4
-loqui_demo.mp4
+www/*.mp4
 test-code.R
 test-app.R
 .secrets

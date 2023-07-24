@@ -177,7 +177,11 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"), 
                     value = "loqui_example",
                     br(),
-                    uiOutput("loqui_example_ui")
+                    h3("Demo of Loqui"),
+                    uiOutput("loqui_example_ui_1"),
+                    br(),
+                    h3("EMERSE: Electronic Medical Record Search Engine"),
+                    uiOutput("loqui_example_ui_2")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -236,15 +240,23 @@ server <- function(input, output, session) {
     unique_file_name
   })
   
-  # Show video when "Generate" is clicked
-  output$loqui_example_ui <- renderUI({
+  # Show videos when "Show Examples" is clicked
+  output$loqui_example_ui_1 <- renderUI({
+    tags$video(src = "i/video/loqui_demo.mp4", 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               controls = TRUE)
+  })
+  output$loqui_example_ui_2 <- renderUI({
     tags$video(src = "i/video/emerse.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",
-               autoplay = TRUE,
                controls = TRUE)
   })
+  
+  
   
   # Voice Options
   output$voice_options <- renderUI({

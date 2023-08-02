@@ -177,11 +177,14 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"), 
                     value = "loqui_example",
                     br(),
-                    h3("Demo of Loqui"),
+                    h3("DeepPhe: Natural Language Processing Tool"),
                     uiOutput("loqui_example_ui_1"),
                     br(),
                     h3("EMERSE: Electronic Medical Record Search Engine"),
-                    uiOutput("loqui_example_ui_2")
+                    uiOutput("loqui_example_ui_2"),
+                    br(),
+                    h3("pVACtools: Cancer Immunotherapy Suite"),
+                    uiOutput("loqui_example_ui_3")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -242,7 +245,7 @@ server <- function(input, output, session) {
   
   # Show videos when "Show Examples" is clicked
   output$loqui_example_ui_1 <- renderUI({
-    tags$video(src = "i/video/loqui_demo.mp4", 
+    tags$video(src = "i/video/deepphe.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",
@@ -250,6 +253,13 @@ server <- function(input, output, session) {
   })
   output$loqui_example_ui_2 <- renderUI({
     tags$video(src = "i/video/emerse.mp4", 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               controls = TRUE)
+  })
+  output$loqui_example_ui_3 <- renderUI({
+    tags$video(src = "i/video/pVACtools.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="854px",

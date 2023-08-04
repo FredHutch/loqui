@@ -270,12 +270,14 @@ server <- function(input, output, session) {
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(
-        selectInput("coqui_lang", "Select Language", 
-                    choices = unique(voices_coqui$language)),
-        selectInput("coqui_dataset", "Select Dataset", choices = NULL),
-        selectInput("coqui_model_name", "Select Model Name", choices = NULL),
-        selectInput("coqui_vocoder_name", "Select Vocoder Name",
-                    choices = NULL)
+        selectInput("coqui_model_name", "Select Model Name (Voice)", 
+                    choices = unique(voices_coqui$model_name))
+        # TODO: Refactor after ITCR PI Meeting 08/04/2023
+        # selectInput("coqui_lang", "Select Language", choices = unique(voices_coqui$language)),
+        # selectInput("coqui_dataset", "Select Dataset", choices = NULL),
+        # selectInput("coqui_model_name", "Select Model Name", choices = NULL),
+        # selectInput("coqui_vocoder_name", "Select Vocoder Name",
+        #             choices = NULL)
         # Remove after testing
         # c("libri-tts/wavegrad",
         #   "libri-tts/fullband-melgan",
@@ -314,34 +316,34 @@ server <- function(input, output, session) {
     }
   })
   
-  
-  # Coqui
-  voices_coqui_reactive <- reactive({
-    filter(voices_coqui, language == input$coqui_lang)
-  })
-  observeEvent(input$coqui_lang, {
-    freezeReactiveValue(input, "coqui_dataset")
-    choices <- unique(voices_coqui_reactive()$dataset)
-    updateSelectInput(inputId = "coqui_dataset", choices = choices)
-  })
-  voices_coqui_dataset_reactive <- reactive({
-    req(input$coqui_dataset)
-    filter(voices_coqui_reactive(), dataset == input$coqui_dataset)
-  })
-  observeEvent(input$coqui_dataset, {
-    freezeReactiveValue(input, "coqui_model_name")
-    choices <- unique(voices_coqui_dataset_reactive()$model_name)
-    updateSelectInput(inputId = "coqui_model_name", choices = choices)
-  })
-  voices_coqui_model_reactive <- reactive({
-    req(input$coqui_model_name)
-    filter(voices_coqui_dataset_reactive(), dataset == input$coqui_model_name)
-  })
-  observeEvent(input$coqui_model_name, {
-    freezeReactiveValue(input, "coqui_vocoder_name")
-    choices <- ifelse(input$coqui_model_name == "jenny", "jenny", "ljspeech/univnet")
-    updateSelectInput(inputId = "coqui_vocoder_name", choices = choices)
-  })
+  # TODO: Refactor after ITCR PI Meeting 08/04/2023
+  # Coqui 
+  # voices_coqui_reactive <- reactive({
+  #   filter(voices_coqui, language == input$coqui_lang)
+  # })
+  # observeEvent(input$coqui_lang, {
+  #   freezeReactiveValue(input, "coqui_dataset")
+  #   choices <- unique(voices_coqui_reactive()$dataset)
+  #   updateSelectInput(inputId = "coqui_dataset", choices = choices)
+  # })
+  # voices_coqui_dataset_reactive <- reactive({
+  #   req(input$coqui_dataset)
+  #   filter(voices_coqui_reactive(), dataset == input$coqui_dataset)
+  # })
+  # observeEvent(input$coqui_dataset, {
+  #   freezeReactiveValue(input, "coqui_model_name")
+  #   choices <- unique(voices_coqui_dataset_reactive()$model_name)
+  #   updateSelectInput(inputId = "coqui_model_name", choices = choices)
+  # })
+  # voices_coqui_model_reactive <- reactive({
+  #   req(input$coqui_model_name)
+  #   filter(voices_coqui_dataset_reactive(), dataset == input$coqui_model_name)
+  # })
+  # observeEvent(input$coqui_model_name, {
+  #   freezeReactiveValue(input, "coqui_vocoder_name")
+  #   choices <- ifelse(input$coqui_model_name == "jenny", "jenny", "ljspeech/univnet")
+  #   updateSelectInput(inputId = "coqui_vocoder_name", choices = choices)
+  # })
   
   # Remove after testing
   # # Amazon
@@ -409,7 +411,9 @@ server <- function(input, output, session) {
     # Inputs used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
-    coqui_vocoder_name <- input$coqui_vocoder_name
+    coqui_vocoder_name <- ifelse(coqui_model_name == "jenny", 
+                                 "jenny", 
+                                 "ljspeech/univnet")
     gs_url <- input$gs_url
     user_email <- input$email
     auto_email <- input$auto_email
@@ -438,7 +442,7 @@ server <- function(input, output, session) {
       
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
-      progress$inc(amount = 0, message = "Processing...")
+      progress$inc(amount = 0, message = "Processing takes a few minutes...")
       switch(service,
              coqui = ari_spin(images = image_path, 
                               paragraphs = pptx_notes_vector,
@@ -463,7 +467,7 @@ server <- function(input, output, session) {
                            output = video_name)
       )
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
-      Sys.sleep(2)
+      Sys.sleep(3)
       progress$close()
       
       # Email

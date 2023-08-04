@@ -75,10 +75,10 @@ ui <- fluidPage(
   titlePanel(tagList(
     "Loqui",
     span(
-      actionButton("demo", 
+      actionButton("demo",
                    label = "Demo",
                    icon = icon("youtube"),
-                   onclick ="window.open(`https://youtu.be/wWo1ul_Vyfo`, '_blank')"),
+                   onclick ="window.open(`https://youtu.be/G7JyvCAxg40`, '_blank')"),
       actionButton("help", 
                    label = "Help",
                    icon = icon("circle-exclamation"),

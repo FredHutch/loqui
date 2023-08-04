@@ -131,9 +131,9 @@ ui <- fluidPage(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
-                    h3("Introducing Loqui: A Shiny app for Creating Automated Courses with ari"),
+                    h3("Introducing Loqui: A Shiny app for Creating Automated Videos with ari"),
                     div( 
-                      p("Loqui is an open source web application that enables the creation of automated courses using ari,
+                      p("Loqui is an open source web application that enables the creation of automated videos using ari,
                         an R package for generating videos from text and images. Loqui takes as input a Google Slides URL,
                         extracts the speaker notes from the slides, and converts them into an audio file. 
                         Then, it converts the Google Slides to images and ultimately,
@@ -142,10 +142,10 @@ ui <- fluidPage(
                       p("The functionality of Loqui relies on two R packages, namely ari and text2speech, which run in the background.
                         Although  it is certainly possible to go directly to these packages and run their functions for course generation,
                         we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
-                        interface allowing individuals to effortlessly create automated courses without the need for programming skills."),
+                        interface allowing individuals to effortlessly create automated videos without the need for programming skills."),
                       h4("Prerequisites"),
                       tags$ul(
-                        tags$li("Start from a Google Slides that you wish to generate automated courses from. 
+                        tags$li("Start from a Google Slides that you wish to generate automated videos from. 
                            Make sure all slides contain speaker notes. A slide without a speaker note will generate a scratchy radio sound."),
                         tags$li("Turn link sharing on. Make sure \"General access\" is set to \"Anyone with the link 
                           (Anyone on the internet with the link can edit)\" 

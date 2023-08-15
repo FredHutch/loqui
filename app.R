@@ -143,29 +143,7 @@ ui <- fluidPage(
                         Although  it is certainly possible to go directly to these packages and run their functions for course generation,
                         we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
                         interface allowing individuals to effortlessly create automated videos without the need for programming skills."),
-                      h4("Prerequisites"),
-                      tags$ul(
-                        tags$li("Start from a Google Slides that you wish to generate automated videos from. 
-                           Make sure all slides contain speaker notes. A slide without a speaker note will generate a scratchy radio sound."),
-                        tags$li("Turn link sharing on. Make sure \"General access\" is set to \"Anyone with the link 
-                          (Anyone on the internet with the link can edit)\" 
-                           and Role can be set to either Editor, Viewer, or Commenter."),
-                        tags$li("For more information, read Section 2 \"How to share a Google Slides presentation via a link\" of this",
-                                a(href = "https://www.brightcarbon.com/blog/how-to-share-google-slides-presentation", "blogpost."))
-                      ),
-                      
-                      h4("Instructions"),
-                      tags$ul(
-                        tags$li("In the left sidebar, please provide a valid email address as this app requires it to function properly."),
-                        tags$li("Copy and Paste the Google Slides URL into the text box labeled \"Google Slides URL\"."),
-                        tags$li("Choose the Text-to-Speech Service. Please note that as of mid-2023, only the Coqui TTS engine is available 
-                          as a free option.
-                        However, paid services like Amazon Polly, Google Cloud Text-to-Speech, and Microsoft Azure Text-to-Speech will be introduced in the future."),
-                        tags$li("Select the desired voice options for the text-to-speech engine. We have already pre-selected the voice options that sound the most human-like.
-                        However, if you prefer alternative voice options, kindly inform us, and we will accommodate your request. 
-                        If there is sufficient interest, we may consider expanding the list of voice options to provide more choices."),
-                        tags$li("Click the \"Generate\" button to initiate the course generation process.")
-                      ),
+                      uiOutput("loqui_demo"),
                       em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61"),
@@ -241,6 +219,15 @@ server <- function(input, output, session) {
     unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
     
     unique_file_name
+  })
+  
+  # Show videos when "Show Examples" is clicked
+  output$loqui_demo <- renderUI({
+    tags$video(src = "i/video/loqui.mp4", 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               controls = TRUE)
   })
   
   # Show videos when "Show Examples" is clicked

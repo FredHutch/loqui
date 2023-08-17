@@ -6,7 +6,6 @@ h2 {
   font-weight: bold;
 }
 
-
 /* Text inside 'About this Shiny app' tab */
 h3 {
   font-family: Times;
@@ -24,6 +23,11 @@ h5 {
 h6 {
   font-family: Arial;
   color: #1c3b61;
+}
+
+
+p {
+  width: 780px;
 }
 
 /* Video Title */

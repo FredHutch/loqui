@@ -133,6 +133,7 @@ ui <- fluidPage(
                     value = "about",
                     h3("Introducing Loqui: A Shiny app for Creating Automated Videos with ari"),
                     div( 
+                      # TODO: Make sure text is not too wide.
                       p("Loqui is an open source web application that enables the creation of automated videos using ari,
                         an R package for generating videos from text and images. Loqui takes as input a Google Slides URL,
                         extracts the speaker notes from the slides, and converts them into an audio file. 

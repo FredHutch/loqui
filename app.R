@@ -131,7 +131,7 @@ ui <- fluidPage(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
-                    h3("Introducing Loqui: A Shiny app for Creating Automated Videos with ari"),
+                    h3("Introducing Loqui: A Shiny app for Creating Automated Videos"),
                     div( 
                       # TODO: Make sure text is not too wide.
                       p("Loqui is an open source web application that enables the creation of automated videos using ari,

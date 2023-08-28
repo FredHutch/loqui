@@ -1,7 +1,9 @@
+# Packages
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinyFeedback)
+library(shinyFiles)
 library(ari)
 library(dplyr)
 library(readr)
@@ -11,8 +13,9 @@ library(googlesheets4)
 library(promises)
 library(future)
 library(ipc)
-plan(multisession, workers = 25)
+# Options
 options("future.rng.onMisuse" = "ignore")
+plan(multisession, workers = 25)
 
 # Voice Data
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
@@ -20,17 +23,19 @@ voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>%
   filter(language == "en", 
          dataset %in% c("ljspeech", "jenny"),
          model_name %in% c("tacotron2-DDC_ph", "jenny"))
-voices_amazon <- read_csv("data/voices-amazon.csv", show_col_types = FALSE)
-voices_google <- read_csv("data/voices-google.csv", show_col_types = FALSE) %>% 
-  filter(!is.na(language))
-voices_ms <- read_csv("data/voices-ms.csv", show_col_types = FALSE)
-names(voices_ms) <- tolower(names(voices_ms))
+# Don't need Paid Voices for now
+# voices_amazon <- read_csv("data/voices-amazon.csv", show_col_types = FALSE)
+# voices_google <- read_csv("data/voices-google.csv", show_col_types = FALSE) %>% 
+#   filter(!is.na(language))
+# voices_ms <- read_csv("data/voices-ms.csv", show_col_types = FALSE)
+# names(voices_ms) <- tolower(names(voices_ms))
 
 # images for pickerInput stored in www/i/ from the root app directory
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
+# Select image 
 select_choice_img <- function(img, text) {
   shiny::HTML(paste(
     tags$img(src=img, width=25, height=22),
@@ -102,10 +107,11 @@ ui <- fluidPage(
                      status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
-      textInput("gs_url", 
-                label = "Google Slides URL (Enable Link Sharing)",
-                value = "",
-                placeholder = "Paste a URL"),
+      radioButtons("presentation_tool", "Presentation Tool",
+                   c("Google Slides" = "google_slides",
+                     "Powerpoint" = "powerpoint")
+      ),
+      uiOutput("user_input"),
       shinyWidgets::pickerInput("service",
                                 label = "Text-to-Speech Service", 
                                 choices = c("Coqui TTS" = "coqui"),
@@ -144,7 +150,7 @@ ui <- fluidPage(
                         we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
                         interface allowing individuals to effortlessly create automated videos without the need for programming skills."),
                       uiOutput("loqui_demo"),
-                      em("Privacy Policy: The data we collect is limited to the date and time of usage, duration of the generated video, and the provided email address."),
+                      em("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61"),
                     actionButton("show_example", "Show Example", icon = icon("magnifying-glass"),
@@ -200,6 +206,26 @@ server <- function(input, output, session) {
     } else {
       hideFeedback("email")
     }
+  })
+  
+  # Select Google Slides or PowerPoint
+  output$user_input <- renderUI({
+    if (input$presentation_tool == "google_slides") {
+      textInput("gs_url", 
+                label = "Google Slides URL (Enable Link Sharing)",
+                value = "",
+                placeholder = "Paste a URL")
+    } else { 
+      # PowerPoint
+      # shinyFiles::shinyFilesButton("pptx_file", "File select", 
+      #                              "Upload PowerPoint Presentation", 
+      #                              FALSE)
+      fileInput("pptx_file", NULL, accept = ".pptx")
+    }
+  })
+  
+  observeEvent(input$upload, {
+    file.rename(from = input$upload$datapath, to = "www/slides.pptx")
   })
   
   # Switch tabs when "Get Started" is clicked
@@ -391,6 +417,8 @@ server <- function(input, output, session) {
   # })
   # 
   
+  # shinyFiles::shinyFileChoose(input, "pptx_file", session = session,
+  #                             roots=c(wd='.'))
   # Main function
   observeEvent(input$generate, {
     # Create a progress bar
@@ -401,7 +429,12 @@ server <- function(input, output, session) {
     coqui_vocoder_name <- ifelse(coqui_model_name == "jenny", 
                                  "jenny", 
                                  "ljspeech/univnet")
+    which_tool <- input$presentation_tool
     gs_url <- input$gs_url
+    pptx_upload_datapath <- input$pptx_file$datapath
+    print(pptx_upload_datapath)
+    # inFile <- shinyFiles::parseFilePaths(roots=c(wd='.'), input$pptx_file)
+    # pptx_upload_datapath <- inFile$datapath
     user_email <- input$email
     auto_email <- input$auto_email
     video_name <- video_name()
@@ -409,49 +442,61 @@ server <- function(input, output, session) {
     
     res <- reactiveVal()
     future_promise({
-      progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      pptx_path <- download_gs_file(gs_url, out_type = "pptx")
-      progress$inc(amount = 1/5, message = "Processing...")
-      
       # extract speaker notes
-      pptx_notes_vector <- pptx_notes(pptx_path)
+      progress$inc(amount = 0, message = "Processing takes a few minutes...")
+      # download google slides as pptx
+      if(which_tool == "google_slides") {
+        pptx_path <- ari::download_gs_file(gs_url, out_type = "pptx")
+      } else {
+        # or fetch path to pptx on server
+        pptx_path <- pptx_upload_datapath
+      }
+      progress$inc(amount = 1/5, message = "Processing...")
+      pptx_notes_vector <- ari::pptx_notes(pptx_path)
       progress$inc(amount = 1/5, message = "Processing...")
       
       # download as pdf
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      pdf_path <- download_gs_file(gs_url, out_type = "pdf")
+      # download google slides as pdf
+      if (which_tool == "google_slides") {
+        pdf_path <- ari::download_gs_file(gs_url, out_type = "pdf")
+      } else {
+        # convert pptx slides to pdf
+        pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+      }
       progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      image_path <- pdf_to_pngs(pdf_path)
+      image_path <- ari::pdf_to_pngs(pdf_path)
       progress$inc(amount = 1/5, message = "Processing...")
-      
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
+      
+      # combine images and notes with ari_spin()
       switch(service,
-             coqui = ari_spin(images = image_path, 
-                              paragraphs = pptx_notes_vector,
-                              service = "coqui",
-                              model_name = coqui_model_name,
-                              vocoder_name = coqui_vocoder_name,
-                              output = video_name),
-             amazon = ari_spin(images = image_path, 
-                               paragraphs = pptx_notes_vector,
-                               service = "amazon",
-                               voice = input$amazon_voice,
-                               output = video_name),
-             google = ari_spin(images = image_path, 
-                               paragraphs = pptx_notes_vector,
-                               service = "google",
-                               voice = input$google_voice,
-                               output = video_name),
-             ms = ari_spin(images = image_path, 
-                           paragraphs = pptx_notes_vector,
-                           service = "microsoft",
-                           voice = input$ms_voice,
-                           output = video_name)
+             coqui = ari::ari_spin(images = image_path, 
+                                   paragraphs = pptx_notes_vector,
+                                   service = "coqui",
+                                   model_name = coqui_model_name,
+                                   vocoder_name = coqui_vocoder_name,
+                                   output = video_name),
+             amazon = ari::ari_spin(images = image_path, 
+                                    paragraphs = pptx_notes_vector,
+                                    service = "amazon",
+                                    voice = input$amazon_voice,
+                                    output = video_name),
+             google = ari::ari_spin(images = image_path, 
+                                    paragraphs = pptx_notes_vector,
+                                    service = "google",
+                                    voice = input$google_voice,
+                                    output = video_name),
+             ms = ari::ari_spin(images = image_path, 
+                                paragraphs = pptx_notes_vector,
+                                service = "microsoft",
+                                voice = input$ms_voice,
+                                output = video_name)
       )
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
       Sys.sleep(3)
@@ -523,29 +568,37 @@ Howard Baek
                  autoplay = TRUE,
                  controls = TRUE)
     })
-    # Extract video info
-    pdf_path <- download_gs_file(input$gs_url, "pdf")
-    video_info_reactive <- pdf_info(pdf = pdf_path)
+    # 
+    # # Extract video info
+    # if (which_tool == "google_slides") {
+    #   pdf_path <- ari::download_gs_file(input$gs_url, "pdf")
+    # } else {
+    #   # convert pptx slides to pdf
+    #   pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+    # }
+    
+    # video_info_reactive <- pdf_info(pdf = pdf_path)
+    
     # Show video title
-    output$video_info <- renderUI({
-      span(textOutput("video_title"), 
-           style = "font-weight: bold; 
-                    font-family: Arial; 
-                    font-size: 25px; 
-                    color: #1c3b61")
-      
-      output$video_title <- renderText({
-        video_info_reactive$keys$Title
-      })
-    })
-    # Show video buttons (download/send email)
-    output$video_btn <- renderUI({
-      column(12,
-             downloadButton("download_btn"),
-             actionButton("send_email", "Email", icon = icon("inbox")),
-             align = "left"
-      )
-    })
+    # output$video_info <- renderUI({
+    #   span(textOutput("video_title"), 
+    #        style = "font-weight: bold; 
+    #                 font-family: Arial; 
+    #                 font-size: 25px; 
+    #                 color: #1c3b61")
+    #   
+    #   output$video_title <- renderText({
+    #     video_info_reactive$keys$Title
+    #   })
+    # })
+    # # Show video buttons (download/send email)
+    # output$video_btn <- renderUI({
+    #   column(12,
+    #          downloadButton("download_btn"),
+    #          actionButton("send_email", "Email", icon = icon("inbox")),
+    #          align = "left"
+    #   )
+    # })
   })
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file

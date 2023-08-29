@@ -3,7 +3,7 @@ library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinyFeedback)
-library(shinyFiles)
+# library(shinyFiles)
 library(ari)
 library(dplyr)
 library(readr)
@@ -220,13 +220,14 @@ server <- function(input, output, session) {
       # shinyFiles::shinyFilesButton("pptx_file", "File select", 
       #                              "Upload PowerPoint Presentation", 
       #                              FALSE)
-      fileInput("pptx_file", NULL, accept = ".pptx")
+      fileInput("pptx_file", NULL, accept = ".pptx",
+                buttonLabel = "Upload .pptx")
     }
   })
   
-  observeEvent(input$upload, {
-    file.rename(from = input$upload$datapath, to = "www/slides.pptx")
-  })
+  # observeEvent(input$upload, {
+  #   file.rename(from = input$upload$datapath, to = "www/slides.pptx")
+  # })
   
   # Switch tabs when "Get Started" is clicked
   observeEvent(input$generate, {
@@ -568,37 +569,35 @@ Howard Baek
                  autoplay = TRUE,
                  controls = TRUE)
     })
-    # 
-    # # Extract video info
-    # if (which_tool == "google_slides") {
-    #   pdf_path <- ari::download_gs_file(input$gs_url, "pdf")
-    # } else {
-    #   # convert pptx slides to pdf
-    #   pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
-    # }
     
-    # video_info_reactive <- pdf_info(pdf = pdf_path)
+    # Extract video info
+    if (which_tool == "google_slides") {
+      pdf_path <- ari::download_gs_file(gs_url, "pdf")
+    } else {
+      # convert pptx slides to pdf
+      pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+    }
+    pdf_info <- pdftools::pdf_info(pdf = pdf_path)
     
     # Show video title
-    # output$video_info <- renderUI({
-    #   span(textOutput("video_title"), 
-    #        style = "font-weight: bold; 
-    #                 font-family: Arial; 
-    #                 font-size: 25px; 
-    #                 color: #1c3b61")
-    #   
-    #   output$video_title <- renderText({
-    #     video_info_reactive$keys$Title
-    #   })
-    # })
-    # # Show video buttons (download/send email)
-    # output$video_btn <- renderUI({
-    #   column(12,
-    #          downloadButton("download_btn"),
-    #          actionButton("send_email", "Email", icon = icon("inbox")),
-    #          align = "left"
-    #   )
-    # })
+    output$video_info <- renderUI({
+      span(textOutput("video_title"),
+           style = "font-weight: bold;
+                    font-family: Arial;
+                    font-size: 25px;
+                    color: #1c3b61")
+      output$video_title <- renderText({
+        pdf_info$keys$Title
+      })
+    })
+    # Show video buttons (download/send email)
+    output$video_btn <- renderUI({
+      column(12,
+             downloadButton("download_btn"),
+             actionButton("send_email", "Email", icon = icon("inbox")),
+             align = "left"
+      )
+    })
   })
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file

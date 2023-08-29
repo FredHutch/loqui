@@ -21,8 +21,8 @@ RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
 
-RUN echo break cache
 
+RUN echo break cache
 RUN R -e "install.packages(c('shinyFiles', 'gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
 
 # TODO change this when PR is merged and ari is updated in CRAN:
@@ -48,4 +48,3 @@ ADD .secrets /app/.secrets
 EXPOSE 3838
 
 CMD R -f app.R
-

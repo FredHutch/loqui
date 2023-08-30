@@ -177,8 +177,7 @@ ui <- fluidPage(
                     uiOutput("video_ui"),
                     br(),
                     fluidRow(column(11, htmlOutput("video_info"))),
-                    fluidRow(uiOutput("video_btn")),
-                    fluidRow(uiOutput("video_btn_test"))
+                    fluidRow(uiOutput("video_btn"))
                   )
       )
     )
@@ -432,7 +431,6 @@ server <- function(input, output, session) {
     which_tool <- input$presentation_tool
     gs_url <- input$gs_url
     pptx_upload_datapath <- input$pptx_file$datapath
-    print(pptx_upload_datapath)
     # inFile <- shinyFiles::parseFilePaths(roots=c(wd='.'), input$pptx_file)
     # pptx_upload_datapath <- inFile$datapath
     user_email <- input$email

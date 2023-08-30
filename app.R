@@ -422,9 +422,6 @@ server <- function(input, output, session) {
   # Main function
   observeEvent(input$generate, {
     # Create a progress bar
-    if (Sys.info()['sysname'] == "Linux") {
-      Sys.setenv(LD_LIBRARY_PATH="/usr/lib/libreoffice/program//")
-    }
     progress <- AsyncProgress$new(message = "Processing...")
     # Inputs used inside future_promise()
     service <- input$service
@@ -465,6 +462,9 @@ server <- function(input, output, session) {
         pdf_path <- ari::download_gs_file(gs_url, out_type = "pdf")
       } else {
         # convert pptx slides to pdf
+        if (Sys.info()['sysname'] == "Linux") {
+          Sys.setenv(LD_LIBRARY_PATH="")
+        }
         pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
       }
       progress$inc(amount = 1/5, message = "Processing...")
@@ -577,6 +577,9 @@ Howard Baek
       pdf_path <- ari::download_gs_file(gs_url, "pdf")
     } else {
       # convert pptx slides to pdf
+      if (Sys.info()['sysname'] == "Linux") {
+        Sys.setenv(LD_LIBRARY_PATH="")
+      }
       pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
     }
     pdf_info <- pdftools::pdf_info(pdf = pdf_path)

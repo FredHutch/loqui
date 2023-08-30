@@ -20,7 +20,7 @@ RUN make altinstall
 RUN python3.9 -m ensurepip
 
 RUN python3.9 -m pip install TTS
-
+RUN python3.9 -m pip install pandas==2.0.3
 
 RUN echo break cache
 RUN R -e "install.packages(c('shinyFiles', 'gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"

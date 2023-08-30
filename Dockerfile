@@ -3,7 +3,7 @@ FROM fredhutch/r-shiny-base:4.2.0
 RUN apt-get --allow-releaseinfo-change update -y
 
 RUN apt-get install -y libpoppler-cpp-dev ffmpeg
-RUN apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev libreoffice
+RUN apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev libreoffice default-jdk
 
 RUN curl -LO https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
 RUN tar -xf Python-3.9.1.tgz
@@ -46,5 +46,7 @@ WORKDIR /app
 ADD .secrets /app/.secrets
 
 EXPOSE 3838
+
+ENV LD_LIBRARY_PATH=/usr/lib/libreoffice/program
 
 CMD R -f app.R

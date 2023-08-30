@@ -422,6 +422,9 @@ server <- function(input, output, session) {
   # Main function
   observeEvent(input$generate, {
     # Create a progress bar
+    if (Sys.info()['sysname'] == "Linux") {
+      Sys.setenv(LD_LIBRARY_PATH="/usr/lib/libreoffice/program//")
+    }
     progress <- AsyncProgress$new(message = "Processing...")
     # Inputs used inside future_promise()
     service <- input$service

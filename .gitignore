@@ -4,6 +4,7 @@
 .Ruserdata
 .DS_Store
 www/*.mp4
+www/*.srt
 test-code.R
 test-app.R
 .secrets

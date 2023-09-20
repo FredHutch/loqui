@@ -1,4 +1,4 @@
-# Packages
+# Packages ----
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -12,11 +12,13 @@ library(googlesheets4)
 library(promises)
 library(future)
 library(ipc)
-# Options
+library(gsplyr)
+library(ptplyr)
+# Options ----
 options("future.rng.onMisuse" = "ignore")
 plan(multisession, workers = 25)
 
-# Voice Data
+# Voice Data ----
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
   # Remove after testing
   filter(language == "en", 
@@ -34,7 +36,7 @@ imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpe
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
-# Select image 
+# Select image ----
 select_choice_img <- function(img, text) {
   shiny::HTML(paste(
     tags$img(src=img, width=25, height=22),
@@ -47,7 +49,7 @@ is_valid_email <- function(x) {
   grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
 }
 
-# Start of Shiny app
+# Start of Shiny app ----
 ui <- fluidPage(
   useShinyjs(),
   useShinyFeedback(),
@@ -416,9 +418,8 @@ server <- function(input, output, session) {
   # })
   # 
   
-  # shinyFiles::shinyFileChoose(input, "pptx_file", session = session,
-  #                             roots=c(wd='.'))
-  # Main function
+  
+  # Generate video ----
   observeEvent(input$generate, {
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Processing...")
@@ -444,32 +445,32 @@ server <- function(input, output, session) {
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       # download google slides as pptx
       if(which_tool == "google_slides") {
-        pptx_path <- ari::download_gs_file(gs_url, out_type = "pptx")
+        pptx_path <- gsplyr::download(gs_url, type = "pptx")
       } else {
         # or fetch path to pptx on server
         pptx_path <- pptx_upload_datapath
       }
       progress$inc(amount = 1/5, message = "Processing...")
-      pptx_notes_vector <- ari::pptx_notes(pptx_path)
+      pptx_notes_vector <- ptplyr::extract_notes(pptx_path)
       progress$inc(amount = 1/5, message = "Processing...")
       
       # download as pdf
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       # download google slides as pdf
       if (which_tool == "google_slides") {
-        pdf_path <- ari::download_gs_file(gs_url, out_type = "pdf")
+        pdf_path <- gsplyr::download(gs_url, type = "pdf")
       } else {
         # convert pptx slides to pdf
         if (Sys.info()['sysname'] == "Linux") {
           Sys.setenv(LD_LIBRARY_PATH="")
         }
-        pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+        pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
       progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      image_path <- ari::pdf_to_pngs(pdf_path)
+      image_path <- ptplyr::convert_pdf_png(pdf_path)
       progress$inc(amount = 1/5, message = "Processing...")
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
@@ -479,10 +480,11 @@ server <- function(input, output, session) {
       switch(service,
              coqui = ari::ari_spin(images = image_path, 
                                    paragraphs = pptx_notes_vector,
-                                   service = "coqui",
-                                   model_name = coqui_model_name,
-                                   vocoder_name = coqui_vocoder_name,
-                                   output = video_name),
+                                   output = video_name,
+                                   tts_engine_args = list(
+                                     service = "coqui",
+                                     model_name = coqui_model_name,
+                                     vocoder_name = coqui_vocoder_name)),
              amazon = ari::ari_spin(images = image_path, 
                                     paragraphs = pptx_notes_vector,
                                     service = "amazon",
@@ -572,7 +574,7 @@ Howard Baek
     
     # Extract video info
     if (which_tool == "google_slides") {
-      pdf_path <- ari::download_gs_file(gs_url, "pdf")
+      pdf_path <- gsplyr::download(gs_url, "pdf")
     } else {
       # convert pptx slides to pdf
       if (Sys.info()['sysname'] == "Linux") {

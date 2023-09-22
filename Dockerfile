@@ -23,7 +23,7 @@ RUN python3.9 -m pip install TTS
 RUN python3.9 -m pip install pandas==2.0.3
 
 RUN echo break cache
-RUN R -e "install.packages(c('shinyFiles', 'gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
+RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
 
 # TODO change this when PR is merged and ari is updated in CRAN:
 RUN R -e 'remotes::install_github("jhudsl/text2speech", upgrade = "never")'
@@ -33,7 +33,7 @@ RUN R -e 'remotes::install_github("fhdsl/ptplyr", upgrade = "never")'
 
 # make sure all packages are installed
 # because R does not fail when there's an error installing a package.
-RUN R -e 'if(!all(commandArgs(TRUE) %in% installed.packages()[,"Package"])) q("no", 1)' --args remotes pdftools tidyr text2speech shinyWidgets aws.polly ari shinyjs blastula googlesheets4 gargle promises future ipc shinyFeedback shinyFiles gsplyr ptplyr 
+RUN R -e 'if(!all(commandArgs(TRUE) %in% installed.packages()[,"Package"])) q("no", 1)' --args remotes pdftools tidyr text2speech shinyWidgets aws.polly ari shinyjs blastula googlesheets4 gargle promises future ipc shinyFeedback gsplyr ptplyr 
 
 RUN mkdir -p /private/
 

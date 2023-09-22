@@ -216,18 +216,10 @@ server <- function(input, output, session) {
                 value = "",
                 placeholder = "Paste a URL")
     } else { 
-      # PowerPoint
-      # shinyFiles::shinyFilesButton("pptx_file", "File select", 
-      #                              "Upload PowerPoint Presentation", 
-      #                              FALSE)
       fileInput("pptx_file", NULL, accept = ".pptx",
                 buttonLabel = "Upload .pptx")
     }
   })
-  
-  # observeEvent(input$upload, {
-  #   file.rename(from = input$upload$datapath, to = "www/slides.pptx")
-  # })
   
   # Switch tabs when "Get Started" is clicked
   observeEvent(input$generate, {
@@ -239,8 +231,8 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "inTabset", selected = "loqui_example")
   })
   
+  # Create unique name for video file
   video_name <- eventReactive(input$generate, {
-    # create unique name for video file
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
     unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
@@ -285,7 +277,8 @@ server <- function(input, output, session) {
     if (input$service == "coqui") {
       tagList(
         selectInput("coqui_model_name", "Select Model Name (Voice)", 
-                    choices = unique(voices_coqui$model_name))
+                    choices = unique(voices_coqui$model_name),
+                    selected = "jenny")
         # TODO: Refactor after ITCR PI Meeting 08/04/2023
         # selectInput("coqui_lang", "Select Language", choices = unique(voices_coqui$language)),
         # selectInput("coqui_dataset", "Select Dataset", choices = NULL),
@@ -432,8 +425,6 @@ server <- function(input, output, session) {
     which_tool <- input$presentation_tool
     gs_url <- input$gs_url
     pptx_upload_datapath <- input$pptx_file$datapath
-    # inFile <- shinyFiles::parseFilePaths(roots=c(wd='.'), input$pptx_file)
-    # pptx_upload_datapath <- inFile$datapath
     user_email <- input$email
     auto_email <- input$auto_email
     video_name <- video_name()

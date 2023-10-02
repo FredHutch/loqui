@@ -141,8 +141,8 @@ ui <- fluidPage(
                     h3("Introducing Loqui: A Shiny app for Creating Automated Videos"),
                     div( 
                       p("Loqui is an open source web application that enables the creation of automated videos using ari,
-                        an R package for generating videos from text and images. Loqui takes as input a Google Slides URL,
-                        extracts the speaker notes from the slides, and converts them into an audio file. 
+                        an R package for generating videos from text and images. Loqui takes as input either a Google Slides URL
+                        or a Microsoft PowerPoint file, extracts the speaker notes from the slides, and converts them into an audio file. 
                         Then, it converts the Google Slides to images and ultimately,
                         generates an mp4 video file where each image is presented with its corresponding audio."),
                       

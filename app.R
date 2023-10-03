@@ -105,7 +105,7 @@ ui <- fluidPage(
       textInput("email", "Email Address (where video should be sent)"),
       div(
         prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
-                     status = "success", fill = TRUE),
+                     value = TRUE, status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
       radioButtons("presentation_tool", "Presentation Tool",

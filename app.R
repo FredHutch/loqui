@@ -104,7 +104,7 @@ ui <- fluidPage(
     sidebarPanel(
       textInput("email", "Email Address (where video should be sent)"),
       div(
-        prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
+        shinyWidgets::prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
                      value = TRUE, status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
@@ -187,24 +187,41 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  # Disable buttons when email is not provided
+  # Disable buttons when email is not provided and Google Slides URL (if provided) is not accessible
   observe({
-    toggleState("generate",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
-    toggleState("download_btn",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
-    toggleState("send_email",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email))
+    shinyjs::toggleState("generate",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email) && 
+                !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+    shinyjs::toggleState("download_btn",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
+                !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+    shinyjs::toggleState("send_email",
+                !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
+                  !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
   })
+  
   # Display feedback message when email address is not valid
   observeEvent(input$email, {
     if (input$email != "" & !is_valid_email(input$email)) {
-      showFeedbackWarning(
+      shinyFeedback::showFeedbackWarning(
         inputId = "email",
         text = "Invalid email. Please try again."
       )  
     } else {
-      hideFeedback("email")
+      shinyFeedback::hideFeedback("email")
+    }
+  })
+  
+  # Display feedback message when Google Slides link isn't accessible
+  observeEvent(input$gs_url, {
+    res <- try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE)
+    if(input$gs_url != "" & inherits(res, "try-error")) {
+      shinyFeedback::showFeedbackWarning(
+        inputId = "gs_url",
+        text = "Please set General access of the slides to 'Anyone with the link'."
+      )  
+    } else {
+      shinyFeedback::hideFeedback("gs_url")
     }
   })
   
@@ -213,8 +230,7 @@ server <- function(input, output, session) {
     if (input$presentation_tool == "google_slides") {
       textInput("gs_url", 
                 label = "Google Slides URL (Enable Link Sharing)",
-                value = "",
-                placeholder = "Paste a URL")
+                placeholder = "Paste a Google Slides URL")
     } else { 
       fileInput("pptx_file", NULL, accept = ".pptx",
                 buttonLabel = "Upload .pptx")
@@ -649,6 +665,7 @@ Howard Baek
       )
   })
 }
+
 # Code for Deployment to Hutch servers
 addResourcePath("/i", file.path(getwd(), "www"))
 options <- list()

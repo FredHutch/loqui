@@ -1,6 +1,5 @@
 FROM fredhutch/r-shiny-base:4.2.0
 
-RUN echo hello
 RUN apt-get --allow-releaseinfo-change update -y
 
 RUN apt-get install -y libpoppler-cpp-dev ffmpeg

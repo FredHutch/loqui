@@ -45,14 +45,18 @@ ADD . /app
 
 WORKDIR /app
 
-RUN echo hello
+RUN echo hello0
 
 ADD .secrets /app/.secrets
 
-RUN echo goodbye
+RUN echo goodbye0
 
-EXPOSE 3838
+#EXPOSE 3838
 
 ENV LD_LIBRARY_PATH=/usr/lib/libreoffice/program
 
+RUN echo test0
+
 CMD R -f app.R
+
+RUN echo test1

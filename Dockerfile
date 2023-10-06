@@ -45,7 +45,11 @@ ADD . /app
 
 WORKDIR /app
 
+RUN echo hello
+
 ADD .secrets /app/.secrets
+
+RUN echo goodbye
 
 EXPOSE 3838
 

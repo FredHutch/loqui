@@ -105,7 +105,7 @@ ui <- fluidPage(
       textInput("email", "Email Address (where video should be sent)"),
       div(
         shinyWidgets::prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
-                     value = TRUE, status = "success", fill = TRUE),
+                                   value = TRUE, status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
       radioButtons("presentation_tool", "Presentation Tool",
@@ -190,14 +190,14 @@ server <- function(input, output, session) {
   # Disable buttons when email is not provided and Google Slides URL (if provided) is not accessible
   observe({
     shinyjs::toggleState("generate",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email) && 
-                !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                         !is.null(input$email) && input$email != "" && is_valid_email(input$email) && 
+                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
     shinyjs::toggleState("download_btn",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
-                !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                         !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
+                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
     shinyjs::toggleState("send_email",
-                !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
-                  !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                         !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
+                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
   })
   
   # Display feedback message when email address is not valid

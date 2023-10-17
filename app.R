@@ -112,6 +112,11 @@ ui <- fluidPage(
                    c("Google Slides" = "google_slides",
                      "Powerpoint" = "powerpoint")
       ),
+      div(
+        prettySwitch("burn_subtitle", "Add Subtitles",
+                     status = "success", fill = TRUE),
+        style = "color: #1c3b61;"
+      ),
       uiOutput("user_input"),
       shinyWidgets::pickerInput("service",
                                 label = "Text-to-Speech Service", 
@@ -252,6 +257,16 @@ server <- function(input, output, session) {
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
     unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
+    
+    unique_file_name
+  })
+  
+  # Video with subtitles
+  video_name_subtitle <- eventReactive(input$burn_subtitle, {
+    # create unique name for video file
+    current_time <- Sys.time()
+    current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
+    unique_file_name <- paste0("www/subtitled-ari-video-", current_time, ".mp4")
     
     unique_file_name
   })
@@ -439,11 +454,13 @@ server <- function(input, output, session) {
                                  "jenny", 
                                  "ljspeech/univnet")
     which_tool <- input$presentation_tool
+    burn_subtitle <- input$burn_subtitle
     gs_url <- input$gs_url
     pptx_upload_datapath <- input$pptx_file$datapath
     user_email <- input$email
     auto_email <- input$auto_email
     video_name <- video_name()
+    video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
     
     res <- reactiveVal()
@@ -491,7 +508,8 @@ server <- function(input, output, session) {
                                    tts_engine_args = list(
                                      service = "coqui",
                                      model_name = coqui_model_name,
-                                     vocoder_name = coqui_vocoder_name)),
+                                     vocoder_name = coqui_vocoder_name),
+                                   subtitles = burn_subtitle),
              amazon = ari::ari_spin(images = image_path, 
                                     paragraphs = pptx_notes_vector,
                                     service = "amazon",
@@ -508,6 +526,13 @@ server <- function(input, output, session) {
                                 voice = input$ms_voice,
                                 output = video_name)
       )
+      
+      # Burn subtitles
+      if (burn_subtitle) {
+        srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
+        ari_burn_subtitles(video_name, srt_file, video_name_subtitle)
+      }
+      
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
       Sys.sleep(3)
       progress$close()
@@ -515,7 +540,11 @@ server <- function(input, output, session) {
       # Email
       if (auto_email) {
         # Video Link
-        video_name_processed <- gsub("www/", "", video_name)
+        if (burn_subtitle) {
+          video_name_processed <- gsub("www/", "", video_name_subtitle)
+        } else {
+          video_name_processed <- gsub("www/", "", video_name)
+        }
         video_link <- paste0(app_url, "/", "i", "/", video_name_processed)
         # Date/Time
         date_time <- add_readable_time()
@@ -549,7 +578,11 @@ Howard Baek
       }
       
       # Google Sheets
-      ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")
+      if (burn_subtitle) {
+        ffmpeg_cmd <- paste0("-i", " ", video_name_subtitle, " ", "2>&1 | grep \"Duration\"")
+      } else {
+        ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")
+      }
       duration_raw <- system2("ffmpeg", ffmpeg_cmd, stdout = TRUE)
       duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
       video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
@@ -565,7 +598,11 @@ Howard Baek
       
       # Final output
       # Replace "www" with "i"
-      gsub("www", "i", video_name)
+      if (burn_subtitle) {
+        gsub("www", "i", video_name_subtitle)
+      } else {
+        gsub("www", "i", video_name)
+      }
     }) %...>% res
     
     # Show video when "Generate" is clicked
@@ -616,7 +653,11 @@ Howard Baek
   output$download_btn <- downloadHandler(
     filename = "loqui_video.mp4",
     content = function(file) {
-      file.copy(video_name(), file)
+      if (input$burn_subtitle) {
+        file.copy(video_name_subtitle(), file)
+      } else {
+        file.copy(video_name(), file)
+      }
     },
     contentType = "video/mp4"
   )

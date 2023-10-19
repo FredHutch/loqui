@@ -31,7 +31,7 @@ ARG CACHEBUST=1
 
 # TODO change this when PR is merged and ari is updated in CRAN:
 RUN R -e 'remotes::install_github("jhudsl/text2speech", upgrade = "never")'
-RUN R -e 'remotes::install_github("jhudsl/ari", "ariExtra-immigration", upgrade = "never")'
+RUN R -e 'remotes::install_github("jhudsl/ari", "dev", upgrade = "never")'
 RUN R -e 'remotes::install_github("fhdsl/gsplyr", upgrade = "never")'
 RUN R -e 'remotes::install_github("fhdsl/ptplyr", upgrade = "never")'
 

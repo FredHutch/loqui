@@ -505,10 +505,8 @@ server <- function(input, output, session) {
              coqui = ari::ari_spin(images = image_path, 
                                    paragraphs = pptx_notes_vector,
                                    output = video_name,
-                                   tts_engine_args = list(
-                                     service = "coqui",
-                                     model_name = coqui_model_name,
-                                     vocoder_name = coqui_vocoder_name),
+                                   tts_engine_args = coqui_args(coqui_model_name,
+                                                                coqui_vocoder_name),
                                    subtitles = burn_subtitle),
              amazon = ari::ari_spin(images = image_path, 
                                     paragraphs = pptx_notes_vector,

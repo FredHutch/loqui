@@ -669,7 +669,11 @@ Howard Baek
     ))
     
     # Video Link
-    video_name_processed <- gsub("www/", "", video_name())
+    if (burn_subtitle) {
+      video_name_processed <- gsub("www/", "", video_name_subtitle())
+    } else {
+      video_name_processed <- gsub("www/", "", video_name())
+    }
     # Video Link
     app_url <- "https://loqui.fredhutch.org"
     video_link <- paste0(app_url, "/", "i", "/", video_name_processed)

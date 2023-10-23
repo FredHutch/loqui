@@ -23,16 +23,18 @@ RUN python3.9 -m pip install pandas==2.0.3
 
 RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
 
-# If this argument is supplied with a unique value, subsequent
-# RUN steps will not be cached. See https://stackoverflow.com/a/49772666/470769
-# We do this to ensure that we always get the latest packages from github.
-ARG CACHEBUST=1
-
 # The latest version of tts as of 10/23/2023, 0.18,2, has a 
 # bug: https://github.com/coqui-ai/TTS/issues/3074
 # So we are using an older version until that is fixed.
 # But we should pin to the latest version once that is fixed.
 RUN python3.9 -m pip install TTS==0.18.1
+
+
+# If this argument is supplied with a unique value, subsequent
+# RUN steps will not be cached. See https://stackoverflow.com/a/49772666/470769
+# We do this to ensure that we always get the latest packages from github.
+ARG CACHEBUST=1
+
 
 # TODO change this when PR is merged and ari is updated in CRAN:
 RUN R -e 'remotes::install_github("jhudsl/text2speech", upgrade = "never")'
@@ -52,14 +54,14 @@ RUN curl -LO https://coqui.gateway.scarf.sh/v0.14.0_models/tts_models--en--jenny
 RUN unzip -d /root/.local/share/tts/  tts_models--en--jenny--jenny.zip
 
 
-RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/tts_models--en--ljspeech--tacotron2-DDC.zip
-RUN unzip -d /root/.local/share/tts/  tts_models--en--ljspeech--tacotron2-DDC.zip 
+RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/tts_models--en--ljspeech--tacotron2-DDC_ph.zip
+RUN unzip -d /root/.local/share/tts/ tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
 
 RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/vocoder_models--en--ljspeech--univnet_v2.zip
-RUN unzip -d /root/.local/share/tts/  vocoder_models--en--ljspeech--univnet_v2.zip
+RUN unzip -d /root/.local/share/tts/ vocoder_models--en--ljspeech--univnet_v2.zip
 
 
-RUN rm tts_models--en--jenny--jenny.zip tts_models--en--ljspeech--tacotron2-DDC.zip vocoder_models--en--ljspeech--univnet_v2.zip
+RUN rm tts_models--en--jenny--jenny.zip tts_models--en--ljspeech--tacotron2-DDC_ph.zip vocoder_models--en--ljspeech--univnet_v2.zip
 
 # make sure all packages are installed
 # because R does not fail when there's an error installing a package.

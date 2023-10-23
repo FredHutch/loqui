@@ -267,7 +267,7 @@ server <- function(input, output, session) {
   })
   
   # Video with subtitles
-  video_name_subtitle <- eventReactive(input$generate, {
+  video_name_subtitle <- eventReactive(input$burn_subtitle, {
     # create unique name for video file
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
@@ -315,138 +315,9 @@ server <- function(input, output, session) {
         selectInput("coqui_model_name", "Select Model Name (Voice)", 
                     choices = unique(voices_coqui$model_name),
                     selected = "jenny")
-        # TODO: Refactor after ITCR PI Meeting 08/04/2023
-        # selectInput("coqui_lang", "Select Language", choices = unique(voices_coqui$language)),
-        # selectInput("coqui_dataset", "Select Dataset", choices = NULL),
-        # selectInput("coqui_model_name", "Select Model Name", choices = NULL),
-        # selectInput("coqui_vocoder_name", "Select Vocoder Name",
-        #             choices = NULL)
-        # Remove after testing
-        # c("libri-tts/wavegrad",
-        #   "libri-tts/fullband-melgan",
-        #   "ek1/wavegrad",
-        #   "ljspeech/multiband-melgan",
-        #   "ljspeech/hifigan_v2",
-        #   "ljspeech/univnet",
-        #   "blizzard2013/hifigan_v2",
-        #   "vctk/hifigan_v2",
-        #   "sam/hifigan_v2")
       )
-      # Remove when paid services are good2go
-    } else if (input$service == "amazon") {
-      # tagList(
-      #   selectInput("amazon_lang", "Select Language", 
-      #               choices = unique(voices_amazon$language)),
-      #   selectInput("amazon_gender", "Select Gender", choices = NULL),
-      #   selectInput("amazon_voice", "Select Voice", choices = NULL)
-      # )
-    } else if (input$service == "google") {
-      # Remove when paid services are good2go
-      # tagList(
-      #   selectInput("google_lang", "Select Language", 
-      #               choices = unique(voices_google$language)),
-      #   selectInput("google_gender", "Select Gender", choices = NULL),
-      #   selectInput("google_voice", "Select Voice", choices = NULL)
-      # )
-    } else {
-      # Remove when paid services are good2go
-      # tagList(
-      #   selectInput("ms_locale", "Select Language",
-      #               choices = unique(voices_ms$locale)),
-      #   selectInput("ms_gender", "Select Gender", choices = NULL),
-      #   selectInput("ms_voice", "Select Voice", choices = NULL)
-      # )
-    }
+    } 
   })
-  
-  # TODO: Refactor after ITCR PI Meeting 08/04/2023
-  # Coqui 
-  # voices_coqui_reactive <- reactive({
-  #   filter(voices_coqui, language == input$coqui_lang)
-  # })
-  # observeEvent(input$coqui_lang, {
-  #   freezeReactiveValue(input, "coqui_dataset")
-  #   choices <- unique(voices_coqui_reactive()$dataset)
-  #   updateSelectInput(inputId = "coqui_dataset", choices = choices)
-  # })
-  # voices_coqui_dataset_reactive <- reactive({
-  #   req(input$coqui_dataset)
-  #   filter(voices_coqui_reactive(), dataset == input$coqui_dataset)
-  # })
-  # observeEvent(input$coqui_dataset, {
-  #   freezeReactiveValue(input, "coqui_model_name")
-  #   choices <- unique(voices_coqui_dataset_reactive()$model_name)
-  #   updateSelectInput(inputId = "coqui_model_name", choices = choices)
-  # })
-  # voices_coqui_model_reactive <- reactive({
-  #   req(input$coqui_model_name)
-  #   filter(voices_coqui_dataset_reactive(), dataset == input$coqui_model_name)
-  # })
-  # observeEvent(input$coqui_model_name, {
-  #   freezeReactiveValue(input, "coqui_vocoder_name")
-  #   choices <- ifelse(input$coqui_model_name == "jenny", "jenny", "ljspeech/univnet")
-  #   updateSelectInput(inputId = "coqui_vocoder_name", choices = choices)
-  # })
-  
-  # Remove after testing
-  # # Amazon
-  # voices_amazon_reactive <- reactive({
-  #   filter(voices_amazon, language == input$amazon_lang)
-  # })
-  # observeEvent(input$amazon_lang, {
-  #   freezeReactiveValue(input, "amazon_gender")
-  #   choices <- unique(voices_amazon_reactive()$gender)
-  #   updateSelectInput(inputId = "amazon_gender", choices = choices) 
-  # })
-  # voices_amazon_gender_reactive <- reactive({
-  #   req(input$amazon_gender)
-  #   filter(voices_amazon_reactive(), gender == input$amazon_gender)
-  # })
-  # observeEvent(input$amazon_gender, {
-  #   freezeReactiveValue(input, "amazon_voice")
-  #   choices <- unique(voices_amazon_gender_reactive()$voice)
-  #   updateSelectInput(inputId = "amazon_voice", choices = choices) 
-  # })
-  # 
-  # # Google
-  # voices_google_reactive <- reactive({
-  #   filter(voices_google, language == input$google_lang)
-  # })
-  # observeEvent(input$google_lang, {
-  #   freezeReactiveValue(input, "google_gender")
-  #   choices <- unique(voices_google_reactive()$gender)
-  #   updateSelectInput(inputId = "google_gender", choices = choices) 
-  # })
-  # voices_google_gender_reactive <- reactive({
-  #   req(input$google_gender)
-  #   filter(voices_google_reactive(), gender == input$google_gender)
-  # })
-  # observeEvent(input$google_gender, {
-  #   freezeReactiveValue(input, "google_voice")
-  #   choices <- unique(voices_google_gender_reactive()$voice)
-  #   updateSelectInput(inputId = "google_voice", choices = choices) 
-  # })
-  # 
-  # # Microsoft
-  # voices_ms_reactive <- reactive({
-  #   filter(voices_ms, locale == input$ms_locale)
-  # })
-  # observeEvent(input$ms_locale, {
-  #   freezeReactiveValue(input, "ms_gender")
-  #   choices <- unique(voices_ms_reactive()$gender)
-  #   updateSelectInput(inputId = "ms_gender", choices = choices) 
-  # })
-  # voices_ms_gender_reactive <- reactive({
-  #   req(input$ms_gender)
-  #   filter(voices_ms_reactive(), gender == input$ms_gender)
-  # })
-  # observeEvent(input$ms_gender, {
-  #   freezeReactiveValue(input, "ms_voice")
-  #   choices <- unique(voices_ms_gender_reactive()$name)
-  #   updateSelectInput(inputId = "ms_voice", choices = choices) 
-  # })
-  # 
-  
   
   # Generate video ----
   observeEvent(input$generate, {
@@ -505,56 +376,39 @@ server <- function(input, output, session) {
       Sys.sleep(2)
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       
-      # combine images and notes with ari_spin()
-      switch(service,
-             coqui = ari::ari_spin(images = image_path, 
-                                   paragraphs = pptx_notes_vector,
-                                   output = video_name,
-                                   tts_engine_args = ari::coqui_args(coqui_model_name,
-                                                                coqui_vocoder_name),
-                                   subtitles = burn_subtitle),
-             amazon = ari::ari_spin(images = image_path, 
-                                    paragraphs = pptx_notes_vector,
-                                    service = "amazon",
-                                    voice = input$amazon_voice,
-                                    output = video_name),
-             google = ari::ari_spin(images = image_path, 
-                                    paragraphs = pptx_notes_vector,
-                                    service = "google",
-                                    voice = input$google_voice,
-                                    output = video_name),
-             ms = ari::ari_spin(images = image_path, 
-                                paragraphs = pptx_notes_vector,
-                                service = "microsoft",
-                                voice = input$ms_voice,
-                                output = video_name)
-      )
-      
-      # Burn subtitles
+      # ari_spin()----
+      ari::ari_spin(images = image_path, 
+                    paragraphs = pptx_notes_vector,
+                    output = video_name,
+                    tts_engine_args = ari::coqui_args(coqui_model_name,
+                                                      coqui_vocoder_name),
+                    subtitles = burn_subtitle)
+    
+    # Burn subtitles
+    if (burn_subtitle) {
+      srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
+      ari_burn_subtitles(video_name, srt_file, video_name_subtitle)
+    }
+    
+    progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
+    Sys.sleep(3)
+    progress$close()
+    
+    # Email
+    if (auto_email) {
+      # Video Link
       if (burn_subtitle) {
-        srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
-        ari_burn_subtitles(video_name, srt_file, video_name_subtitle)
+        video_name_processed <- gsub("www/", "", video_name_subtitle)
+      } else {
+        video_name_processed <- gsub("www/", "", video_name)
       }
-      
-      progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
-      Sys.sleep(3)
-      progress$close()
-      
-      # Email
-      if (auto_email) {
-        # Video Link
-        if (burn_subtitle) {
-          video_name_processed <- gsub("www/", "", video_name_subtitle)
-        } else {
-          video_name_processed <- gsub("www/", "", video_name)
-        }
-        video_link <- paste0(app_url, "/", "i", "/", video_name_processed)
-        # Date/Time
-        date_time <- add_readable_time()
-        # Compose Email
-        email <- compose_email(
-          body = md(glue::glue(
-            "Dear Loqui User,
+      video_link <- paste0(app_url, "/", "i", "/", video_name_processed)
+      # Date/Time
+      date_time <- add_readable_time()
+      # Compose Email
+      email <- compose_email(
+        body = md(glue::glue(
+          "Dear Loqui User,
             
 To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three 
 vertical dots and select 'Download'.
@@ -568,126 +422,126 @@ We will respond to your inquiries as soon as possible.
             
 Howard Baek
 ")),
-          footer = md(glue::glue("Email automatically sent on {date_time}."))
+        footer = md(glue::glue("Email automatically sent on {date_time}."))
+      )
+      # Send email
+      email %>% 
+        smtp_send(
+          from = "loqui-noreply@fredhutch.org",
+          to = user_email,
+          subject = "Video Generated by Loqui from Fred Hutch Data Science Lab (DaSL)",
+          credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
         )
-        # Send email
-        email %>% 
-          smtp_send(
-            from = "loqui-noreply@fredhutch.org",
-            to = user_email,
-            subject = "Video Generated by Loqui from Fred Hutch Data Science Lab (DaSL)",
-            credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
-          )
-      }
-      
-      # Google Sheets
-      if (burn_subtitle) {
-        ffmpeg_cmd <- paste0("-i", " ", video_name_subtitle, " ", "2>&1 | grep \"Duration\"")
-      } else {
-        ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")
-      }
-      duration_raw <- system2("ffmpeg", ffmpeg_cmd, stdout = TRUE)
-      duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
-      video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
-      date_time <- add_readable_time()
-      # Authorize
-      gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
-      # Append
-      gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
-      sheet_append(gs_url,
-                   data.frame(date_time = date_time,
-                              video_duration = video_duration, 
-                              email = user_email))
-      
-      # Final output
-      # Replace "www" with "i"
-      if (burn_subtitle) {
-        gsub("www", "i", video_name_subtitle)
-      } else {
-        gsub("www", "i", video_name)
-      }
-    }) %...>% res
-    
-    # Show video when "Generate" is clicked
-    output$video_ui <- renderUI({
-      res <- res()
-      tags$video(src = res, 
-                 type = "video/mp4",
-                 height ="480px", 
-                 width="854px",
-                 autoplay = TRUE,
-                 controls = TRUE)
-    })
-    
-    # Extract video info
-    if (which_tool == "google_slides") {
-      pdf_path <- gsplyr::download(gs_url, "pdf")
-    } else {
-      # convert pptx slides to pdf
-      if (Sys.info()['sysname'] == "Linux") {
-        Sys.setenv(LD_LIBRARY_PATH="")
-      }
-      pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
     }
-    pdf_info <- pdftools::pdf_info(pdf = pdf_path)
     
-    # Show video title
-    output$video_info <- renderUI({
-      span(textOutput("video_title"),
-           style = "font-weight: bold;
+    # Google Sheets
+    if (burn_subtitle) {
+      ffmpeg_cmd <- paste0("-i", " ", video_name_subtitle, " ", "2>&1 | grep \"Duration\"")
+    } else {
+      ffmpeg_cmd <- paste0("-i", " ", video_name, " ", "2>&1 | grep \"Duration\"")
+    }
+    duration_raw <- system2("ffmpeg", ffmpeg_cmd, stdout = TRUE)
+    duration_raw <- regmatches(duration_raw, regexpr("Duration: (\\d{2}:\\d{2}:\\d{2}\\.\\d{2})", duration_raw))
+    video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
+    date_time <- add_readable_time()
+    # Authorize
+    gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
+    # Append
+    gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
+    sheet_append(gs_url,
+                 data.frame(date_time = date_time,
+                            video_duration = video_duration, 
+                            email = user_email))
+    
+    # Final output
+    # Replace "www" with "i"
+    if (burn_subtitle) {
+      gsub("www", "i", video_name_subtitle)
+    } else {
+      gsub("www", "i", video_name)
+    }
+    }) %...>% res
+  
+  # Show video when "Generate" is clicked
+  output$video_ui <- renderUI({
+    res <- res()
+    tags$video(src = res, 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               autoplay = TRUE,
+               controls = TRUE)
+  })
+  
+  # Extract video info
+  if (which_tool == "google_slides") {
+    pdf_path <- gsplyr::download(gs_url, "pdf")
+  } else {
+    # convert pptx slides to pdf
+    if (Sys.info()['sysname'] == "Linux") {
+      Sys.setenv(LD_LIBRARY_PATH="")
+    }
+    pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+  }
+  pdf_info <- pdftools::pdf_info(pdf = pdf_path)
+  
+  # Show video title
+  output$video_info <- renderUI({
+    span(textOutput("video_title"),
+         style = "font-weight: bold;
                     font-family: Arial;
                     font-size: 25px;
                     color: #1c3b61")
-      output$video_title <- renderText({
-        pdf_info$keys$Title
-      })
-    })
-    # Show video buttons (download/send email)
-    output$video_btn <- renderUI({
-      column(12,
-             downloadButton("download_btn"),
-             actionButton("send_email", "Email", icon = icon("inbox")),
-             align = "left"
-      )
+    output$video_title <- renderText({
+      pdf_info$keys$Title
     })
   })
-  # Download rendered video
-  # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
-  output$download_btn <- downloadHandler(
-    filename = "loqui_video.mp4",
-    content = function(file) {
-      if (input$burn_subtitle) {
-        file.copy(video_name_subtitle(), file)
-      } else {
-        file.copy(video_name(), file)
-      }
-    },
-    contentType = "video/mp4"
-  )
-  
-  # Send email
-  observeEvent(input$send_email, {
-    # Dialog Box
-    showModal(modalDialog(
-      title = span(h4("Success message:"), style = "color: #1c3b61;font-family:Times;font-weight: bold;"),
-      span(paste0("Email with the video file has been sent to ", input$email, "."), style = "color: #1c3b61;font-family:Arial")
-    ))
-    
-    # Video Link
-    if (burn_subtitle) {
-      video_name_processed <- gsub("www/", "", video_name_subtitle())
+  # Show video buttons (download/send email)
+  output$video_btn <- renderUI({
+    column(12,
+           downloadButton("download_btn"),
+           actionButton("send_email", "Email", icon = icon("inbox")),
+           align = "left"
+    )
+  })
+  })
+# Download rendered video
+# Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
+output$download_btn <- downloadHandler(
+  filename = "loqui_video.mp4",
+  content = function(file) {
+    if (input$burn_subtitle) {
+      file.copy(video_name_subtitle(), file)
     } else {
-      video_name_processed <- gsub("www/", "", video_name())
+      file.copy(video_name(), file)
     }
-    # Video Link
-    app_url <- "https://loqui.fredhutch.org"
-    video_link <- paste0(app_url, "/", "i", "/", video_name_processed)
-    # Date/Time
-    date_time <- add_readable_time()
-    # Compose Email
-    email <- compose_email(
-      body = md(glue::glue(
-        "Dear Loqui User,
+  },
+  contentType = "video/mp4"
+)
+
+# Send email
+observeEvent(input$send_email, {
+  # Dialog Box
+  showModal(modalDialog(
+    title = span(h4("Success message:"), style = "color: #1c3b61;font-family:Times;font-weight: bold;"),
+    span(paste0("Email with the video file has been sent to ", input$email, "."), style = "color: #1c3b61;font-family:Arial")
+  ))
+  
+  # Video Link
+  if (burn_subtitle) {
+    video_name_processed <- gsub("www/", "", video_name_subtitle())
+  } else {
+    video_name_processed <- gsub("www/", "", video_name())
+  }
+  # Video Link
+  app_url <- "https://loqui.fredhutch.org"
+  video_link <- paste0(app_url, "/", "i", "/", video_name_processed)
+  # Date/Time
+  date_time <- add_readable_time()
+  # Compose Email
+  email <- compose_email(
+    body = md(glue::glue(
+      "Dear Loqui User,
             
 To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three 
 vertical dots and select 'Download'.
@@ -701,17 +555,17 @@ We will respond to your inquiries as soon as possible.
             
 Howard Baek
 ")),
-      footer = md(glue::glue("Email sent on {date_time}."))
+    footer = md(glue::glue("Email sent on {date_time}."))
+  )
+  # Send email
+  email %>% 
+    smtp_send(
+      from = "loqui-noreply@fredhutch.org",
+      to = input$email,
+      subject = "Video Generated by Loqui from Fred Hutch Data Science Lab (DaSL)",
+      credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
     )
-    # Send email
-    email %>% 
-      smtp_send(
-        from = "loqui-noreply@fredhutch.org",
-        to = input$email,
-        subject = "Video Generated by Loqui from Fred Hutch Data Science Lab (DaSL)",
-        credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
-      )
-  })
+})
 }
 
 # Code for Deployment to Hutch servers

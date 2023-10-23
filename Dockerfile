@@ -18,9 +18,8 @@ RUN make -j `nproc`
 RUN make altinstall
 
 RUN python3.9 -m ensurepip
-
-RUN python3.9 -m pip install TTS
 RUN python3.9 -m pip install pandas==2.0.3
+
 
 RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
 
@@ -28,6 +27,12 @@ RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', '
 # RUN steps will not be cached. See https://stackoverflow.com/a/49772666/470769
 # We do this to ensure that we always get the latest packages from github.
 ARG CACHEBUST=1
+
+# The latest version of tts as of 10/23/2023, 0.18,2, has a 
+# bug: https://github.com/coqui-ai/TTS/issues/3074
+# So we are using an older version until that is fixed.
+# But we should pin to the latest version once that is fixed.
+RUN python3.9 -m pip install TTS==0.18.1
 
 # TODO change this when PR is merged and ari is updated in CRAN:
 RUN R -e 'remotes::install_github("jhudsl/text2speech", upgrade = "never")'

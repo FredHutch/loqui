@@ -1,19 +1,30 @@
 # Packages ----
+
+## Shiny + ari
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinyFeedback)
 library(ari)
+
+## Data manipulation
 library(dplyr)
 library(readr)
 library(pdftools)
+
+## Google Sheets+Email
 library(blastula)
 library(googlesheets4)
+
+## Future
 library(promises)
 library(future)
 library(ipc)
+
+## PPTX/Google Slide manipulation
 library(gsplyr)
 library(ptplyr)
+
 # Options ----
 options("future.rng.onMisuse" = "ignore")
 plan(multisession, workers = 25)
@@ -24,19 +35,13 @@ voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>%
   filter(language == "en", 
          dataset %in% c("ljspeech", "jenny"),
          model_name %in% c("tacotron2-DDC_ph", "jenny"))
-# Don't need Paid Voices for now
-# voices_amazon <- read_csv("data/voices-amazon.csv", show_col_types = FALSE)
-# voices_google <- read_csv("data/voices-google.csv", show_col_types = FALSE) %>% 
-#   filter(!is.na(language))
-# voices_ms <- read_csv("data/voices-ms.csv", show_col_types = FALSE)
-# names(voices_ms) <- tolower(names(voices_ms))
 
-# images for pickerInput stored in www/i/ from the root app directory
+# Images for pickerInput stored in i/ from the root app directory
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
-# Select image ----
+# Select image
 select_choice_img <- function(img, text) {
   shiny::HTML(paste(
     tags$img(src=img, width=25, height=22),
@@ -44,23 +49,26 @@ select_choice_img <- function(img, text) {
   ))
 }
 
-# Check if email is valid 
+# Function to check if email is valid 
 is_valid_email <- function(x) {
   grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
 }
 
-# Start of Shiny app ----
+
+# UI ----
 ui <- fluidPage(
-  useShinyjs(),
-  useShinyFeedback(),
-  # css
+  # Setup to use shinyjs
+  shinyjs::useShinyjs(),
+  # and shinyFeedback
+  shinyFeedback::useShinyFeedback(),
+  
+  # Hutch theme CSS
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "i/hutch_theme.css")
   ),
-  # favicon
+  # Favicon
   tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
-  # css to center the progress bar
-  # https://stackoverflow.com/a/52585505/14804653
+  # CSS to center the progress bar
   tags$head(
     tags$style(
       HTML(".shiny-notification {
@@ -122,10 +130,6 @@ ui <- fluidPage(
                                 label = "Text-to-Speech Service", 
                                 choices = c("Coqui TTS" = "coqui"),
                                 choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img)[[1]])),
-      # "Amazon Polly" = "amazon",
-      # "Google Cloud Text-to-Speech" = "google",
-      # "Microsoft Cognitive Services Text-to-Speech" = "ms"),
-      # choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img))),
       uiOutput("voice_options"),
       actionButton("generate", "Generate", icon = icon("person-running")),
       br(),
@@ -191,6 +195,7 @@ ui <- fluidPage(
   )
 )
 
+# Server ----
 server <- function(input, output, session) {
   # Disable buttons when email is not provided and Google Slides URL (if provided) is not accessible
   observe({
@@ -230,7 +235,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Select Google Slides or PowerPoint
+  # Show different inputs depending on Google Slides or PowerPoint
   output$user_input <- renderUI({
     if (input$presentation_tool == "google_slides") {
       textInput("gs_url", 
@@ -262,7 +267,7 @@ server <- function(input, output, session) {
   })
   
   # Video with subtitles
-  video_name_subtitle <- eventReactive(input$burn_subtitle, {
+  video_name_subtitle <- eventReactive(input$generate, {
     # create unique name for video file
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")

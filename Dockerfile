@@ -35,6 +35,12 @@ RUN R -e 'remotes::install_github("jhudsl/ari", "dev", upgrade = "never")'
 RUN R -e 'remotes::install_github("fhdsl/gsplyr", upgrade = "never")'
 RUN R -e 'remotes::install_github("fhdsl/ptplyr", upgrade = "never")'
 
+# download tts models
+RUN tts --text "download jenny"  --model_name tts_models/en/jenny/jenny --out_path /tmp/jenny.wav
+RUN tts --text "download tacotron"  --vocoder_name "vocoder_models/en/ljspeech/univnet" --model_name tts_models/en/ljspeech/tacotron2-DDC_ph --out_path /tmp/tacotron.wav
+
+RUN rm /tmp/jenny.wav /tmp/tacotron.wav
+
 # make sure all packages are installed
 # because R does not fail when there's an error installing a package.
 RUN R -e 'if(!all(commandArgs(TRUE) %in% installed.packages()[,"Package"])) q("no", 1)' --args remotes pdftools tidyr text2speech shinyWidgets aws.polly ari shinyjs blastula googlesheets4 gargle promises future ipc shinyFeedback gsplyr ptplyr 

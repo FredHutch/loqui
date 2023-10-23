@@ -49,22 +49,6 @@ RUN tts --text "download tacotron"  --vocoder_name "vocoder_models/en/ljspeech/u
 
 RUN rm /tmp/jenny.wav /tmp/tacotron.wav 
 
-# RUN mkdir -p /root/.local/share/tts/
-
-# RUN curl -LO https://coqui.gateway.scarf.sh/v0.14.0_models/tts_models--en--jenny--jenny.zip
-# RUN unzip -d /root/.local/share/tts/  tts_models--en--jenny--jenny.zip
-
-
-# RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/tts_models--en--ljspeech--tacotron2-DDC_ph.zip
-# RUN unzip -d /root/.local/share/tts/ tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
-
-# RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/vocoder_models--en--ljspeech--univnet.zip
-# RUN unzip -d /root/.local/share/tts/ vocoder_models--en--ljspeech--univnet.zip
-
-
-# RUN rm tts_models--en--jenny--jenny.zip tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
-# vocoder_models--en--ljspeech--univnet.zip
-
 # make sure all packages are installed
 # because R does not fail when there's an error installing a package.
 RUN R -e 'if(!all(commandArgs(TRUE) %in% installed.packages()[,"Package"])) q("no", 1)' --args remotes pdftools tidyr text2speech shinyWidgets aws.polly ari shinyjs blastula googlesheets4 gargle promises future ipc shinyFeedback gsplyr ptplyr 

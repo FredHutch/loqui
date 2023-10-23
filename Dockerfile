@@ -43,26 +43,26 @@ RUN R -e 'remotes::install_github("fhdsl/gsplyr", upgrade = "never")'
 RUN R -e 'remotes::install_github("fhdsl/ptplyr", upgrade = "never")'
 
 # download tts models
-# RUN tts --text "download jenny"  --model_name tts_models/en/jenny/jenny --out_path /tmp/jenny.wav
+RUN tts --text "download jenny"  --model_name tts_models/en/jenny/jenny --out_path /tmp/jenny.wav
 
 RUN tts --text "download tacotron"  --vocoder_name "vocoder_models/en/ljspeech/univnet" --model_name tts_models/en/ljspeech/tacotron2-DDC_ph --out_path /tmp/tacotron.wav
 
-RUN rm /tmp/tacotron.wav
+RUN rm /tmp/jenny.wav /tmp/tacotron.wav 
 
-RUN mkdir -p /root/.local/share/tts/
+# RUN mkdir -p /root/.local/share/tts/
 
-RUN curl -LO https://coqui.gateway.scarf.sh/v0.14.0_models/tts_models--en--jenny--jenny.zip
-RUN unzip -d /root/.local/share/tts/  tts_models--en--jenny--jenny.zip
+# RUN curl -LO https://coqui.gateway.scarf.sh/v0.14.0_models/tts_models--en--jenny--jenny.zip
+# RUN unzip -d /root/.local/share/tts/  tts_models--en--jenny--jenny.zip
 
 
-RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/tts_models--en--ljspeech--tacotron2-DDC_ph.zip
-RUN unzip -d /root/.local/share/tts/ tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
+# RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/tts_models--en--ljspeech--tacotron2-DDC_ph.zip
+# RUN unzip -d /root/.local/share/tts/ tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
 
 # RUN curl -LO https://coqui.gateway.scarf.sh/v0.6.1_models/vocoder_models--en--ljspeech--univnet.zip
 # RUN unzip -d /root/.local/share/tts/ vocoder_models--en--ljspeech--univnet.zip
 
 
-RUN rm tts_models--en--jenny--jenny.zip tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
+# RUN rm tts_models--en--jenny--jenny.zip tts_models--en--ljspeech--tacotron2-DDC_ph.zip 
 # vocoder_models--en--ljspeech--univnet.zip
 
 # make sure all packages are installed

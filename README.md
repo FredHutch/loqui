@@ -29,3 +29,11 @@ what you are struggling with. You can ask us questions such as “Could
 you provide step-by-step instructions for navigating the app?”, “Where
 exactly is my data stored?” or “Is it possible to access additional
 voice options?” We welcome any constructive feedback as well.
+
+## More Voice Options
+
+If you’d like to explore different voices but aren’t certain about the
+available options, you can visit the
+[CoquiTTS](https://huggingface.co/spaces/coqui/CoquiTTS) Hugging Face
+Space. Once you find a voice you like, please let me know by submitting
+a GitHub issue and I will make sure to include it.

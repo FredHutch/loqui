@@ -23,11 +23,8 @@ RUN python3.9 -m pip install pandas==2.0.3
 
 RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"
 
-# The latest version of tts as of 10/23/2023, 0.18,2, has a 
-# bug: https://github.com/coqui-ai/TTS/issues/3074
-# So we are using an older version until that is fixed.
-# But we should pin to the latest version once that is fixed.
-RUN python3.9 -m pip install TTS==0.18.1
+# (10/31/2023) Use latest version of TTS
+RUN python3.9 -m pip install TTS==0.19.1
 
 
 # If this argument is supplied with a unique value, subsequent

@@ -75,20 +75,29 @@ p {
   border-radius: 12px;
 }
 
-/* Download Button */
+/* Download Buttons */
 #download_btn.btn {
   font-family: Arial;
   font-weight: bold;
   color: #F4F4F4;
-  background-color: #0A799A;
+  background-color: #FFB500;
   border-radius: 12px;
 }
+
+#download_subtitle_btn.btn {
+  font-family: Arial;
+  font-weight: bold;
+  color: #F4F4F4;
+  background-color: #AA4AC4;
+  border-radius: 12px;
+}
+
 /* Email button */
 #send_email.btn {
   font-family: Arial;
   font-weight: bold;
   color: #F4F4F4;
-  background-color: #FFB500;
+  background-color: #0A799A;
   border-radius: 12px;
 }
 

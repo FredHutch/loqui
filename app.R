@@ -110,7 +110,7 @@ ui <- fluidPage(
   hr(),
   sidebarLayout(
     sidebarPanel(
-      textInput("email", "Email Address (where video should be sent)", value = "howardbaek@fredhutch.org"),
+      textInput("email", "Email Address (where video should be sent)"),
       div(
         shinyWidgets::prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
                                    value = TRUE, status = "success", fill = TRUE),
@@ -242,8 +242,7 @@ server <- function(input, output, session) {
     if (input$presentation_tool == "google_slides") {
       textInput("gs_url", 
                 label = "Google Slides URL (Enable Link Sharing)",
-                placeholder = "Paste a Google Slides URL",
-                value = "https://docs.google.com/presentation/d/1Dw_rBb1hySN_76xh9-x5J2dWF_das9BAUjQigf2fN-E/edit?usp=sharing")
+                placeholder = "Paste a Google Slides URL")
     } else { 
       fileInput("pptx_file", NULL, accept = ".pptx",
                 buttonLabel = "Upload .pptx")

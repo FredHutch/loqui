@@ -121,7 +121,7 @@ ui <- fluidPage(
                      "Powerpoint" = "powerpoint")
       ),
       div(
-        prettySwitch("burn_subtitle", "Add Subtitles",
+        prettySwitch("burn_subtitle", "Embed Subtitles",
                      status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
@@ -208,8 +208,6 @@ server <- function(input, output, session) {
     shinyjs::toggleState("send_email",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
                            !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
-    shinyjs::toggleState("download_subtitle_btn",
-                         input$burn_subtitle)
   })
   
   # Display feedback message when email address is not valid
@@ -384,7 +382,7 @@ server <- function(input, output, session) {
                     output = video_name,
                     tts_engine_args = ari::coqui_args(coqui_model_name,
                                                       coqui_vocoder_name),
-                    subtitles = burn_subtitle)
+                    subtitles = TRUE)
       
       # Burn subtitles
       if (burn_subtitle) {
@@ -503,7 +501,7 @@ Howard Baek
     output$video_btn <- renderUI({
       column(12,
              downloadButton("download_btn", label = "Download Video"),
-             downloadButton("download_subtitle_btn", label = "Download Subtitle"),
+             downloadButton("download_subtitle_btn", label = "Download Subtitles"),
              actionButton("send_email", "Email", icon = icon("inbox")),
              align = "left"
       )

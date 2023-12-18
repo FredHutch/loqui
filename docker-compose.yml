@@ -5,6 +5,7 @@ services:
     networks:
       - proxy
     deploy:
+      replicas: 4
       restart_policy:
         condition: on-failure
       labels:

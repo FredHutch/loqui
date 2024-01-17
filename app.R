@@ -26,7 +26,8 @@ library(gsplyr)
 library(ptplyr)
 
 # Options ----
-options("future.rng.onMisuse" = "ignore")
+options("future.rng.onMisuse" = "ignore",
+        shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
 plan(multisession, workers = 25)
 
 # Voice Data ----
@@ -201,13 +202,16 @@ server <- function(input, output, session) {
   observe({
     shinyjs::toggleState("generate",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) && 
-                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                           (!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") ||
+                              is.data.frame(input$pptx_file)))
     shinyjs::toggleState("download_btn",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
-                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                           (!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") ||
+                              is.data.frame(input$pptx_file)))
     shinyjs::toggleState("send_email",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
-                           !inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error"))
+                           (!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") ||
+                              is.data.frame(input$pptx_file)))
   })
   
   # Display feedback message when email address is not valid
@@ -319,7 +323,7 @@ server <- function(input, output, session) {
     } 
   })
   
-  # START Generate video ----
+  # Start: Generate video ----
   observeEvent(input$generate, {
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Processing...")
@@ -481,7 +485,7 @@ Howard Baek
       if (Sys.info()['sysname'] == "Linux") {
         Sys.setenv(LD_LIBRARY_PATH="")
       }
-      pdf_path <- ari::pptx_to_pdf(pptx_upload_datapath)
+      pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
     }
     pdf_info <- pdftools::pdf_info(pdf = pdf_path)
     
@@ -507,7 +511,7 @@ Howard Baek
       )
     })
   })
-  # END Generate video ----
+  # End: Generate video ----
   
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
@@ -590,4 +594,5 @@ if (!interactive()) {
   options$host = "0.0.0.0"
   
 }
+
 shinyApp(ui, server, options=options)

@@ -19,6 +19,7 @@ library(googlesheets4)
 ## Future
 library(promises)
 library(future)
+plan(multisession, workers = 25)
 library(ipc)
 
 ## PPTX/Google Slide manipulation
@@ -28,7 +29,6 @@ library(ptplyr)
 # Options ----
 options("future.rng.onMisuse" = "ignore",
         shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
-plan(multisession, workers = 25)
 
 # Voice Data ----
 voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
@@ -163,23 +163,7 @@ ui <- fluidPage(
                       uiOutput("loqui_demo"),
                       em("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
-                      style = "font-family: Arial; color: #1c3b61"),
-                    actionButton("show_example", "Show Example", icon = icon("magnifying-glass"),
-                                 style = "font-family: Arial; font-weight: bold; color: #F4F4F4; background-color: #0A799A; border-radius: 12px;")
-                  ),
-                  tabPanel(
-                    title = div("Examples", 
-                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"), 
-                    value = "loqui_example",
-                    br(),
-                    h3("DeepPhe: Natural Language Processing Tool"),
-                    uiOutput("loqui_example_ui_1"),
-                    br(),
-                    h3("EMERSE: Electronic Medical Record Search Engine"),
-                    uiOutput("loqui_example_ui_2"),
-                    br(),
-                    h3("pVACtools: Cancer Immunotherapy Suite"),
-                    uiOutput("loqui_example_ui_3")
+                      style = "font-family: Arial; color: #1c3b61")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -280,35 +264,12 @@ server <- function(input, output, session) {
     unique_file_name
   })
   
-  # Show videos when "Show Examples" is clicked
+  # Demo of Loqui
   output$loqui_demo <- renderUI({
     tags$video(src = "i/video/loqui.mp4", 
                type = "video/mp4",
                height ="480px", 
                width="790px",
-               controls = TRUE)
-  })
-  
-  # Show videos when "Show Examples" is clicked
-  output$loqui_example_ui_1 <- renderUI({
-    tags$video(src = "i/video/deepphe.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               controls = TRUE)
-  })
-  output$loqui_example_ui_2 <- renderUI({
-    tags$video(src = "i/video/emerse.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               controls = TRUE)
-  })
-  output$loqui_example_ui_3 <- renderUI({
-    tags$video(src = "i/video/pVACtools.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
                controls = TRUE)
   })
   
@@ -343,7 +304,9 @@ server <- function(input, output, session) {
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
     
+    # Create single reactive value
     res <- reactiveVal()
+    
     future_promise({
       # extract speaker notes
       progress$inc(amount = 0, message = "Processing takes a few minutes...")

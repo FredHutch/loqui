@@ -30,13 +30,6 @@ library(ptplyr)
 options("future.rng.onMisuse" = "ignore",
         shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
 
-# Voice Data ----
-voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
-  # Remove after testing
-  filter(language == "en", 
-         dataset %in% c("ljspeech", "jenny"),
-         model_name %in% c("tacotron2-DDC_ph", "jenny"))
-
 # Images for pickerInput stored in i/ from the root app directory
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
@@ -278,7 +271,7 @@ server <- function(input, output, session) {
     if (input$service == "coqui") {
       tagList(
         selectInput("coqui_model_name", "Select Model Name (Voice)", 
-                    choices = unique(voices_coqui$model_name),
+                    choices = c("tacotron2-DDC_ph", "jenny"),
                     selected = "jenny")
       )
     } 

@@ -281,7 +281,8 @@ server <- function(input, output, session) {
   observeEvent(input$generate, {
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Processing...")
-    # Inputs used inside future_promise()
+    
+    # Read inputs to be used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
     coqui_vocoder_name <- ifelse(coqui_model_name == "jenny", 

@@ -277,6 +277,10 @@ server <- function(input, output, session) {
     } 
   })
   
+  
+  # Create single reactive value
+  res <- reactiveVal()
+  
   # Start: Generate video ----
   observeEvent(input$generate, {
     # Create a progress bar
@@ -297,9 +301,6 @@ server <- function(input, output, session) {
     video_name <- video_name()
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
-    
-    # Create single reactive value
-    res <- reactiveVal()
     
     future_promise({
       # extract speaker notes
@@ -327,6 +328,11 @@ server <- function(input, output, session) {
         }
         pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
+      
+      pdf_info <- pdftools::pdf_info(pdf = pdf_path)
+      video_title <- pdf_info$keys$Title
+      
+      
       progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
@@ -417,34 +423,15 @@ Howard Baek
       # Final output
       # Replace "www" with "i"
       if (burn_subtitle) {
-        gsub("www", "i", video_name_subtitle)
+        rendered_video_path <- gsub("www", "i", video_name_subtitle)
       } else {
-        gsub("www", "i", video_name)
+        rendered_video_path <- gsub("www", "i", video_name)
       }
+      
+      final_res <- c(rendered_video_path, video_title)
+      final_res
     }) %...>% res
     
-    # Show video when "Generate" is clicked
-    output$video_ui <- renderUI({
-      res <- res()
-      tags$video(src = res, 
-                 type = "video/mp4",
-                 height ="480px", 
-                 width="854px",
-                 autoplay = TRUE,
-                 controls = TRUE)
-    })
-    
-    # Extract video info
-    if (which_tool == "google_slides") {
-      pdf_path <- gsplyr::download(gs_url, "pdf")
-    } else {
-      # convert pptx slides to pdf
-      if (Sys.info()['sysname'] == "Linux") {
-        Sys.setenv(LD_LIBRARY_PATH="")
-      }
-      pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
-    }
-    pdf_info <- pdftools::pdf_info(pdf = pdf_path)
     
     # Show video title
     output$video_info <- renderUI({
@@ -454,7 +441,7 @@ Howard Baek
                     font-size: 25px;
                     color: #1c3b61")
       output$video_title <- renderText({
-        pdf_info$keys$Title
+        res()[2]
       })
     })
     
@@ -469,6 +456,17 @@ Howard Baek
     })
   })
   # End: Generate video ----
+  
+  # Show video when "Generate" is clicked
+  output$video_ui <- renderUI({
+    res <- res()[1]
+    tags$video(src = res, 
+               type = "video/mp4",
+               height ="480px", 
+               width="854px",
+               autoplay = TRUE,
+               controls = TRUE)
+  })
   
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file

@@ -432,6 +432,16 @@ Howard Baek
       final_res
     }) %...>% res
     
+    # Show video when "Generate" is clicked
+    output$video_ui <- renderUI({
+      res <- res()[1]
+      tags$video(src = res, 
+                 type = "video/mp4",
+                 height ="480px", 
+                 width="854px",
+                 autoplay = TRUE,
+                 controls = TRUE)
+    })
     
     # Show video title
     output$video_info <- renderUI({
@@ -456,17 +466,6 @@ Howard Baek
     })
   })
   # End: Generate video ----
-  
-  # Show video when "Generate" is clicked
-  output$video_ui <- renderUI({
-    res <- res()[1]
-    tags$video(src = res, 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               autoplay = TRUE,
-               controls = TRUE)
-  })
   
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file

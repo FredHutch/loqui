@@ -19,6 +19,7 @@ library(googlesheets4)
 ## Future
 library(promises)
 library(future)
+plan(multisession, workers = 25)
 library(ipc)
 
 ## PPTX/Google Slide manipulation
@@ -28,14 +29,6 @@ library(ptplyr)
 # Options ----
 options("future.rng.onMisuse" = "ignore",
         shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
-plan(multisession, workers = 25)
-
-# Voice Data ----
-voices_coqui <- read_csv("data/voices-coqui.csv", show_col_types = FALSE) %>% 
-  # Remove after testing
-  filter(language == "en", 
-         dataset %in% c("ljspeech", "jenny"),
-         model_name %in% c("tacotron2-DDC_ph", "jenny"))
 
 # Images for pickerInput stored in i/ from the root app directory
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
@@ -163,23 +156,7 @@ ui <- fluidPage(
                       uiOutput("loqui_demo"),
                       em("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
-                      style = "font-family: Arial; color: #1c3b61"),
-                    actionButton("show_example", "Show Example", icon = icon("magnifying-glass"),
-                                 style = "font-family: Arial; font-weight: bold; color: #F4F4F4; background-color: #0A799A; border-radius: 12px;")
-                  ),
-                  tabPanel(
-                    title = div("Examples", 
-                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"), 
-                    value = "loqui_example",
-                    br(),
-                    h3("DeepPhe: Natural Language Processing Tool"),
-                    uiOutput("loqui_example_ui_1"),
-                    br(),
-                    h3("EMERSE: Electronic Medical Record Search Engine"),
-                    uiOutput("loqui_example_ui_2"),
-                    br(),
-                    h3("pVACtools: Cancer Immunotherapy Suite"),
-                    uiOutput("loqui_example_ui_3")
+                      style = "font-family: Arial; color: #1c3b61")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -280,7 +257,7 @@ server <- function(input, output, session) {
     unique_file_name
   })
   
-  # Show videos when "Show Examples" is clicked
+  # Demo of Loqui
   output$loqui_demo <- renderUI({
     tags$video(src = "i/video/loqui.mp4", 
                type = "video/mp4",
@@ -289,45 +266,27 @@ server <- function(input, output, session) {
                controls = TRUE)
   })
   
-  # Show videos when "Show Examples" is clicked
-  output$loqui_example_ui_1 <- renderUI({
-    tags$video(src = "i/video/deepphe.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               controls = TRUE)
-  })
-  output$loqui_example_ui_2 <- renderUI({
-    tags$video(src = "i/video/emerse.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               controls = TRUE)
-  })
-  output$loqui_example_ui_3 <- renderUI({
-    tags$video(src = "i/video/pVACtools.mp4", 
-               type = "video/mp4",
-               height ="480px", 
-               width="854px",
-               controls = TRUE)
-  })
-  
   # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       tagList(
         selectInput("coqui_model_name", "Select Model Name (Voice)", 
-                    choices = unique(voices_coqui$model_name),
+                    choices = c("tacotron2-DDC_ph", "jenny"),
                     selected = "jenny")
       )
     } 
   })
   
+  
+  # Create single reactive value
+  res <- reactiveVal()
+  
   # Start: Generate video ----
   observeEvent(input$generate, {
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Processing...")
-    # Inputs used inside future_promise()
+    
+    # Read inputs to be used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
     coqui_vocoder_name <- ifelse(coqui_model_name == "jenny", 
@@ -343,7 +302,6 @@ server <- function(input, output, session) {
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
     
-    res <- reactiveVal()
     future_promise({
       # extract speaker notes
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
@@ -370,6 +328,11 @@ server <- function(input, output, session) {
         }
         pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
+      
+      pdf_info <- pdftools::pdf_info(pdf = pdf_path)
+      video_title <- pdf_info$keys$Title
+      
+      
       progress$inc(amount = 1/5, message = "Processing...")
       
       # convert to png
@@ -460,15 +423,18 @@ Howard Baek
       # Final output
       # Replace "www" with "i"
       if (burn_subtitle) {
-        gsub("www", "i", video_name_subtitle)
+        rendered_video_path <- gsub("www", "i", video_name_subtitle)
       } else {
-        gsub("www", "i", video_name)
+        rendered_video_path <- gsub("www", "i", video_name)
       }
+      
+      final_res <- c(rendered_video_path, video_title)
+      final_res
     }) %...>% res
     
     # Show video when "Generate" is clicked
     output$video_ui <- renderUI({
-      res <- res()
+      res <- res()[1]
       tags$video(src = res, 
                  type = "video/mp4",
                  height ="480px", 
@@ -476,18 +442,6 @@ Howard Baek
                  autoplay = TRUE,
                  controls = TRUE)
     })
-    
-    # Extract video info
-    if (which_tool == "google_slides") {
-      pdf_path <- gsplyr::download(gs_url, "pdf")
-    } else {
-      # convert pptx slides to pdf
-      if (Sys.info()['sysname'] == "Linux") {
-        Sys.setenv(LD_LIBRARY_PATH="")
-      }
-      pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
-    }
-    pdf_info <- pdftools::pdf_info(pdf = pdf_path)
     
     # Show video title
     output$video_info <- renderUI({
@@ -497,7 +451,7 @@ Howard Baek
                     font-size: 25px;
                     color: #1c3b61")
       output$video_title <- renderText({
-        pdf_info$keys$Title
+        res()[2]
       })
     })
     

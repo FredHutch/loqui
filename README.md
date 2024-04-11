@@ -37,3 +37,7 @@ available options, you can visit the
 [CoquiTTS](https://huggingface.co/spaces/coqui/CoquiTTS) Hugging Face
 Space. Once you find a voice you like, please let me know by submitting
 a GitHub issue and I will make sure to include it.
+
+## License
+
+[MIT](LICENSE.md)

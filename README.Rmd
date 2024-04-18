@@ -26,3 +26,8 @@ If you are confused, please open a [GitHub issue](https://github.com/FredHutch/l
 ## More Voice Options
 
 If you'd like to explore different voices but aren't certain about the available options, you can visit the [CoquiTTS](https://huggingface.co/spaces/coqui/CoquiTTS) Hugging Face Space. Once you find a voice you like, please let me know by submitting a GitHub issue and I will make sure to include it.
+
+
+## License
+
+[MIT](LICENSE.md)

@@ -81,6 +81,7 @@ ui <- fluidPage(
     )
   ),
   titlePanel(tagList(
+    img(src = "img/logo-loqui.jpeg", height = "45px"),
     "Loqui",
     span(
       actionButton("demo",

@@ -117,7 +117,7 @@ ui <- fluidPage(
       ),
       div(
         prettySwitch("burn_subtitle", "Embed Subtitles",
-                     status = "success", fill = TRUE),
+                     value = TRUE, status = "success", fill = TRUE),
         style = "color: #1c3b61;"
       ),
       uiOutput("user_input"),

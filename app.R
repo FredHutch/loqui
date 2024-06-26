@@ -272,7 +272,7 @@ server <- function(input, output, session) {
     if (input$service == "coqui") {
       tagList(
         selectInput("coqui_model_name", "Select Model Name (Voice)", 
-                    choices = c("tacotron2-DDC_ph", "jenny"),
+                    choices = c("tacotron2-DDC_ph", "jenny", "fast_pitch"),
                     selected = "jenny")
       )
     } 
@@ -290,9 +290,12 @@ server <- function(input, output, session) {
     # Read inputs to be used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
-    coqui_vocoder_name <- ifelse(coqui_model_name == "jenny", 
-                                 "jenny", 
-                                 "ljspeech/univnet")
+    coqui_vocoder_name <- switch(coqui_model_name,
+                                 "jenny" = "jenny",
+                                 "tacotron2-DDC_ph" = "ljspeech/univnet",
+                                 "fast_pitch" = "ljspeech/hifigan_v2",
+                                 stop("Invalid model name"))
+    
     which_tool <- input$presentation_tool
     burn_subtitle <- input$burn_subtitle
     gs_url <- input$gs_url

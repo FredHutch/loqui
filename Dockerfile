@@ -1,4 +1,4 @@
-FROM fredhutch/r-shiny-base:4.2.0
+FROM fredhutch/r-shiny-base:4.4.0
 
 RUN echo break cache0
 RUN apt-get --allow-releaseinfo-change update -y

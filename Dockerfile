@@ -1,7 +1,9 @@
-FROM fredhutch/r-shiny-base:4.2.0
+FROM fredhutch/r-shiny-base:4.4.0
 
+RUN echo break cache0
 RUN apt-get --allow-releaseinfo-change update -y
 
+RUN apt-get install -y usrmerge
 RUN apt-get install -y libpoppler-cpp-dev ffmpeg
 RUN apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev libreoffice default-jdk
 

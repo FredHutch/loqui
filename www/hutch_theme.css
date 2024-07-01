@@ -7,12 +7,6 @@ h2 {
 }
 
 /* Text inside 'About this Shiny app' tab */
-h3 {
-  font-family: Times;
-  font-size: 28px;
-  color: #1c3b61;
-  font-weight: bold;
-}
 
 /* Change footer text */
 h5 {
@@ -25,10 +19,6 @@ h6 {
   color: #1c3b61;
 }
 
-
-p {
-  width: 780px;
-}
 
 /* Video Title */
 #video_info.shiny-html-output {
@@ -105,4 +95,8 @@ p {
 .control-label {
   font-family: Arial;
   color: #1c3b61;
+}
+
+#email {
+    font-size: 18px; /* Adjust the size as needed */
 }

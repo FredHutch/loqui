@@ -82,7 +82,7 @@ ui <- fluidPage(
   ),
   titlePanel(tagList(
     img(src = "i/img/logo-loqui.jpeg", height = "45px"),
-    "Loqui",
+    "Loqui: A Shiny app for Creating Automated Videos",
     span(
       actionButton("demo",
                    label = "Demo",
@@ -105,36 +105,41 @@ ui <- fluidPage(
   hr(),
   sidebarLayout(
     sidebarPanel(
-      textInput("email", "Email Address (where video should be sent)"),
+      div(textInput("email", "Email Address (where video should be sent)"), style = "font-size: 18px"),
       div(
         shinyWidgets::prettySwitch("auto_email", "Once video finishes rendering, send email automatically",
                                    value = TRUE, status = "success", fill = TRUE),
-        style = "color: #1c3b61;"
+        style = "color: #1c3b61;font-size:16px"
       ),
-      radioButtons("presentation_tool", "Presentation Tool",
-                   c("Google Slides" = "google_slides",
-                     "Powerpoint" = "powerpoint")
+      div(
+        radioButtons("presentation_tool", "Presentation Tool",
+                     c("Google Slides" = "google_slides",
+                       "Powerpoint" = "powerpoint")),
+        style = "font-size:18px"
       ),
       div(
         prettySwitch("burn_subtitle", "Embed Subtitles",
                      value = TRUE, status = "success", fill = TRUE),
-        style = "color: #1c3b61;"
+        style = "color: #1c3b61;font-size:16px"
       ),
       uiOutput("user_input"),
-      shinyWidgets::pickerInput("service",
-                                label = "Text-to-Speech Service", 
-                                choices = c("Coqui TTS" = "coqui"),
-                                choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img)[[1]])),
+      div(
+        shinyWidgets::pickerInput("service",
+                                  label = "Text-to-Speech Service", 
+                                  choices = c("Coqui TTS" = "coqui"),
+                                  choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img)[[1]])),
+        style = "font-size:18px"
+      ),
       uiOutput("voice_options"),
       actionButton("generate", "Generate", icon = icon("person-running")),
       br(),
       br(),
+      tags$img(src = "i/img/logo.png", width = "90%"),
       h5("Built with",
          img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
          "by",
          img(src = "i/img/posit.jpeg", height = "30px")
-      ),
-      tags$img(src = "i/img/logo.png", width = "90%")
+      )
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
@@ -142,22 +147,12 @@ ui <- fluidPage(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
-                    h3("Introducing Loqui: A Shiny app for Creating Automated Videos"),
                     div( 
-                      p("Loqui is an open source web application that enables the creation of automated videos using ari,
-                        an R package for generating videos from text and images. Loqui takes as input either a Google Slides URL
-                        or a Microsoft PowerPoint file, extracts the speaker notes from the slides, and converts them into an audio file. 
-                        Then, it converts the Google Slides to images and ultimately,
-                        generates an mp4 video file where each image is presented with its corresponding audio."),
-                      
-                      p("The functionality of Loqui relies on two R packages, namely ari and text2speech, which run in the background.
-                        Although  it is certainly possible to go directly to these packages and run their functions for course generation,
-                        we realize that not everyone feels comfortable programming in R. This web application offers an intuitive and user-friendly
-                        interface allowing individuals to effortlessly create automated videos without the need for programming skills."),
+                      includeHTML("include.html"),
                       uiOutput("loqui_demo"),
-                      em("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
+                      h5("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
-                      style = "font-family: Arial; color: #1c3b61")
+                      style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
                   tabPanel(
                     title = div("Rendered Video", 
@@ -220,9 +215,12 @@ server <- function(input, output, session) {
   # Show different inputs depending on Google Slides or PowerPoint
   output$user_input <- renderUI({
     if (input$presentation_tool == "google_slides") {
-      textInput("gs_url", 
-                label = "Google Slides URL (Enable Link Sharing)",
-                placeholder = "Paste a Google Slides URL")
+      div(
+        textInput("gs_url", 
+                  label = "Google Slides URL (Enable Link Sharing)",
+                  placeholder = "Paste a Google Slides URL"),
+        style = "font-size:18px"
+      )
     } else { 
       fileInput("pptx_file", NULL, accept = ".pptx",
                 buttonLabel = "Upload .pptx")
@@ -270,10 +268,11 @@ server <- function(input, output, session) {
   # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
-      tagList(
-        selectInput("coqui_model_name", "Select Model Name (Voice)", 
-                    choices = c("tacotron2-DDC_ph", "jenny", "fast_pitch"),
-                    selected = "jenny")
+      div(
+      selectInput("coqui_model_name", "Select Model Name (Voice)", 
+                  choices = c("tacotron2-DDC_ph", "jenny", "fast_pitch"),
+                  selected = "jenny"),
+      style = "font-size:18px"
       )
     } 
   })

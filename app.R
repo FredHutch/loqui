@@ -112,6 +112,10 @@ ui <- fluidPage(
         style = "color: #1c3b61;font-size:16px"
       ),
       div(
+        h5("NOTE: For Automatic Emails, Keep Browser Open"),
+        style = "color: #1c3b61;font-size:16px"
+      ),
+      div(
         radioButtons("presentation_tool", "Presentation Tool",
                      c("Google Slides" = "google_slides",
                        "Powerpoint" = "powerpoint")),

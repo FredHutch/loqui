@@ -112,6 +112,10 @@ ui <- fluidPage(
         style = "color: #1c3b61;font-size:16px"
       ),
       div(
+        h5("NOTE: For Automatic Emails, Keep Browser Open"),
+        style = "color: #1c3b61;font-size:16px"
+      ),
+      div(
         radioButtons("presentation_tool", "Presentation Tool",
                      c("Google Slides" = "google_slides",
                        "Powerpoint" = "powerpoint")),
@@ -148,10 +152,18 @@ ui <- fluidPage(
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
                     div( 
-                      includeHTML("include.html"),
+                      includeHTML("include-about.html"),
                       uiOutput("loqui_demo"),
                       h5("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
+                      style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
+                  ),
+                  tabPanel(
+                    title = div("Tips",
+                                style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
+                    value = "tips",
+                    div( 
+                      includeHTML("include-tips.html"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
                   tabPanel(

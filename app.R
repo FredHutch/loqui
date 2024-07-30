@@ -1,6 +1,8 @@
 # Handoff Notes from Howard
 
 # All the required packages are attached here ----
+# Whenever I used a function from one of these libraries, I made sure to use the `::` operator (i.e. ari::ari_spin())
+# so I know where this function came from.
 
 ## shiny family of packages + ari
 library(shiny)

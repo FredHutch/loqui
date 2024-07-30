@@ -1,5 +1,7 @@
 FROM fredhutch/r-shiny-base:4.4.0
 
+ARG GITHUB_PAT
+
 RUN echo break cache0
 RUN apt-get --allow-releaseinfo-change update -y
 

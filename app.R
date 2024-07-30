@@ -1,9 +1,8 @@
 # Handoff Notes from Howard
 
+# All the required packages are attached here ----
 
-# Packages ----
-
-## Shiny + ari
+## shiny family of packages + ari
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -31,14 +30,17 @@ library(ptplyr)
 
 # Options ----
 options("future.rng.onMisuse" = "ignore",
-        shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
+        shiny.maxRequestSize = 10 * 1024^2) # Set the maximum file upload size to be 10 MB
 
-# Images for pickerInput stored in i/ from the root app directory
+# Images for pickerInput() stored in i/ from the root app directory
+# Note that the current version of Loqui only offers Coqui TTS since the other services (Amazon, Google, Microsoft)
+# are paid services and require more work to setup (payments, business operations, admin, etc). 
+# On the other hand, Coqui TTS is free, open-source: <https://github.com/coqui-ai/TTS>
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
-# Select image
+# Helper function to select image in pickerInput()
 select_choice_img <- function(img, text) {
   shiny::HTML(paste(
     tags$img(src=img, width=25, height=22),
@@ -46,7 +48,7 @@ select_choice_img <- function(img, text) {
   ))
 }
 
-# Function to check if email is valid 
+# Helper function to check if email is valid 
 is_valid_email <- function(x) {
   grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
 }
@@ -54,7 +56,7 @@ is_valid_email <- function(x) {
 
 # UI ----
 ui <- fluidPage(
-  # Setup to use shinyjs
+  # Setup Shiny app to use shinyjs
   shinyjs::useShinyjs(),
   # and shinyFeedback
   shinyFeedback::useShinyFeedback(),
@@ -65,9 +67,9 @@ ui <- fluidPage(
   ),
   # Favicon
   tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
-  # CSS to center the progress bar
   tags$head(
     tags$style(
+      # CSS to center the progress bar
       HTML(".shiny-notification {
            height: 100px;
            width: 800px;
@@ -84,9 +86,11 @@ ui <- fluidPage(
     )
   ),
   titlePanel(tagList(
+    # Logo on the title panel
     img(src = "i/img/logo-loqui.jpeg", height = "45px"),
     "Loqui: A Shiny app for Creating Automated Videos",
     span(
+      # Action buttons (top-right corner)
       actionButton("demo",
                    label = "Demo",
                    icon = icon("youtube"),
@@ -107,6 +111,7 @@ ui <- fluidPage(
   windowTitle = "Loqui"),
   hr(),
   sidebarLayout(
+    # HTML elements on left sidebar
     sidebarPanel(
       div(textInput("email", "Email Address (where video should be sent)"), style = "font-size: 18px"),
       div(
@@ -150,6 +155,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
+                  # About Tab
                   tabPanel(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -161,6 +167,7 @@ ui <- fluidPage(
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
+                  # Tips Tab
                   tabPanel(
                     title = div("Tips",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -169,6 +176,7 @@ ui <- fluidPage(
                       includeHTML("include-tips.html"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
+                  # Rendered Video Tab
                   tabPanel(
                     title = div("Rendered Video", 
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -202,7 +210,7 @@ server <- function(input, output, session) {
                               is.data.frame(input$pptx_file)))
   })
   
-  # Display feedback message when email address is not valid
+  # Display feedback message when _email address_ is not valid
   observeEvent(input$email, {
     if (input$email != "" & !is_valid_email(input$email)) {
       shinyFeedback::showFeedbackWarning(
@@ -214,7 +222,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Display feedback message when Google Slides link isn't accessible
+  # Display feedback message when _Google Slides link_ isn't accessible
   observeEvent(input$gs_url, {
     res <- try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE)
     if(input$gs_url != "" & inherits(res, "try-error")) {
@@ -558,6 +566,7 @@ Howard Baek
 }
 
 # Code for Deployment to Hutch servers
+# For help with deploying this app, contact Dan Tenenbaum (Scientific Computing)
 addResourcePath("/i", file.path(getwd(), "www"))
 options <- list()
 if (!interactive()) {

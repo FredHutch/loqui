@@ -16,9 +16,14 @@ library(pdftools)
 library(blastula)
 library(googlesheets4)
 
-## Future
-library(promises)
-library(future)
+# The promises library is necessary for the %...>% operator.
+library(promises) 
+
+# The future library is needed for the future() function call used inside future_promise()
+# This is how you will launch asynchronous tasks.
+library(future) 
+
+# Launches up to 25 background R processes on the same machine
 plan(multisession, workers = 25)
 library(ipc)
 
@@ -317,48 +322,63 @@ server <- function(input, output, session) {
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
     
-    future_promise({
-      # extract speaker notes
+    # To learn more about {promises}, start here:
+    # <https://rstudio.github.io/promises/articles/promises_01_motivation.html>
+    # Read this to learn about using promises with Shiny:
+    # <https://rstudio.github.io/promises/articles/promises_06_shiny.html>
+    # See below for using promises inside observers:
+    # <https://rstudio.github.io/promises/articles/promises_06_shiny.html#observers>
+    
+    # future_promise(): Creates a promise() that will execute the expr using future::future()
+    # For information on `future_promise()`,
+    # see <https://rstudio.github.io/promises/articles/promises_05_future_promise.html> 
+    
+    promises::future_promise({
+      # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      # download google slides as pptx
+      # Download google slides as pptx
       if(which_tool == "google_slides") {
         pptx_path <- gsplyr::download(gs_url, type = "pptx")
       } else {
         # or fetch path to pptx on server
         pptx_path <- pptx_upload_datapath
       }
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
+      # Extract speaker notes
       pptx_notes_vector <- ptplyr::extract_notes(pptx_path)
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
       
-      # download as pdf
+      # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      # download google slides as pdf
+      # Download google slides as pdf
       if (which_tool == "google_slides") {
         pdf_path <- gsplyr::download(gs_url, type = "pdf")
       } else {
-        # convert pptx slides to pdf
+        # Convert pptx slides to pdf
         if (Sys.info()['sysname'] == "Linux") {
           Sys.setenv(LD_LIBRARY_PATH="")
         }
         pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
       
+      # Extract video title from pdf file
       pdf_info <- pdftools::pdf_info(pdf = pdf_path)
       video_title <- pdf_info$keys$Title
       
-      
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
-      
-      # convert to png
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
+      # Convert to png
       image_path <- ptplyr::convert_pdf_png(pdf_path)
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       
-      # ari_spin()----
+      # Generate videos from images (image_path) and text (pptx_notes_vector)
       ari::ari_spin(images = image_path, 
                     paragraphs = pptx_notes_vector,
                     output = video_name,
@@ -371,7 +391,7 @@ server <- function(input, output, session) {
         srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
         ari::ari_burn_subtitles(video_name, srt_file, video_name_subtitle)
       }
-      
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
       Sys.sleep(3)
       progress$close()
@@ -446,6 +466,9 @@ Howard Baek
       final_res <- c(rendered_video_path, video_title)
       final_res
     }) %...>% res
+    # '%...>%' is the promise pipe. 
+    # See <https://rstudio.github.io/promises/articles/promises_02_intro.html> for 
+    # more details on the promise pipe.
     
     # Show video when "Generate" is clicked
     output$video_ui <- renderUI({

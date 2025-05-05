@@ -427,7 +427,7 @@ Howard Baek
       video_duration <- sub("Duration: ([0-9:.]+)", "\\1", duration_raw)
       date_time <- blastula::add_readable_time()
       # Authorize
-      googlesheets4::gs4_auth(cache=".secrets", email="howardbaek.fh@gmail.com")
+      googlesheets4::gs4_auth(cache=".secrets", email="itcrtrainingnetwork@gmail.com")
       # Append
       gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
       googlesheets4::sheet_append(gs_url,

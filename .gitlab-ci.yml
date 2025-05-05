@@ -18,7 +18,7 @@ build:
   script:
     - mkdir -p .secrets
     - echo $GOOGLE_TOKEN | base64 -d > .secrets/$GOOGLE_TOKEN_NAME
-    - docker build --no-cache --build-arg CACHEBUST=$(date +%s) -t sc-registry.fredhutch.org/loqui:test .
+    - docker build --no-cache --build-arg GITHUB_PAT=${GITHUB_PAT} --build-arg CACHEBUST=$(date +%s) -t sc-registry.fredhutch.org/loqui:test .
     - docker push sc-registry.fredhutch.org/loqui:test
 
 test:

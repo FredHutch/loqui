@@ -1,6 +1,10 @@
-# Packages ----
+# Handoff Notes from Howard
 
-## Shiny + ari
+# All the required packages are attached here ----
+# Whenever I used a function from one of these libraries, I made sure to use the `::` operator (i.e. ari::ari_spin())
+# so I know where this function came from.
+
+## shiny family of packages + ari
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -16,9 +20,14 @@ library(pdftools)
 library(blastula)
 library(googlesheets4)
 
-## Future
-library(promises)
-library(future)
+# The promises library is necessary for the %...>% operator.
+library(promises) 
+
+# The future library is needed for the future() function call used inside future_promise()
+# This is how you will launch asynchronous tasks.
+library(future) 
+
+# Launches up to 25 background R processes on the same machine
 plan(multisession, workers = 25)
 library(ipc)
 
@@ -28,14 +37,17 @@ library(ptplyr)
 
 # Options ----
 options("future.rng.onMisuse" = "ignore",
-        shiny.maxRequestSize = 10 * 1024^2) # Maximum file upload size: 10 MB
+        shiny.maxRequestSize = 10 * 1024^2) # Set the maximum file upload size to be 10 MB
 
-# Images for pickerInput stored in i/ from the root app directory
+# Images for pickerInput() stored in i/ from the root app directory
+# Note that the current version of Loqui only offers Coqui TTS since the other services (Amazon, Google, Microsoft)
+# are paid services and require more work to setup (payments, business operations, admin, etc). 
+# On the other hand, Coqui TTS is free, open-source: <https://github.com/coqui-ai/TTS>
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
 img_name <- c("Coqui TTS", "Amazon Polly", 
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
-# Select image
+# Helper function to select image in pickerInput()
 select_choice_img <- function(img, text) {
   shiny::HTML(paste(
     tags$img(src=img, width=25, height=22),
@@ -43,7 +55,7 @@ select_choice_img <- function(img, text) {
   ))
 }
 
-# Function to check if email is valid 
+# Helper function to check if email is valid 
 is_valid_email <- function(x) {
   grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
 }
@@ -51,7 +63,7 @@ is_valid_email <- function(x) {
 
 # UI ----
 ui <- fluidPage(
-  # Setup to use shinyjs
+  # Setup Shiny app to use shinyjs
   shinyjs::useShinyjs(),
   # and shinyFeedback
   shinyFeedback::useShinyFeedback(),
@@ -62,9 +74,9 @@ ui <- fluidPage(
   ),
   # Favicon
   tags$head(tags$link(rel="shortcut icon", href="i/img/favicon.ico")),
-  # CSS to center the progress bar
   tags$head(
     tags$style(
+      # CSS to center the progress bar
       HTML(".shiny-notification {
            height: 100px;
            width: 800px;
@@ -81,9 +93,11 @@ ui <- fluidPage(
     )
   ),
   titlePanel(tagList(
+    # Logo on the title panel
     img(src = "i/img/logo-loqui.jpeg", height = "45px"),
     "Loqui: A Shiny app for Creating Automated Videos",
     span(
+      # Action buttons (top-right corner)
       actionButton("demo",
                    label = "Demo",
                    icon = icon("youtube"),
@@ -104,6 +118,7 @@ ui <- fluidPage(
   windowTitle = "Loqui"),
   hr(),
   sidebarLayout(
+    # HTML elements on left sidebar
     sidebarPanel(
       div(textInput("email", "Email Address (where video should be sent)"), style = "font-size: 18px"),
       div(
@@ -147,6 +162,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       tabsetPanel(id = "inTabset",
+                  # About Tab
                   tabPanel(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -158,6 +174,7 @@ ui <- fluidPage(
                       h5("This initiative is funded by the following grant: National Cancer Institute (NCI) UE5 CA254170"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
+                  # Tips Tab
                   tabPanel(
                     title = div("Tips",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -166,6 +183,7 @@ ui <- fluidPage(
                       includeHTML("include-tips.html"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
+                  # Rendered Video Tab
                   tabPanel(
                     title = div("Rendered Video", 
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
@@ -199,7 +217,7 @@ server <- function(input, output, session) {
                               is.data.frame(input$pptx_file)))
   })
   
-  # Display feedback message when email address is not valid
+  # Display feedback message when _email address_ is not valid
   observeEvent(input$email, {
     if (input$email != "" & !is_valid_email(input$email)) {
       shinyFeedback::showFeedbackWarning(
@@ -211,7 +229,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Display feedback message when Google Slides link isn't accessible
+  # Display feedback message when _Google Slides link_ isn't accessible
   observeEvent(input$gs_url, {
     res <- try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE)
     if(input$gs_url != "" & inherits(res, "try-error")) {
@@ -317,48 +335,63 @@ server <- function(input, output, session) {
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
     
-    future_promise({
-      # extract speaker notes
+    # To learn more about {promises}, start here:
+    # <https://rstudio.github.io/promises/articles/promises_01_motivation.html>
+    # Read this to learn about using promises with Shiny:
+    # <https://rstudio.github.io/promises/articles/promises_06_shiny.html>
+    # See below for using promises inside observers:
+    # <https://rstudio.github.io/promises/articles/promises_06_shiny.html#observers>
+    
+    # future_promise(): Creates a promise() that will execute the expr using future::future()
+    # For information on `future_promise()`,
+    # see <https://rstudio.github.io/promises/articles/promises_05_future_promise.html> 
+    
+    promises::future_promise({
+      # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      # download google slides as pptx
+      # Download google slides as pptx
       if(which_tool == "google_slides") {
         pptx_path <- gsplyr::download(gs_url, type = "pptx")
       } else {
         # or fetch path to pptx on server
         pptx_path <- pptx_upload_datapath
       }
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
+      # Extract speaker notes
       pptx_notes_vector <- ptplyr::extract_notes(pptx_path)
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
       
-      # download as pdf
+      # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      # download google slides as pdf
+      # Download google slides as pdf
       if (which_tool == "google_slides") {
         pdf_path <- gsplyr::download(gs_url, type = "pdf")
       } else {
-        # convert pptx slides to pdf
+        # Convert pptx slides to pdf
         if (Sys.info()['sysname'] == "Linux") {
           Sys.setenv(LD_LIBRARY_PATH="")
         }
         pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
       
+      # Extract video title from pdf file
       pdf_info <- pdftools::pdf_info(pdf = pdf_path)
       video_title <- pdf_info$keys$Title
       
-      
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
-      
-      # convert to png
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
+      # Convert to png
       image_path <- ptplyr::convert_pdf_png(pdf_path)
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       
-      # ari_spin()----
+      # Generate videos from images (image_path) and text (pptx_notes_vector)
       ari::ari_spin(images = image_path, 
                     paragraphs = pptx_notes_vector,
                     output = video_name,
@@ -371,7 +404,7 @@ server <- function(input, output, session) {
         srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
         ari::ari_burn_subtitles(video_name, srt_file, video_name_subtitle)
       }
-      
+      # Progress message
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
       Sys.sleep(3)
       progress$close()
@@ -446,6 +479,9 @@ Howard Baek
       final_res <- c(rendered_video_path, video_title)
       final_res
     }) %...>% res
+    # '%...>%' is the promise pipe. 
+    # See <https://rstudio.github.io/promises/articles/promises_02_intro.html> for 
+    # more details on the promise pipe.
     
     # Show video when "Generate" is clicked
     output$video_ui <- renderUI({
@@ -555,6 +591,7 @@ Howard Baek
 }
 
 # Code for Deployment to Hutch servers
+# For help with deploying this app, contact Dan Tenenbaum (Scientific Computing)
 addResourcePath("/i", file.path(getwd(), "www"))
 options <- list()
 if (!interactive()) {

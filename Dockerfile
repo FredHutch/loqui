@@ -22,7 +22,7 @@ RUN make -j `nproc`
 RUN make altinstall
 
 RUN python3.9 -m ensurepip
-RUN python3.9 -m pip install pandas==2.0.3
+RUN python3.9 -m pip install numpy=1.22.4 pandas==2.0.3
 
 
 RUN R -e "install.packages(c('gargle', 'googlesheets4', 'remotes', 'pdftools', 'tidyr', 'text2speech', 'shinyWidgets', 'aws.polly', 'shinyjs', 'blastula', 'promises', 'future', 'ipc', 'shinyFeedback'), repos='https://cran.rstudio.com/')"

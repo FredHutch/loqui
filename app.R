@@ -155,7 +155,7 @@ ui <- fluidPage(
       br(),
       tags$img(src = "i/img/logo.png", width = "90%"),
       h5("Built with",
-         img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png", height = "30px"),
+         img(src = "https://shiny.posit.co/images/shiny-solo.png", height = "30px"),
          "by",
          img(src = "i/img/posit.jpeg", height = "30px")
       )

@@ -430,12 +430,12 @@ vertical dots and select 'Download'.
             
 We also invite you to visit our website at [https://hutchdatascience.org](https://hutchdatascience.org)
 to explore a wealth of valuable resources and stay updated on the latest news from
-the Fred Hutch Data Science Lab (DaSL). 
+the Fred Hutch Data Science Lab (DaSL). The team supporting this tool describes additional resources at [https://www.itcrtraining.org](https://www.itcrtraining.org/home). 
 
-Feel free to reach out to us with any questions at howardbaek@fredhutch.org or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
+Feel free to reach out to us with any questions at itcrtrainingnetwork@gmail.com or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
             
-Howard Baek
+-The ITN Team
 ")),
           footer = md(glue::glue("Email automatically sent on {date_time}."))
         )
@@ -570,12 +570,12 @@ vertical dots and select 'Download'.
             
 We also invite you to visit our website at [https://hutchdatascience.org](https://hutchdatascience.org)
 to explore a wealth of valuable resources and stay updated on the latest news from
-the Fred Hutch Data Science Lab (DaSL). 
+the Fred Hutch Data Science Lab (DaSL). The team supporting this tool describes additional resources at [https://www.itcrtraining.org](https://www.itcrtraining.org/home).
 
-Feel free to reach out to us with any questions at howardbaek@fredhutch.org or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
+Feel free to reach out to us with any questions at itcrtrainingnetwork@gmail.com or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
             
-Howard Baek
+-The ITN Team
 ")),
       footer = md(glue::glue("Email sent on {date_time}."))
     )

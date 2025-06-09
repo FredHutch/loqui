@@ -21,11 +21,11 @@ library(blastula)
 library(googlesheets4)
 
 # The promises library is necessary for the %...>% operator.
-library(promises) 
+library(promises)
 
 # The future library is needed for the future() function call used inside future_promise()
 # This is how you will launch asynchronous tasks.
-library(future) 
+library(future)
 
 # Launches up to 25 background R processes on the same machine
 plan(multisession, workers = 25)
@@ -41,10 +41,10 @@ options("future.rng.onMisuse" = "ignore",
 
 # Images for pickerInput() stored in i/ from the root app directory
 # Note that the current version of Loqui only offers Coqui TTS since the other services (Amazon, Google, Microsoft)
-# are paid services and require more work to setup (payments, business operations, admin, etc). 
+# are paid services and require more work to setup (payments, business operations, admin, etc).
 # On the other hand, Coqui TTS is free, open-source: <https://github.com/coqui-ai/TTS>
 imgs <- c("i/img/coqui.png", "i/img/aws.jpeg", "i/img/google.png", "i/img/ms.jpeg")
-img_name <- c("Coqui TTS", "Amazon Polly", 
+img_name <- c("Coqui TTS", "Amazon Polly",
               "Google Cloud Text-to-Speech", "Microsoft Cognitive Services Text-to-Speech")
 
 # Helper function to select image in pickerInput()
@@ -55,7 +55,7 @@ select_choice_img <- function(img, text) {
   ))
 }
 
-# Helper function to check if email is valid 
+# Helper function to check if email is valid
 is_valid_email <- function(x) {
   grepl("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", x)
 }
@@ -67,7 +67,7 @@ ui <- fluidPage(
   shinyjs::useShinyjs(),
   # and shinyFeedback
   shinyFeedback::useShinyFeedback(),
-  
+
   # Hutch theme CSS
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "i/hutch_theme.css")
@@ -102,7 +102,7 @@ ui <- fluidPage(
                    label = "Demo",
                    icon = icon("youtube"),
                    onclick ="window.open(`https://youtu.be/G7JyvCAxg40`, '_blank')"),
-      actionButton("help", 
+      actionButton("help",
                    label = "Help",
                    icon = icon("circle-exclamation"),
                    width = "77px",
@@ -143,8 +143,13 @@ ui <- fluidPage(
       ),
       uiOutput("user_input"),
       div(
+        checkboxInput("speaker_notes_check",
+                      label = "All slides have speaker notes",
+                      value = FALSE),
+      ),
+      div(
         shinyWidgets::pickerInput("service",
-                                  label = "Text-to-Speech Service", 
+                                  label = "Text-to-Speech Service",
                                   choices = c("Coqui TTS" = "coqui"),
                                   choicesOpt = list(content = purrr::map2(imgs, img_name, select_choice_img)[[1]])),
         style = "font-size:18px"
@@ -167,7 +172,7 @@ ui <- fluidPage(
                     title = div("About",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "about",
-                    div( 
+                    div(
                       includeHTML("include-about.html"),
                       uiOutput("loqui_demo"),
                       h5("Privacy Policy: We only collect the date and time of usage, duration of the generated video, and the provided email address."),
@@ -179,13 +184,13 @@ ui <- fluidPage(
                     title = div("Tips",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "tips",
-                    div( 
+                    div(
                       includeHTML("include-tips.html"),
                       style = "font-family: Arial; color: #1c3b61; font-size: 1.65rem")
                   ),
                   # Rendered Video Tab
                   tabPanel(
-                    title = div("Rendered Video", 
+                    title = div("Rendered Video",
                                 style = "font-family: Arial; color: #1c3b61; font-weight: bold"),
                     value = "rendered_video",
                     br(),
@@ -202,10 +207,13 @@ ui <- fluidPage(
 # Server ----
 server <- function(input, output, session) {
   # Disable buttons when email is not provided and Google Slides URL (if provided) is not accessible
+  # and checkboxes for link sharing and speaker notes are not checked
   observe({
     shinyjs::toggleState("generate",
-                         !is.null(input$email) && input$email != "" && is_valid_email(input$email) && 
-                           (!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") ||
+                         !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
+                         speaker_ntoes_check == TRUE &&
+                           ((!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") &&
+                           link_sharing_check == TRUE) ||
                               is.data.frame(input$pptx_file)))
     shinyjs::toggleState("download_btn",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
@@ -216,19 +224,19 @@ server <- function(input, output, session) {
                            (!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") ||
                               is.data.frame(input$pptx_file)))
   })
-  
+
   # Display feedback message when _email address_ is not valid
   observeEvent(input$email, {
     if (input$email != "" & !is_valid_email(input$email)) {
       shinyFeedback::showFeedbackWarning(
         inputId = "email",
         text = "Invalid email. Please try again."
-      )  
+      )
     } else {
       shinyFeedback::hideFeedback("email")
     }
   })
-  
+
   # Display feedback message when _Google Slides link_ isn't accessible
   observeEvent(input$gs_url, {
     res <- try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE)
@@ -236,86 +244,92 @@ server <- function(input, output, session) {
       shinyFeedback::showFeedbackWarning(
         inputId = "gs_url",
         text = "Please set General access of the slides to 'Anyone with the link'."
-      )  
+      )
     } else {
       shinyFeedback::hideFeedback("gs_url")
     }
   })
-  
+
   # Show different inputs depending on Google Slides or PowerPoint
   output$user_input <- renderUI({
     if (input$presentation_tool == "google_slides") {
       div(
-        textInput("gs_url", 
+        textInput("gs_url",
                   label = "Google Slides URL (Enable Link Sharing)",
                   placeholder = "Paste a Google Slides URL"),
         style = "font-size:18px"
+        ),
+      div(
+        checkboxInput("link_sharing_check",
+                      label = "Link Sharing has been enabled",
+                      value = FALSE),
+        style = "font-size:18px"
       )
-    } else { 
+    } else {
       fileInput("pptx_file", NULL, accept = ".pptx",
                 buttonLabel = "Upload .pptx")
     }
   })
-  
+
   # Switch tabs when "Get Started" is clicked
   observeEvent(input$generate, {
     updateTabsetPanel(session, "inTabset", selected = "rendered_video")
   })
-  
+
   # Switch tabs when "Show Example" is clicked
   observeEvent(input$show_example, {
     updateTabsetPanel(session, "inTabset", selected = "loqui_example")
   })
-  
+
   # Create unique name for video file
   video_name <- eventReactive(input$generate, {
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
     unique_file_name <- paste0("www/ari-video-", current_time, ".mp4")
-    
+
     unique_file_name
   })
-  
+
   # Video with subtitles
   video_name_subtitle <- eventReactive(input$burn_subtitle, {
     # create unique name for video file
     current_time <- Sys.time()
     current_time <- format(current_time, "%Y-%m-%d-%H-%M-%S")
     unique_file_name <- paste0("www/subtitled-ari-video-", current_time, ".mp4")
-    
+
     unique_file_name
   })
-  
+
   # Demo of Loqui
   output$loqui_demo <- renderUI({
-    tags$video(src = "i/video/loqui.mp4", 
+    tags$video(src = "i/video/loqui.mp4",
                type = "video/mp4",
-               height ="480px", 
+               height ="480px",
                width="790px",
                controls = TRUE)
   })
-  
+
   # Voice Options
   output$voice_options <- renderUI({
     if (input$service == "coqui") {
       div(
-      selectInput("coqui_model_name", "Select Model Name (Voice)", 
+      selectInput("coqui_model_name", "Select Model Name (Voice)",
                   choices = c("tacotron2-DDC_ph", "jenny", "fast_pitch"),
                   selected = "jenny"),
       style = "font-size:18px"
       )
-    } 
+    }
   })
-  
-  
+
+
   # Create single reactive value
   res <- reactiveVal()
-  
+
   # Start: Generate video ----
   observeEvent(input$generate, {
     # Create a progress bar
     progress <- AsyncProgress$new(message = "Processing...")
-    
+
     # Read inputs to be used inside future_promise()
     service <- input$service
     coqui_model_name <- input$coqui_model_name
@@ -324,7 +338,7 @@ server <- function(input, output, session) {
                                  "tacotron2-DDC_ph" = "ljspeech/univnet",
                                  "fast_pitch" = "ljspeech/hifigan_v2",
                                  stop("Invalid model name"))
-    
+
     which_tool <- input$presentation_tool
     burn_subtitle <- input$burn_subtitle
     gs_url <- input$gs_url
@@ -334,18 +348,18 @@ server <- function(input, output, session) {
     video_name <- video_name()
     video_name_subtitle <- video_name_subtitle()
     app_url <- "https://loqui.fredhutch.org"
-    
+
     # To learn more about {promises}, start here:
     # <https://rstudio.github.io/promises/articles/promises_01_motivation.html>
     # Read this to learn about using promises with Shiny:
     # <https://rstudio.github.io/promises/articles/promises_06_shiny.html>
     # See below for using promises inside observers:
     # <https://rstudio.github.io/promises/articles/promises_06_shiny.html#observers>
-    
+
     # future_promise(): Creates a promise() that will execute the expr using future::future()
     # For information on `future_promise()`,
-    # see <https://rstudio.github.io/promises/articles/promises_05_future_promise.html> 
-    
+    # see <https://rstudio.github.io/promises/articles/promises_05_future_promise.html>
+
     promises::future_promise({
       # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
@@ -362,7 +376,7 @@ server <- function(input, output, session) {
       pptx_notes_vector <- ptplyr::extract_notes(pptx_path)
       # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
-      
+
       # Progress message
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
       # Download google slides as pdf
@@ -375,11 +389,11 @@ server <- function(input, output, session) {
         }
         pdf_path <- ptplyr::convert_pptx_pdf(pptx_upload_datapath)
       }
-      
+
       # Extract video title from pdf file
       pdf_info <- pdftools::pdf_info(pdf = pdf_path)
       video_title <- pdf_info$keys$Title
-      
+
       # Progress message
       progress$inc(amount = 1/5, message = "Processing...")
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
@@ -390,15 +404,15 @@ server <- function(input, output, session) {
       progress$inc(amount = 0, message = "This step requires a few minutes...")
       Sys.sleep(2)
       progress$inc(amount = 0, message = "Processing takes a few minutes...")
-      
+
       # Generate videos from images (image_path) and text (pptx_notes_vector)
-      ari::ari_spin(images = image_path, 
+      ari::ari_spin(images = image_path,
                     paragraphs = pptx_notes_vector,
                     output = video_name,
                     tts_engine_args = ari::coqui_args(coqui_model_name,
                                                       coqui_vocoder_name),
                     subtitles = TRUE)
-      
+
       # Burn subtitles
       if (burn_subtitle) {
         srt_file <- paste0(tools::file_path_sans_ext(video_name), ".srt")
@@ -408,7 +422,7 @@ server <- function(input, output, session) {
       progress$inc(amount = 1/5, message = "Processing...Done!", detail = "100%")
       Sys.sleep(3)
       progress$close()
-      
+
       # Email
       if (auto_email) {
         # Video Link
@@ -424,23 +438,23 @@ server <- function(input, output, session) {
         email <- blastula::compose_email(
           body = md(glue::glue(
             "Dear Loqui User,
-            
-To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three 
+
+To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three
 vertical dots and select 'Download'.
-            
+
 We also invite you to visit our website at [https://hutchdatascience.org](https://hutchdatascience.org)
 to explore a wealth of valuable resources and stay updated on the latest news from
-the Fred Hutch Data Science Lab (DaSL). The team supporting this tool describes additional resources at [https://www.itcrtraining.org](https://www.itcrtraining.org/home). 
+the Fred Hutch Data Science Lab (DaSL). The team supporting this tool describes additional resources at [https://www.itcrtraining.org](https://www.itcrtraining.org/home).
 
 Feel free to reach out to us with any questions at itcrtrainingnetwork@gmail.com or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
-            
+
 -The ITN Team
 ")),
           footer = md(glue::glue("Email automatically sent on {date_time}."))
         )
         # Send email
-        email %>% 
+        email %>%
           blastula::smtp_send(
             from = "loqui-noreply@fredhutch.org",
             to = user_email,
@@ -448,7 +462,7 @@ We will respond to your inquiries as soon as possible.
             credentials = creds_anonymous(host = "mx.fhcrc.org", port = 25)
           )
       }
-      
+
       # Google Sheets
       if (burn_subtitle) {
         ffmpeg_cmd <- paste0("-i", " ", video_name_subtitle, " ", "2>&1 | grep \"Duration\"")
@@ -465,9 +479,9 @@ We will respond to your inquiries as soon as possible.
       gs_url <- "https://docs.google.com/spreadsheets/d/1G_HTU-bv2k5txExP8EH3ScUfGqtW1P3syThD84Z-g9k/edit?usp=sharing"
       googlesheets4::sheet_append(gs_url,
                                   data.frame(date_time = date_time,
-                                             video_duration = video_duration, 
+                                             video_duration = video_duration,
                                              email = user_email))
-      
+
       # Final output
       # Replace "www" with "i"
       if (burn_subtitle) {
@@ -475,25 +489,25 @@ We will respond to your inquiries as soon as possible.
       } else {
         rendered_video_path <- gsub("www", "i", video_name)
       }
-      
+
       final_res <- c(rendered_video_path, video_title)
       final_res
     }) %...>% res
-    # '%...>%' is the promise pipe. 
-    # See <https://rstudio.github.io/promises/articles/promises_02_intro.html> for 
+    # '%...>%' is the promise pipe.
+    # See <https://rstudio.github.io/promises/articles/promises_02_intro.html> for
     # more details on the promise pipe.
-    
+
     # Show video when "Generate" is clicked
     output$video_ui <- renderUI({
       res <- res()[1]
-      tags$video(src = res, 
+      tags$video(src = res,
                  type = "video/mp4",
-                 height ="480px", 
+                 height ="480px",
                  width="854px",
                  autoplay = TRUE,
                  controls = TRUE)
     })
-    
+
     # Show video title
     output$video_info <- renderUI({
       span(textOutput("video_title"),
@@ -505,7 +519,7 @@ We will respond to your inquiries as soon as possible.
         res()[2]
       })
     })
-    
+
     # Show video buttons (download/send email)
     output$video_btn <- renderUI({
       column(12,
@@ -517,7 +531,7 @@ We will respond to your inquiries as soon as possible.
     })
   })
   # End: Generate video ----
-  
+
   # Download rendered video
   # Source: https://stackoverflow.com/questions/33416557/r-shiny-download-existing-file
   output$download_btn <- downloadHandler(
@@ -531,7 +545,7 @@ We will respond to your inquiries as soon as possible.
     },
     contentType = "video/mp4"
   )
-  
+
   # Download subtitles (if exists)
   output$download_subtitle_btn <- downloadHandler(
     filename = "loqui_video_subtitle.srt",
@@ -540,7 +554,7 @@ We will respond to your inquiries as soon as possible.
       file.copy(srt_file, file)
     },
   )
-  
+
   # Send email
   observeEvent(input$send_email, {
     # Dialog Box
@@ -548,7 +562,7 @@ We will respond to your inquiries as soon as possible.
       title = span(h4("Success message:"), style = "color: #1c3b61;font-family:Times;font-weight: bold;"),
       span(paste0("Email with the video file has been sent to ", input$email, "."), style = "color: #1c3b61;font-family:Arial")
     ))
-    
+
     # Video Link
     if (input$burn_subtitle) {
       video_name_processed <- gsub("www/", "", video_name_subtitle())
@@ -564,23 +578,23 @@ We will respond to your inquiries as soon as possible.
     email <- compose_email(
       body = md(glue::glue(
         "Dear Loqui User,
-            
-To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three 
+
+To access the video, simply click on the following link: [{video_link}]({video_link}). To download the video, click the three
 vertical dots and select 'Download'.
-            
+
 We also invite you to visit our website at [https://hutchdatascience.org](https://hutchdatascience.org)
 to explore a wealth of valuable resources and stay updated on the latest news from
 the Fred Hutch Data Science Lab (DaSL). The team supporting this tool describes additional resources at [https://www.itcrtraining.org](https://www.itcrtraining.org/home).
 
 Feel free to reach out to us with any questions at itcrtrainingnetwork@gmail.com or by filing a [GitHub issue](https://github.com/FredHutch/loqui/issues).
 We will respond to your inquiries as soon as possible.
-            
+
 -The ITN Team
 ")),
       footer = md(glue::glue("Email sent on {date_time}."))
     )
     # Send email
-    email %>% 
+    email %>%
       smtp_send(
         from = "loqui-noreply@fredhutch.org",
         to = input$email,
@@ -598,7 +612,7 @@ if (!interactive()) {
   options$port = 3838
   options$launch.browser = FALSE
   options$host = "0.0.0.0"
-  
+
 }
 
 shinyApp(ui, server, options=options)

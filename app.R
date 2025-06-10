@@ -211,7 +211,7 @@ server <- function(input, output, session) {
   observe({
     shinyjs::toggleState("generate",
                          !is.null(input$email) && input$email != "" && is_valid_email(input$email) &&
-                         speaker_ntoes_check == TRUE &&
+                         speaker_notes_check == TRUE &&
                            ((!inherits(try(gsplyr::download(input$gs_url, type = "pptx"), silent = TRUE), "try-error") &&
                            link_sharing_check == TRUE) ||
                               is.data.frame(input$pptx_file)))

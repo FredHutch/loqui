@@ -253,17 +253,13 @@ server <- function(input, output, session) {
   # Show different inputs depending on Google Slides or PowerPoint
   output$user_input <- renderUI({
     if (input$presentation_tool == "google_slides") {
-      div(
+      tagList(
         textInput("gs_url",
                   label = "Google Slides URL (Enable Link Sharing)",
                   placeholder = "Paste a Google Slides URL"),
-        style = "font-size:18px"
-        ),
-      div(
         checkboxInput("link_sharing_check",
                       label = "Link Sharing has been enabled",
-                      value = FALSE),
-        style = "font-size:18px"
+                      value = FALSE)
       )
     } else {
       fileInput("pptx_file", NULL, accept = ".pptx",
